@@ -60,10 +60,13 @@ How we'll know it worked. These are observable, not designs.
 4. **Deterministic resolution is proven by tests.** The same extracted facts always give the same result.
    The rating logic has unit tests covering resolved, unsupported, ambiguous, SATP and footnote/exclusion
    paths. The storage layer has tests showing runs persist and reload.
-5. **Unseen policies work.** Extraction and grid normalisation are general code that reads the original
+5. **Every covered motor product works (A1).** For each product a supplied grid covers, a policy of that
+   product resolves or refuses with evidence from its own sheet. No product is refused just because it
+   wasn't normalised.
+6. **Unseen policies work.** Extraction and grid normalisation are general code that reads the original
    grid files. A policy from one of the four insurers that isn't a sample resolves or refuses with
    evidence, and a policy from an unsupported insurer or product returns `unsupported` with the reason.
-6. **Submission is complete.** Hosted URL, repo, README (setup/run/deploy, where PDFs and analyses are
+7. **Submission is complete.** Hosted URL, repo, README (setup/run/deploy, where PDFs and analyses are
    stored and how they persist across each event), a short note on architecture, assumptions, failure
    modes and trade-offs, and committed structured outputs plus traces for all four samples that are easy to
    find. Emailed to careers@vaatun.com, subject "Insurance Rater Agent Challenge Submission", with
@@ -73,6 +76,7 @@ How we'll know it worked. These are observable, not designs.
 
 - **Vaatun reviewers:** the only real users. They upload PDFs, read results, and judge the submission.
 - **Me (solo):** I hold every sdlc role.
+- **Policies:** any motor policy PDF from any insurer (A1), text-based or image-only (B2).
 - **Inputs:** the starter bundle `insurance-rater-agent-challenge/`: 4 sample policy PDFs, 3 XLSX grids
   (Go Digit, Reliance, Tata AIG) and 1 PDF grid (HDFC ERGO), verified against `MANIFEST.json`.
 - **External services (decided below):** a hosting platform, Supabase (Postgres + Storage + Auth), and an
@@ -109,8 +113,8 @@ recognisable: `status` (`resolved` | `unsupported` | `ambiguous`), `facts`,
 `rates.od` / `rates.tp` each with `applicable` and `ratePercent`, `trace[]` with `decision`,
 `policyCitation` and `gridCitation`, and `confidence` with `level` and `reason`. It is only ever extended,
 never reshaped, and it must carry **all** R1 facts (insurer, previous insurer and business type where
-relevant, make/model, fuel, RTO, CC, manufacture year or vehicle age, policy type, NCB, premium breakup),
-each with its page citation and uncertainty. The bundle has no separate schema file. An earlier assumption
+relevant, make/model, fuel, RTO, CC, manufacture year or vehicle age, policy type, NCB, premium breakup,
+plus policy start/issue date per D1), each with its page citation and uncertainty. The bundle has no separate schema file. An earlier assumption
 of a "task contract schema" was wrong and is withdrawn.
 
 ### Product-owner decisions
@@ -128,45 +132,63 @@ of a "task contract schema" was wrong and is withdrawn.
   quality of its evidence. The overall level is the weakest fact the rate actually depended on. Resolution
   itself either matches every dimension or it doesn't.
 
-### Strict interpretations (decided 2026-11-20, without waiting for Vaatun)
+### Settled decisions (2026-11-20)
 
-Submission is due within 24 hours (by 2026-11-21), so questions for the hiring team were answered by the
-product owner with the stricter reading. Each is recorded in the README as an assumption.
+Sources: **A** = answered by the brief (challenge.md / challenge page), **B** = product-owner decision,
+**D** = default pending Vaatun's reply. Each D item is a single documented switch, so it can be flipped
+without code changes elsewhere. Every A, B and D item is listed in the README as an assumption or decision.
 
-1. **Grid effective dates.** Where a grid states an effective period, the policy start date must fall inside
-   it, or the result is `unsupported`, citing the period. Where the grid states none, the trace records
-   "effective period not stated" and overall confidence is capped at medium. The folder date is never used
-   as evidence.
-2. **Scope.** Only private-car policies from the four supplied insurers' grids can resolve. Any other
-   insurer, vehicle class or product is `unsupported`, with the reason.
-3. **XLSX values.** The workbook's cached values are authoritative, and the citation records any formula
-   behind the cell. A cell with no cached value counts as missing, never recomputed or guessed.
-4. **Grid eligibility.** The supplied grids are taken as applying to this broker. Conditions in
-   guideline/T&C/checks sheets that depend on policy facts are enforced. Conditions that depend on
-   broker-side facts the policy can't show are listed as assumptions, never silently ignored.
-5. **Overlapping matches.** If more than one row, cell or exception applies and they disagree, the result
-   is `ambiguous`, citing all of them.
-6. **Unknown business type.** If the grid depends on business type and the policy doesn't establish it,
-   the result is `ambiguous`. If the grid doesn't depend on it, the fact stays unknown and doesn't block.
-7. **Output format.** Assume machine grading. The example JSON's keys and value types are kept exactly
-   (`ratePercent` is a number), and extensions are additive only.
-8. **Stand-alone TP OD** is `{"applicable": false, "ratePercent": null}`, with a not-applicable reason.
-9. **No clarifying questions.** A genuinely ambiguous fact always gives `ambiguous` with the evidence.
-10. **Data minimisation.** Uploaded PDFs go only to our storage and the extraction LLM API, with no other
-    third party. OCR for scanned pages runs locally. The README discloses where data goes.
-11. **Extraction** (settles the earlier open question): text is pulled from the PDF first, image-only pages
-    are OCR'd locally, and the LLM extracts from page-tagged text. Code checks every cited quote against
-    that page's text. An unverified fact is low confidence, and an OCR-derived fact is at most medium. Upload
-    size and page limits are explicit, set above the largest sample, and enforced with a clear error.
-12. **Access.** One shared reviewer login, with credentials sent in the submission email.
-13. **Uptime.** The review window is unknown, so the app and database run on tiers that don't sleep or pause.
-14. **Repo.** The repo stays private, because the bundle contains real insurer grids. Access is granted to
-    Vaatun by invitation at submission.
+- **A1 Scope.** Review uploads can be any motor policy from any insurer (R/05 says "motor", not only
+  private car). Anything the supplied grids don't cover is `unsupported`, with the reason. Don't assume only
+  the four sample insurers or only private cars. **Full scope (product owner, 2026-11-20):** every motor
+  product that a supplied grid covers (private car, two-wheeler, commercial vehicle, taxi, school/staff
+  bus, and others found in the files) is normalised and resolved. "Covered but not built" is never an
+  acceptable `unsupported` reason.
+- **A2 Contradictions.** If two matching rows or footnotes give different rates, the result is `ambiguous`
+  (a contradictory rule, R/04), citing both. Never pick one.
+- **A3 Business type.** A missing or unclear previous insurer is flagged only when the selected grid
+  actually uses business type (R/01 "where relevant"). Otherwise it stays unknown and doesn't block.
+- **A4 Output keys.** The schema isn't fixed ("your schema may differ"), but the example's keys are kept for
+  easy comparison: `status`, `facts`, `rates.od/tp {applicable, ratePercent}`,
+  `trace[{decision, policyCitation, gridCitation}]`, `confidence {level, reason}`. Extend it, never rename.
+- **A5 Stand-alone TP OD** is `{"applicable": false, "ratePercent": null}`. Never 0.
+- **A6 Clarifying questions** are optional ("may" ask). Every run finishes with its own status. A genuinely
+  ambiguous fact gives `ambiguous`, and an answer-and-rerun option may be offered on top of that, never
+  instead of it.
+- **A7 Outside LLM.** Uploaded PDFs may be sent to an outside LLM API for extraction (R/04). The README
+  states that uploads go to that API.
+- **A8 Access.** A single shared reviewer login is fine. Credentials go in the submission email.
+- **B1 XLSX values.** Read stored (cached) cell values, not formulas, and document this in the README. Cite
+  cells exactly as they appear. A cell with no stored value counts as missing, never recalculated or guessed.
+- **B2 OCR is required.** None of the four sample policies has a text layer. Checked with `pdffonts` and
+  `pdftotext`: 0 fonts and 0 characters on every page of all four (9, 15, 4 and 12 pages). Reading page
+  images is therefore the main extraction path, not a fallback, and page citations must still work. (The
+  HDFC ERGO grid PDF does have a text layer.)
+- **B3 Quote verification.** Every extracted fact carries its page and the exact text it came from. Code
+  checks that text against that page's text (the text layer, or the OCR output for image pages). A fact
+  that fails the check is low confidence, and a fact that relies on OCR text is at most medium.
+- **B4 OCR engine** *(decided last)*. The preference is local OCR first. The engine choice is the last
+  design decision, so the extraction path must not depend on which engine is picked.
+- **D1 Grid dates** *(default, switchable)*. The policy start/issue date is extracted as an R1 fact. If it
+  falls outside a grid's stated period, the grid is still used, with a trace warning ("grid effective
+  <date>; policy dated <date>; a newer grid may exist") and lower confidence. The result is `unsupported`
+  only when the grid itself states an end date and the policy falls after it.
+- **D2 Broker eligibility** *(default, switchable)*. The broker is assumed to qualify for every supplied
+  grid's base rates ("Large Insurance Brokers", "Broking Premier"). Bonuses that depend on the broker's
+  business volume (e.g. Go Digit's "Additional 2.5% CD2 … partners with volume of 10 Lac monthly",
+  Reliance's volume slabs) are never added. They appear in the trace as "possible, not applied: depends on
+  broker volume, which the policy can't show". Whether private-car sheets carry such bonuses too (seen
+  mostly on commercial-vehicle sheets) is checked in spec.
+
+Still waiting on Vaatun, not blocking: review timing (decides hosting tier and keep-alive) and repo
+visibility. Until they reply, hosting must not sleep or pause, and the repo stays private.
 
 ### Deadline
 
-- Submit by **2026-11-21** (within 24 hours of 2026-11-20). Scope that endangers the baseline gate or the
-  four sample traces is cut first.
+- Submit by **2026-11-21** (within 24 hours of 2026-11-20). Build order: the baseline gate and the four
+  sample traces first, then the remaining covered motor products (A1). Full A1 scope is attempted. If the
+  deadline can't hold it, the product owner asks Vaatun for more time rather than cutting scope. Nothing is
+  cut silently.
 
 ### Conflict flagged between sources
 
@@ -179,22 +201,23 @@ product owner with the stricter reading. Each is recorded in the README as an as
 - Customer pricing, premium calculation, or discounts. We find the broker's commission percentage only.
 - Rupee commission amounts (optional; not committed to).
 - Rating non-OD/TP components (roadside assistance, paid driver, CNG kit, etc.).
-- Products other than private cars, unless a grid sheet already covers them (they may be detected and
-  returned as `unsupported`).
 - Uploading new grids, or policy URLs (both optional in the brief).
 - Multi-user accounts, roles or tenancy beyond the single reviewer login.
 
 ## Open questions
 
-Product-owner questions are all settled above under "Strict interpretations". Questions sent to Vaatun
-(if any) don't block. If a reply contradicts a strict interpretation, it reopens that item only.
+Product-owner questions are settled above under "Settled decisions". If a Vaatun reply contradicts a D item,
+only that switch flips.
 
 For spec (design), answered there with evidence from the files:
 
 1. How to extract table rows from the HDFC ERGO PDF grid so each rate cites page + row.
 2. Which sheets are in scope per insurer, confirmed by reading them. Guideline, T&C and checks sheets
    are possible exception sources.
-3. Where each grid states its effective period, if anywhere.
+3. Where each grid states its effective period, if anywhere. (Already seen: the HDFC ERGO grid says
+   "Effective from 1st Feb'25" and states no end date.)
 4. Exact field-level extension of the output schema, and the confidence rules.
-5. Extraction LLM model and the upload size/page limits.
+5. Extraction LLM model and the upload size/page limits. The OCR engine (B4) is decided last, local first.
 6. Render vs Fly, and the plan tiers that avoid sleep or pause.
+7. Whether private-car sheets carry broker-volume bonuses (D2).
+8. How D1 and D2 are exposed as switches, and where they are documented.
