@@ -551,3 +551,13 @@ T14 and T15 reuse T7's primitives and extend `registry.py`. **Test:** the same
   - Remaining for T5 (🔑): GitHub repo, Supabase project (migrations, private bucket `policies`, sign-ups
     off, reviewer user), Render services, then the AC22 checklist.
   - (T5-prep commit)
+- **T7: grid core departures.**
+  - `grids/model.py` moved to T9, where the resolver's tests define and exercise the rule model. `Band`
+    lives in `grids/bands.py`.
+  - `xlsx.py` exposes `Workbook(path).sheet(name)` with `.value/.formula/.is_error/.is_aggregate/.cells()`
+    instead of a `SheetView(path, sheet)` constructor, so one workbook load serves many sheets.
+  - `pdfgrid.py` returns positioned lines (`pdf_lines`) rather than finished `PdfTable`s. The HDFC ERGO
+    layout is specific enough that the adapter (T10) builds its tables from x-positions.
+  - `textrules.classify` gained three kinds the real lines needed: `undefined_decline` (C5),
+    `slab_basis` (C1) and `definition`.
+  - (T7 commit)

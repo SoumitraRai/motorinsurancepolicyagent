@@ -60,7 +60,12 @@ def postgres_dsn() -> Iterator[str]:
                 conn.execute(sql.read_text())
         yield dsn
     finally:
-        subprocess.run(["docker", "rm", "-f", name], check=False, capture_output=True)
+        # Docker Desktop can stall on removal; never let cleanup block the test run.
+        try:
+            subprocess.run(["docker", "rm", "-f", name], check=False, capture_output=True, timeout=30)
+        except subprocess.TimeoutExpired:
+            quiet = subprocess.DEVNULL
+            subprocess.Popen(["docker", "rm", "-f", name], stdout=quiet, stderr=quiet)
 
 
 @pytest.fixture
