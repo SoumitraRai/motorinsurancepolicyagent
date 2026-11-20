@@ -488,3 +488,18 @@ T14 and T15 reuse T7's primitives and extend `registry.py`. **Test:** the same
 
 ## Departures from plan
 <!-- Filled in during build. Each entry: what changed vs. the plan above, why, commit. -->
+
+- **T1: minimal frontend scaffold created in T1, not T4.** `make build/test/lint` run both halves, so
+  T1 needed a building and testing frontend. Added `frontend/{package.json, package-lock.json, tsconfig.json,
+  vite.config.ts, index.html, eslint.config.js, tailwind.config.ts, postcss.config.js}`,
+  `src/{App.tsx, App.test.tsx, main.tsx, index.css, test-setup.ts, vite-env.d.ts}`. T4 builds the pages on
+  top. (T1 commit)
+- **T1: `make format` accepts file arguments.** The sdlc `format-on-edit` hook runs `make format "<file>"`.
+  The Makefile formats only the named files when given, and everything otherwise. (T1 commit)
+- **T1: the guard script exempts its own test.** `backend/tests/test_check_no_sample_answers.py` must contain
+  the forbidden strings to test the guard, so `scripts/check_no_sample_answers.py` skips that one file by
+  name. (T1 commit)
+- **T1: `sdlc-deploy.yml` lost its `workflow_dispatch` inputs** when its triggers were switched to manual
+  only. Restoring them from the shell was blocked by the `production-gate` hook: the command text named the
+  release environment, though nothing was deployed. The PO chose option 1: the inputs were restored with a file
+  edit (Edit tool). Only push and schedule triggers are removed. (T1 commit)

@@ -1,0 +1,50 @@
+[project]
+name = "rater"
+version = "0.1.0"
+description = "Brokerage rate agent: motor policy PDF -> cited OD/TP commission rates (Vaatun INS/001)"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi>=0.165.0",
+    "httpx>=0.28.1",
+    "openpyxl>=3.1.5",
+    "pdfplumber>=0.11.10",
+    "pillow>=13.0.0",
+    "psycopg[binary]>=3.3.9",
+    "pydantic>=2.14.4",
+    "pyjwt[crypto]>=2.15.1",
+    "pypdfium2>=5.15.2",
+    "pytesseract>=0.3.13",
+    "python-multipart>=0.0.34",
+    "rapidocr-onnxruntime>=1.4.4",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rater"]
+
+[dependency-groups]
+dev = [
+    "hypothesis>=6.170.17",
+    "mypy>=2.4.1",
+    "pytest>=9.2.0",
+    "ruff>=0.17.6",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
