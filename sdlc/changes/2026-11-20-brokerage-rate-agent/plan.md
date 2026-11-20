@@ -503,3 +503,13 @@ T14 and T15 reuse T7's primitives and extend `registry.py`. **Test:** the same
   only. Restoring them from the shell was blocked by the `production-gate` hook: the command text named the
   release environment, though nothing was deployed. The PO chose option 1: the inputs were restored with a file
   edit (Edit tool). Only push and schedule triggers are removed. (T1 commit)
+- **T2: `migrations/001_init.sql` is a protected path** (`**/migrations/**`: tech lead plus a change
+  ticket). The agent's write was blocked by the `protected-paths` hook. On 2026-11-20 Soumitra Rai, acting as
+  platform engineer and TL, removed the `**/migrations/**` entry from `sdlc.config.json` `protectedPaths`.
+  The PO ran the edit themselves, since `sdlc.config.json` stays protected. Migrations are no longer gated by
+  the hook. Change reference: plan T2. Also: RLS is created only where Supabase's `auth` schema exists, so the
+  same file runs on plain Postgres in tests. (T2 commit)
+- **T2: storage additions beyond the plan's interface.** `RunStore.get_run_any_user` (the worker reads a run
+  without a user context), `PostgresStore.set_queued` (for retry), `RunStore.audit`, and
+  `LocalObjectStore.verify` (the local signed-URL check served by the API's `/api/files` route). Also, `Page`
+  carries `next_cursor` for keyset pagination. (T2 commit)
