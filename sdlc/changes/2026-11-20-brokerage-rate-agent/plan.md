@@ -539,3 +539,15 @@ T14 and T15 reuse T7's primitives and extend `registry.py`. **Test:** the same
   - Hash routes (`#/`, `#/runs/<id>`), so FastAPI's static mount needs no open catch-all route.
   - PDFs from the local store are fetched with the auth header and opened as a blob URL.
   - (T4 commit)
+- **T5 (partial, no accounts yet): deploy files prepared ahead of the accounts.**
+  - `Dockerfile`, `.dockerignore` and `render.yaml` were written and the image built locally: 1.28 GB,
+    Tesseract 5.5.0, RapidOCR/OpenCV/pdfium import cleanly, 11 bundle files, SPA present.
+  - RapidOCR's ONNX models ship inside the `rapidocr-onnxruntime` wheel, so there's no build-time model
+    download.
+  - `render.yaml` uses plan `starter` for web and `standard` (2 GB) for the worker, per the memory
+    measurement (≈1 GB peak per OCR'd page), with `OCR_WORKERS=1`. `autoDeploy: false`.
+  - A local two-container HTTP smoke test was not run: the shell command was denied, since project
+    settings deny `curl`. The API is covered by T3's TestClient tests.
+  - Remaining for T5 (🔑): GitHub repo, Supabase project (migrations, private bucket `policies`, sign-ups
+    off, reviewer user), Render services, then the AC22 checklist.
+  - (T5-prep commit)

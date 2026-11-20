@@ -1,0 +1,55 @@
+# Render Blueprint. Both services build the same Dockerfile; neither keeps state on disk.
+# Secrets (sync: false) are entered in the Render dashboard, never committed.
+# Plans: web needs ~512 MB; the worker needs 2 GB for OCR (measured ~1 GB peak per page, see plan.md).
+services:
+  - type: web
+    name: rater-web
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    autoDeploy: false
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: STORAGE_BUCKET
+        value: policies
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false
+
+  - type: worker
+    name: rater-worker
+    runtime: docker
+    plan: standard
+    dockerfilePath: ./Dockerfile
+    dockerCommand: python -m rater.worker
+    autoDeploy: false
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: STORAGE_BUCKET
+        value: policies
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: EXTRACTION_PROVIDER
+        value: openrouter
+      - key: EXTRACTION_MODEL
+        sync: false
+      - key: GRID_DATE_POLICY
+        value: warn
+      - key: BROKER_ELIGIBILITY
+        value: assume_base
+      - key: LESSER_PERCENT_MEANS
+        value: points
+      - key: OCR_WORKERS
+        value: "1"
