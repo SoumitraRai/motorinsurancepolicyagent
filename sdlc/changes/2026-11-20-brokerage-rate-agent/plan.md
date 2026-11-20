@@ -561,3 +561,20 @@ T14 and T15 reuse T7's primitives and extend `registry.py`. **Test:** the same
   - `textrules.classify` gained three kinds the real lines needed: `undefined_decline` (C5),
     `slab_basis` (C1) and `definition`.
   - (T7 commit)
+- **T9: resolver departures.**
+  - `grids/model.py` (from T7) and `resolve/common.py` (`Refusal`, `Step`) were added.
+  - `select_grid` returns one `Selection` (the single applicable grid) rather than a list. More than one
+    applicable grid is a refusal (`ambiguous`).
+  - Exceptions carry an explicit `when` condition plus the components they touch, so a footnote that
+    names only OD (e.g. "payout on OD premium") never alters TP.
+  - Extra tests beyond the plan's list:
+    - an identical rate from two rows is not a contradiction;
+    - SAOD makes TP not applicable;
+    - an unknown vehicle class or policy type is ambiguous;
+    - no grid for the vehicle class is unsupported;
+    - a two-valued mapping is ambiguous;
+    - a past stated end date is unsupported even in `warn` mode;
+    - decline footnotes are unsupported;
+    - an exception needing an unknown fact is ambiguous;
+    - definition/basis/out-of-scope notes never block.
+  - (T9 commit)
