@@ -39,6 +39,8 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"
+# Dump every thread's stack if a single test runs for 2 minutes (diagnoses hangs).
+faulthandler_timeout = 120
 
 [tool.ruff]
 line-length = 110
