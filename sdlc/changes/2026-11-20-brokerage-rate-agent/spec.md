@@ -1,6 +1,6 @@
 ---
 change: 2026-11-20-brokerage-rate-agent
-status: draft
+status: accepted
 owner: Soumitra Rai (product owner)
 author: AI coding assistant
 risk: high
