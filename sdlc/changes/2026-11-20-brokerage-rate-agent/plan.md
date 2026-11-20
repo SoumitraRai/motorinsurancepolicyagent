@@ -513,3 +513,16 @@ T14 and T15 reuse T7's primitives and extend `registry.py`. **Test:** the same
   without a user context), `PostgresStore.set_queued` (for retry), `RunStore.audit`, and
   `LocalObjectStore.verify` (the local signed-URL check served by the API's `/api/files` route). Also, `Page`
   carries `next_cursor` for keyset pagination. (T2 commit)
+- **T3: API and worker departures.**
+  - `migrations/002_run_overrides.sql` adds `runs.overrides`, which holds the reviewer-supplied facts for
+    clarification reruns (SR25).
+  - The worker's pipeline returns `PipelineOutput(status, result_json, versions, switches)` until the
+    `Result` model lands (T8/T13).
+  - The uvicorn entry point is the factory `rater.api.app:create_app_from_env`.
+  - The object key is `{uuid}/{sha256}.pdf` (the object is stored before the run row exists).
+  - `/api/files/{key}` serves local-store signed URLs and requires the JWT, so the frontend fetches PDFs
+    with the auth header.
+  - `/health` doesn't yet check the grid manifest or the DB (added in T6).
+  - The route test enumerates the router directly, because FastAPI 0.165 nests included routers.
+  - A Starlette TestClient deprecation warning remains (one warning in test output).
+  - (T3 commit)

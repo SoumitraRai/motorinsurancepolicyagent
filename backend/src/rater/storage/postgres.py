@@ -14,7 +14,7 @@ from rater.storage.base import Job, Page, RunRow
 
 _COLUMNS = (
     "id, user_id, created_at, file_name, pdf_sha256, storage_key, page_count, status, "
-    "result::text as result_json, error, parent_run_id, switches, versions"
+    "result::text as result_json, error, parent_run_id, switches, versions, overrides"
 )
 
 
@@ -47,11 +47,20 @@ class PostgresStore:
         storage_key: str,
         page_count: int,
         parent_run_id: UUID | None = None,
+        overrides: dict[str, str] | None = None,
     ) -> RunRow:
         row = self._conn.execute(
-            f"insert into runs (user_id, file_name, pdf_sha256, storage_key, page_count, parent_run_id) "
-            f"values (%s, %s, %s, %s, %s, %s) returning {_COLUMNS}",
-            (user_id, file_name, pdf_sha256, storage_key, page_count, parent_run_id),
+            f"insert into runs (user_id, file_name, pdf_sha256, storage_key, page_count, parent_run_id, "
+            f"overrides) values (%s, %s, %s, %s, %s, %s, %s) returning {_COLUMNS}",
+            (
+                user_id,
+                file_name,
+                pdf_sha256,
+                storage_key,
+                page_count,
+                parent_run_id,
+                Jsonb(overrides) if overrides is not None else None,
+            ),
         ).fetchone()
         assert row is not None
         return _row(row)

@@ -21,6 +21,7 @@ class RunRow:
     parent_run_id: UUID | None = None
     switches: dict[str, Any] | None = None
     versions: dict[str, Any] | None = None
+    overrides: dict[str, str] | None = None
 
 
 @dataclass(frozen=True)
@@ -45,6 +46,7 @@ class RunStore(Protocol):
         storage_key: str,
         page_count: int,
         parent_run_id: UUID | None = None,
+        overrides: dict[str, str] | None = None,
     ) -> RunRow: ...
 
     def get_run(self, user_id: UUID, run_id: UUID) -> RunRow | None: ...
@@ -58,6 +60,8 @@ class RunStore(Protocol):
     ) -> None: ...
 
     def set_failed(self, run_id: UUID, error: str) -> None: ...
+
+    def set_queued(self, run_id: UUID) -> None: ...
 
     def audit(self, actor: str, action: str, entity: str) -> None: ...
 

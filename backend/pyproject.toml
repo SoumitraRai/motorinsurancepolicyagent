@@ -30,6 +30,7 @@ packages = ["src/rater"]
 dev = [
     "hypothesis>=6.170.17",
     "mypy>=2.4.1",
+    "pypdf>=7.1.1",
     "pytest>=9.2.0",
     "ruff>=0.17.6",
 ]
