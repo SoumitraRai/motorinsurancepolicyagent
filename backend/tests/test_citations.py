@@ -19,9 +19,16 @@ def test_pdf_grid_cite_render() -> None:
 
 def test_structured_form_keeps_exact_values() -> None:
     assert XlsxCite(GODIGIT, "4W  RTO", "B9").to_dict() == {
-        "type": "xlsx", "file": GODIGIT, "sheet": "4W  RTO", "range": "B9"
+        "type": "xlsx",
+        "file": GODIGIT,
+        "sheet": "4W  RTO",
+        "range": "B9",
     }
     assert PdfGridCite("g.pdf", 2, "Zone 1", "<10k").to_dict() == {
-        "type": "pdf_grid", "file": "g.pdf", "page": 2, "table": "Zone 1", "row": "<10k"
+        "type": "pdf_grid",
+        "file": "g.pdf",
+        "page": 2,
+        "table": "Zone 1",
+        "row": "<10k",
     }
     assert PolicyCite("p.pdf", 1).to_dict() == {"type": "policy", "file": "p.pdf", "page": 1}

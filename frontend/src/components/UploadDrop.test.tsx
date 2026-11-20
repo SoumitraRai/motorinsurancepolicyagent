@@ -11,9 +11,13 @@ function file(name: string, type: string, bytes: number): File {
 test("rejects a non-PDF inline and does not upload", async () => {
   const onUpload = vi.fn();
   render(<UploadDrop onUpload={onUpload} busy={false} />);
-  await userEvent.upload(screen.getByLabelText(/policy pdf/i), file("notes.txt", "text/plain", 10), {
-    applyAccept: false,
-  });
+  await userEvent.upload(
+    screen.getByLabelText(/policy pdf/i),
+    file("notes.txt", "text/plain", 10),
+    {
+      applyAccept: false,
+    },
+  );
   expect(screen.getByRole("alert")).toHaveTextContent("Upload a PDF file");
   expect(onUpload).not.toHaveBeenCalled();
 });
