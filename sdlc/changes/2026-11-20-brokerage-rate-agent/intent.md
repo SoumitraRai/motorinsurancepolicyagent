@@ -167,8 +167,33 @@ without code changes elsewhere. Every A, B and D item is listed in the README as
 - **B3 Quote verification.** Every extracted fact carries its page and the exact text it came from. Code
   checks that text against that page's text (the text layer, or the OCR output for image pages). A fact
   that fails the check is low confidence, and a fact that relies on OCR text is at most medium.
-- **B4 OCR engine** *(decided last)*. The preference is local OCR first. The engine choice is the last
-  design decision, so the extraction path must not depend on which engine is picked.
+- **B4 OCR engine** *(settled 2026-11-20, after a spike)*. Both run locally: **RapidOCR** (PaddleOCR models
+  on ONNX Runtime, Apache-2.0) is the main text source, and **Tesseract 5** (Apache-2.0) is a cross-check.
+  A fact gets the OCR cap (medium, per B3) only when both engines support its quote. If only one does, it
+  is low. Quote matching ignores whitespace (RapidOCR drops spaces). A `%` that OCR places next to a rupee
+  amount is never treated as a rate (Tesseract misreads ₹ as `%`). Extraction code sits behind an
+  OCR interface, so a cloud engine can still be swapped in if local accuracy proves too low.
+
+  Spike evidence (throwaway; all 40 sample pages at 300 dpi, spot-checked against rendered images of
+  HDFC ERGO p1 and Reliance p2):
+  - Both engines read every checked rating fact correctly: make, model, registration/RTO, CC, year,
+    OD/TP premium lines, NCB %, policy and issue dates.
+  - RapidOCR: better characters (gets long digit strings right where Tesseract slips) and higher
+    confidence (0.96 to 0.99 mean per page). But it returns separate text boxes, so rows must be rebuilt
+    from coordinates, and it drops spaces.
+  - Tesseract: keeps rows, so label and value share a line. But it makes symbol errors (₹ as `%`, `®` or
+    `2`; `II` as `Il`) and has lower confidence (0.78 to 0.95).
+  - Speed: about 1 to 6.5 s per page per engine on a laptop CPU. A 15-page policy takes minutes with both
+    engines run one after the other, so uploads are processed in the background, not in one web request.
+
+  Spike findings that design must handle:
+  - Reliance's package policy carries a background watermark "Private Car Liability Only Policy". Policy
+    type must come from the schedule's heading and premium sections, never from any text found on the page.
+  - The Go Digit sample shows `Year of Mfg. 0001-01-01` next to `Year of Regn. 2019`. The manufacture year is
+    unknown and must not be guessed from the registration year.
+  - The HDFC ERGO sample shows "No Claim Bonus (35%)" in the premium table and "NCB 25%" in the
+    previous-policy row. Which figure is the lookup NCB must be defined, and if it can't be determined
+    the result is `ambiguous` (A2).
 - **D1 Grid dates** *(default, switchable)*. The policy start/issue date is extracted as an R1 fact. If it
   falls outside a grid's stated period, the grid is still used, with a trace warning ("grid effective
   <date>; policy dated <date>; a newer grid may exist") and lower confidence. The result is `unsupported`
@@ -217,7 +242,7 @@ For spec (design), answered there with evidence from the files:
 3. Where each grid states its effective period, if anywhere. (Already seen: the HDFC ERGO grid says
    "Effective from 1st Feb'25" and states no end date.)
 4. Exact field-level extension of the output schema, and the confidence rules.
-5. Extraction LLM model and the upload size/page limits. The OCR engine (B4) is decided last, local first.
+5. Extraction LLM model and the upload size/page limits. OCR is settled (B4).
 6. Render vs Fly, and the plan tiers that avoid sleep or pause.
 7. Whether private-car sheets carry broker-volume bonuses (D2).
 8. How D1 and D2 are exposed as switches, and where they are documented.
