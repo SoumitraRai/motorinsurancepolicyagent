@@ -629,3 +629,16 @@ T14 and T15 reuse T7's primitives and extend `registry.py`. **Test:** the same
     - add-ons and CPA;
     - page citation and a failed quote check give low confidence.
   - (T11 commit)
+- **T12: providers departures.**
+  - Checked OpenRouter's docs on 2026-11-21 (structured outputs, images, chat-completion reference, models
+    API): `response_format.json_schema` with `name`/`strict`/`schema`, `provider.require_parameters: true`,
+    `image_url` parts with base64 data URLs, the reply in `choices[0].message.content`, and errors as
+    `{error: {code, message}}` (402 out of credits, 429 rate limit).
+  - No `temperature` is sent: some current models reject sampling parameters, which would silently force
+    the rules fallback.
+  - `choose_extractor` uses rules when `OPENROUTER_API_KEY` or `EXTRACTION_MODEL` is unset. A model id
+    is never guessed.
+  - `extract_with_fallback` returns a third value, the reason the primary wasn't used, for the trace.
+  - Spec amended in this commit (SR5 wording, extraction call, Approaches 2, AC15, security egress/secrets,
+    C10 wording, `meta.extractor`), keeping `status: accepted`, per the PO's plan-interview decision.
+  - (T12 commit)

@@ -16,6 +16,11 @@ intent non-negotiables as **NN1–NN9**. Grid facts below were read from the ori
 openpyxl (cached values, B1), pdfplumber/pdftotext, and the OCR spike, in throwaway scratch code. Rates are
 described by structure only: no expected answer for any sample appears in this spec (NN5).
 
+**Amended 2026-11-20 by PO: OpenRouter + local fallback (no Anthropic key).** Extraction goes through a
+pluggable extractor: OpenRouter's OpenAI-compatible API by default (model chosen by the PO through
+`EXTRACTION_MODEL`), with a local rule-based extractor whenever no key or model is set, or the call fails.
+The run records which extractor ran. `status: accepted` is unchanged; affected text is marked "(amended)".
+
 ## Flagged concerns
 
 Every row is a decision the product owner (PO) or tech lead (TL) must make before plan. Both roles are
@@ -32,7 +37,7 @@ held by Soumitra Rai. All 13 were decided on 2026-11-20 ("accept all recommendat
 | C7 | **Go Digit's rate column is titled "Max CD2"**, which could be a ceiling rather than the rate payable. **Recommend:** report it as the rate, labelled in the trace as "insurer's published maximum (Max CD2)", and assumed in the README. The alternative is `unsupported` for all Go Digit grids. | NN2 | PO || Accepted: report as the rate, labelled "insurer's published maximum (Max CD2)"; README assumption. (Soumitra Rai, PO/TL, 2026-11-20) |
 | C8 | **Tata AIG has no make/model → segment table** in any of its 7 sheets, including the hidden `cv checks` and `pci checks`. `Pvtcar` rows need a segment (Mini, Compact, Mid Size, …). Our own knowledge of which models are "Mini" would be inference. **Recommend:** if the policy doesn't print the segment, the result is `unsupported`, citing the absence of a mapping. This is consistent with the test bench's Tata case expecting a refusal; we don't target that answer, it follows from the rule. | NN2, NN5 | PO || Accepted: no printed segment → `unsupported`, citing the missing mapping. (Soumitra Rai, PO/TL, 2026-11-20) |
 | C9 | **Full A1 scope is large.** About 20 sheets beyond private car (CV, HCV, taxi, school/staff bus, two-wheeler, SAOD flexi), each with its own layout. That doesn't fit 24 hours with certainty. Per intent's Deadline: attempt everything, and if time runs short the PO asks Vaatun for more time. **Recommend:** build in the order of the Build order section below, so the baseline gate and the four samples are safe first. | intent A1, Deadline | PO || Accepted: build order baseline → four samples → rest of A1; ask Vaatun for time if short. (Soumitra Rai, PO/TL, 2026-11-20) |
-| C10 | **Reviewer uploads may contain real personal data** (names, addresses, registration numbers). They are stored in Supabase and sent to the Anthropic API (A7). The security policy template says new storage or transfer of restricted data needs a flagged concern. **Recommend:** treat uploads as restricted, use a private bucket, disable signups, keep personal fields out of logs, disclose this in the README, and keep data for the review period only. | security-policy, A7 | PO (as data protection owner) || Accepted: restricted data controls as recommended; disclosed in README. (Soumitra Rai, PO/TL, 2026-11-20) |
+| C10 | **Reviewer uploads may contain real personal data** (names, addresses, registration numbers). They are stored in Supabase and sent to the extraction LLM API (A7; amended: OpenRouter, when configured). The security policy template says new storage or transfer of restricted data needs a flagged concern. **Recommend:** treat uploads as restricted, use a private bucket, disable signups, keep personal fields out of logs, disclose this in the README, and keep data for the review period only. | security-policy, A7 | PO (as data protection owner) || Accepted: restricted data controls as recommended; disclosed in README. (Soumitra Rai, PO/TL, 2026-11-20) |
 | C11 | **The policy skills are unfilled templates.** All five organisation policy files have placeholders and no review date, so they were applied in spirit only (generic controls). **Recommend:** accept them as applied for this submission and note it in the README's assumptions. | all policy skills | PO (as policy owner) || Accepted: templates applied in spirit; noted in README assumptions. (Soumitra Rai, PO/TL, 2026-11-20) |
 | C12 | **Paid hosting tiers.** Intent requires no sleep or pause, which needs paid Render and Supabase plans. The cost depends on plan prices at sign-up and isn't stated here. **Recommend:** Render paid web service and worker, plus Supabase Pro, for the review window. | intent decisions (uptime) | PO (budget) || Accepted: Render paid web + worker, Supabase Pro for the review window. (Soumitra Rai, PO/TL, 2026-11-20) |
 | C13 | **secure-api-review asks for `scripts/check-endpoints.sh` output, but that script doesn't exist in this repo.** **Recommend:** replace it with an automated test that every route except `/health` returns 401 without a valid JWT (AC19). | secure-api-review | TL || Accepted: AC19 replaces `check-endpoints.sh`. (Soumitra Rai, PO/TL, 2026-11-20) |
@@ -41,7 +46,8 @@ held by Soumitra Rai. All 13 were decided on 2026-11-20 ("accept all recommendat
 
 A hosted web app where a Vaatun reviewer signs in with the shared reviewer login and uploads any motor
 policy PDF, text-based or scanned. In the background, the app reads every page with two local OCR engines.
-An LLM extracts the R1 facts, each with a page and a verbatim quote, and code checks every quote against
+An extractor (an LLM via OpenRouter, or local rules as the fallback) proposes the R1 facts, each with a
+page and a verbatim quote, and code checks every quote against
 the OCR text. Plain deterministic code then picks the insurer's grid, maps facts into that grid's
 vocabulary, matches the row, and applies footnotes and exceptions. The run ends as `resolved`,
 `unsupported` or `ambiguous`, with OD and TP reported separately (stand-alone TP OD is always "not
@@ -171,7 +177,8 @@ Each requirement traces to intent (`I:` = section of intent.md).
   real pipeline; nothing is hand-edited. (I: success criterion 7)
 - **SR27** The README covers: setup, run and deploy; where PDFs and analyses are stored and how they
   persist across each R6 event; every A/B/D decision and C-row decision as assumptions; the D1/D2
-  switches; that uploads go to the Anthropic API; architecture, failure modes and trade-offs.
+  switches; that uploads go to OpenRouter and its upstream model provider when a key is set (amended);
+  architecture, failure modes and trade-offs.
   (I: A7, success criterion 7)
 
 ## Design
@@ -189,6 +196,7 @@ Each requirement traces to intent (`I:` = section of intent.md).
      layout.
    - (b) The PDF document block only. Rejected: quotes might not match OCR text.
    - (c) The API's citations feature. Rejected: it can't be combined with structured outputs.
+   - (amended) The provider is OpenRouter, not the Anthropic SDK; a local rules extractor is the fallback.
 3. **Background processing.**
    - (a) A worker process polling a Postgres jobs table (`FOR UPDATE SKIP LOCKED`). **Chosen**: no
      extra service, and jobs survive restarts.
@@ -287,7 +295,7 @@ Request bodies are validated with Pydantic models that reject unknown fields.
   "notApplied": [ { "rule": "...", "why": "depends on broker volume, which the policy can't show",
                     "gridCitation": "..." } ],
   "clarification": { "facts": ["manufactureYear"] },
-  "meta": { "pdfSha256": "...", "model": "<model id>", "ocr": {"rapidocr": "x.y", "tesseract": "5.5.4"},
+  "meta": { "pdfSha256": "...", "extractor": "openrouter | rules", "model": "<EXTRACTION_MODEL or null>", "ocr": {"rapidocr": "x.y", "tesseract": "5.5.4"},
             "gridManifest": "<sha256 of MANIFEST.json>", "switches": {"GRID_DATE_POLICY": "warn",
             "BROKER_ELIGIBILITY": "assume_base", "LESSER_PERCENT_MEANS": "points"} }
 }
@@ -311,23 +319,27 @@ Request bodies are validated with Pydantic models that reject unknown fields.
 Bands are parsed from labels into explicit intervals, with open and closed ends recorded so C6 gaps can
 be detected.
 
-**Extraction call.**
-- Anthropic Python SDK, an Anthropic model.
-- Structured output (`output_config.format` with a JSON schema: per fact `{value|null, page, quote}`),
-  adaptive thinking, effort set explicitly, server-side refusal fallback enabled.
+**Extraction call (amended).**
+- OpenRouter chat completions over httpx (`POST https://openrouter.ai/api/v1/chat/completions`), model
+  from `EXTRACTION_MODEL` (no model id is hard-coded; the PO picks a vision model with structured-output
+  support).
+- Structured output: `response_format` `json_schema` (per fact `{value|null, page|null, quote|null}`,
+  `strict: true`), with `provider.require_parameters: true`. No sampling parameters are sent.
+- Fallback: with no key or model, or on any error, timeout, rate limit, out-of-credit or schema violation,
+  the local rules extractor runs (generic schedule labels over the OCR rows). `meta.extractor` records it.
 - Input: page images plus page-tagged OCR text. The prompt tells the model to copy quotes exactly from
   the OCR text, and to return `null` rather than guess.
 - No grid content is ever sent.
 - The output is treated as untrusted and validated against the schema before SR6.
 
 **Security controls.**
-- Secrets (`ANTHROPIC_API_KEY`, Supabase service key, JWT secret) come only from host environment
+- Secrets (`OPENROUTER_API_KEY` (amended), Supabase service key, JWT secret) come only from host environment
   variables. Never in the repo or logs, and `.env*` is never written by an agent.
 - Logs carry run ids and step names only. No fact values, quotes, names or registration numbers (C10).
 - Rate limit uploads at 10 per minute per user.
 - New dependencies are pinned with licences checked: RapidOCR (Apache-2.0), Tesseract (Apache-2.0),
-  openpyxl (MIT), pdfplumber (MIT), pypdfium2 (Apache-2.0/BSD), FastAPI (MIT), anthropic (MIT).
-- Egress goes only to the Anthropic API and Supabase.
+  openpyxl (MIT), pdfplumber (MIT), pypdfium2 (Apache-2.0/BSD), FastAPI (MIT), httpx (BSD) (amended).
+- Egress goes only to OpenRouter (when configured) and Supabase (amended).
 
 ### Integration with the existing codebase
 Greenfield. The repo today holds only the sdlc scaffold: `sdlc.config.json` (commands via `make`),
@@ -412,8 +424,9 @@ Each becomes an automated test unless marked (manual).
   `%` adjacent to a rupee amount is never parsed as a rate.
 - **AC14** SR9 policy type: a page with a "Liability Only" watermark but a package title and an OD
   premium section → `comprehensive`; contradictory titles → `ambiguous`.
-- **AC15** The extraction client is the only module importing `anthropic`. This is checked by a test that
-  scans imports.
+- **AC15 (amended)** LLM calls happen only in `extraction/providers/`: no module imports an LLM SDK,
+  `httpx` is used only in `extraction/providers/`, `storage/` and `api/`, and `grids/`/`resolve/` never
+  import extraction. Checked by a test that scans imports. Every provider failure falls back to rules.
 
 **Storage and API**
 - **AC16** Storage boundary: a run written through the storage interface is read back identically after
@@ -450,7 +463,8 @@ From intent.md "Open questions":
    stated; others not stated).
 4. **Output schema extension and confidence rules.** Answered in the result JSON and SR23. The OCR cap
    consequence is raised as C4 (PO).
-5. **Extraction model and upload limits.** Answered: an Anthropic model (extraction call above); limits
+5. **Extraction model and upload limits.** Answered (amended): OpenRouter, model set by the PO via
+   `EXTRACTION_MODEL`, with the local rules fallback (extraction call above); limits
    25 MB and 60 pages (SR1).
 6. **Render vs Fly and tiers.** Answered: Render (Approaches 4). Tier cost raised as C12 (PO).
 7. **Broker-volume bonuses on private-car sheets (D2).** Answered:
