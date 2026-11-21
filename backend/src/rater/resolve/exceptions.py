@@ -59,7 +59,7 @@ def apply_exceptions(
                 )
             )
             continue
-        if rule.kind in ("out_of_scope", "definition", "basis", "slab_basis"):
+        if rule.kind in ("out_of_scope", "definition", "basis", "slab_basis", "post_issue", "process"):
             out.steps.append(
                 Step("note", f"Grid note ({rule.kind.replace('_', ' ')}): {rule.text}", cites=(rule.cite,))
             )

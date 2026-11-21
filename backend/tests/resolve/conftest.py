@@ -44,7 +44,7 @@ def facts(verification: str = "verified_both", **values: Any) -> Facts:
     return f
 
 
-def car(**over: Any) -> Facts:
+def car(verification: str = "verified_both", **over: Any) -> Facts:
     base = dict(
         insurer="Acme General Insurance Ltd",
         vehicle_class="private_car",
@@ -59,7 +59,7 @@ def car(**over: Any) -> Facts:
         ncb=20,
     )
     base.update(over)
-    return facts(**{k: v for k, v in base.items() if v is not None})
+    return facts(verification, **{k: v for k, v in base.items() if v is not None})
 
 
 def rto_map(*pairs: tuple[str, str, str]) -> MappingTable:

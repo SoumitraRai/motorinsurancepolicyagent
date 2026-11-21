@@ -12,7 +12,7 @@ from rater.citations import PolicyCite
 from rater.facts import Facts
 from rater.grids.model import Grid, GridSet, RateCell, describe
 from rater.resolve.common import Refusal, Step
-from rater.resolve.confidence import overall
+from rater.resolve.confidence import Cap, overall
 from rater.resolve.dates import check_dates
 from rater.resolve.exceptions import BROKER_WHY, apply_exceptions
 from rater.resolve.mapping import apply_mappings
@@ -56,6 +56,7 @@ class _Run:
         self.used: set[str] = set()
         self.warnings = 0
         self.grid: Grid | None = None
+        self.caps: list[Cap] = []
 
     # -- trace ------------------------------------------------------------------------------------
     def _policy_cite(self, names: tuple[str, ...]) -> tuple[str | None, list[dict[str, Any]]]:
@@ -108,7 +109,7 @@ class _Run:
             else:
                 rates[comp] = RateOut(applicable=True, rate_percent=None, reason=r.reason)
         used = {n: self.facts.get(n) for n in sorted(self.used | set(r.missing))}
-        conf = overall(used, self.warnings, list(self.grid.caps) if self.grid else [])
+        conf = overall(used, self.warnings, (list(self.grid.caps) if self.grid else []) + self.caps)
         return Result(
             status=r.status,
             facts=self.facts,
@@ -142,9 +143,10 @@ class _Run:
         mapped_out = apply_mappings(self.facts, grid)
         if isinstance(mapped_out, Refusal):
             return self.refuse(mapped_out)
-        mapped, map_steps, map_used = mapped_out
+        mapped, map_steps, map_used, map_caps = mapped_out
         self.steps.extend(map_steps)
         self.used.update(map_used)
+        self.caps.extend(map_caps)
 
         matches: dict[str, Match] = {}
         outs: dict[str, RateOut] = {}
@@ -230,7 +232,9 @@ class _Run:
             Step("result", f"Resolved: {summary}.", cites=tuple(m.cell.cite for m in matches.values()))
         )
 
-        conf = overall({n: self.facts.get(n) for n in sorted(self.used)}, self.warnings, list(grid.caps))
+        conf = overall(
+            {n: self.facts.get(n) for n in sorted(self.used)}, self.warnings, list(grid.caps) + self.caps
+        )
         return Result(
             status="resolved",
             facts=self.facts,

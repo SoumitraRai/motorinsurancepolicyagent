@@ -4,7 +4,9 @@ Kinds:
 - `broker_side`: depends on the broker's business (volume, GWP, synergy mix). Never applied (D2).
 - `policy_condition`: a condition on policy facts with an effect (`reduce`/`add`/`flat`/`decline`).
 - `undefined_decline`: declines "few RTOs" without naming them; any policy in scope is ambiguous (C5).
+- `post_issue`: a recovery after the policy is issued (bounced cheque, falsified NCB); never a rate input.
 - `slab_basis`: how a premium slab is computed (HDFC ERGO's GWP footnote, C1).
+- `process`: the insurer's internal procedure (data entry, calculation order, endorsements); a note only.
 - `basis`: which premium a rate applies to.
 - `definition`: vocabulary (what "Non Petrol" or "NCB" covers).
 - `out_of_scope`: about a different product than the one being rated.
@@ -19,7 +21,7 @@ from dataclasses import dataclass
 _PRODUCT_WORDS = {
     "extended_warranty": r"\bEW\b|extended warranty",
     "school_bus": r"school\s*bus|\bSB\b",
-    "gcv": r"\bGCV\b|\bM&HCV\b|\bHCV\b|\bLCV\b|goods carr",
+    "gcv": r"\bGCV\b|\bM&HCV\b|\bHCV\b|\bLCV\b|\bCV\b|goods carr",
     "pcv_taxi": r"\btaxi\b|kaali|kali peeli",
     "pcv_3w": r"\b3W\b|three wheeler",
     "two_wheeler": r"\bTW\b|\b2W\b|scooter|two wheeler",
@@ -55,6 +57,16 @@ def classify(text: str, product: str) -> Classified:
         return Classified("slab_basis", t)
     if _BROKER.search(t):
         return Classified("broker_side", t)
+    if re.search(r"\brecover(ed|able)\b", low):
+        return Classified("post_issue", t)
+    if re.search(r"\bidentification\b", low):
+        return Classified("definition", t)
+    if re.search(
+        r"inputted|needs to be updated|sequence for calculation|^[a-e]\.\s|\bproducers?\b"
+        r"|cancellation/endorsement|^standard grid$",
+        low,
+    ):
+        return Classified("process", t)
 
     other = _product_of(t)
     if other is not None and other != product:
@@ -78,8 +90,8 @@ def classify(text: str, product: str) -> Classified:
     if m:
         return Classified("policy_condition", t, effect="flat", percent=float(m.group(1)))
 
-    if re.search(r"\bpayout\b.*\bon\b.*\bpremium\b", low):
+    if re.search(r"\bpayout\b.*\bon\b.*\bpremium\b|not be considered for .*payout", low):
         return Classified("basis", t)
-    if re.search(r"\bincludes?\b|\bconsidered (as|in)\b", low):
+    if re.search(r"\bincludes?\b|\bconsidered (as|in)\b|\bidentification\b", low):
         return Classified("definition", t)
     return Classified("unclassified", t)

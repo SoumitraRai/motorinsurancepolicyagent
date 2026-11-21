@@ -13,21 +13,43 @@ from rater.citations import GridCite
 from rater.grids.bands import Band
 from rater.resolve.confidence import Cap
 
-# A rule dimension is an exact value, any of a set of values, or a numeric band.
-DimValue = str | frozenset[str] | Band
+
+@dataclass(frozen=True)
+class NotIn:
+    """Any value except those listed (e.g. Go Digit's "Others" makes)."""
+
+    values: frozenset[str]
+
+
+# A rule dimension is an exact value, any of a set of values, "anything but", or a numeric band.
+DimValue = str | frozenset[str] | NotIn | Band
+
+
+def norm_key(text: str) -> str:
+    return "".join(ch for ch in str(text).upper() if ch.isalnum())
 
 
 def dim_matches(want: DimValue, have: Any) -> bool:
+    if isinstance(have, list | tuple):  # list-valued fact (e.g. add-on covers): any keyword in any item
+        words = (
+            want.values if isinstance(want, NotIn) else want if isinstance(want, frozenset) else {str(want)}
+        )
+        hit = any(norm_key(w) in norm_key(item) for item in have for w in words)
+        return not hit if isinstance(want, NotIn) else hit
     if isinstance(want, Band):
-        return isinstance(have, int | float) and want.contains(float(have))
+        return isinstance(have, int | float) and not isinstance(have, bool) and want.contains(float(have))
+    if isinstance(want, NotIn):
+        return norm_key(have) not in {norm_key(v) for v in want.values}
     if isinstance(want, frozenset):
-        return str(have) in want
-    return str(have) == want
+        return norm_key(have) in {norm_key(v) for v in want}
+    return norm_key(have) == norm_key(want)
 
 
 def describe(want: DimValue) -> str:
     if isinstance(want, Band):
         return want.label
+    if isinstance(want, NotIn):
+        return "not " + " / ".join(sorted(want.values))
     if isinstance(want, frozenset):
         return " / ".join(sorted(want))
     return want
@@ -60,10 +82,8 @@ class MappingRow:
     value: str
     cite: GridCite
     raw: Any = None
-
-
-def norm_key(text: str) -> str:
-    return "".join(ch for ch in str(text).upper() if ch.isalnum())
+    note: str = ""  # how the row was derived, shown in the trace (e.g. "via the city → state list")
+    cap: Cap | None = None  # confidence cap when the row rests on a documented assumption
 
 
 @dataclass(frozen=True)
@@ -74,10 +94,39 @@ class MappingTable:
     source: str
     target: str
     rows: tuple[MappingRow, ...]
+    # What an absent source fact means: usually "ambiguous" (could not read it); "unsupported" when the grid
+    # itself lacks the table that would let any policy supply it (spec C8).
+    if_missing: str = "ambiguous"
+    missing_reason: str = ""
 
     def lookup(self, key: str) -> list[MappingRow]:
         k = norm_key(key)
         return [r for r in self.rows if norm_key(r.key) == k]
+
+
+@dataclass(frozen=True)
+class CitySplitTable:
+    """State → zone, where some states are split by city.
+
+    Keys: `STATE` (whole state), `STATE|CITY` (a named city), `STATE|*` ("Rest of" the state).
+    """
+
+    name: str
+    target: str
+    rows: tuple[MappingRow, ...]
+    source: str = "rto"
+
+
+@dataclass(frozen=True)
+class RtoRegionTable:
+    """RTO code → grid region, from the grid's own RTO list; codes it doesn't list fall back to the RTO's
+    state (two-letter prefix) and the grid's state-level rows."""
+
+    name: str
+    target: str
+    by_code: tuple[MappingRow, ...]
+    by_state: tuple[MappingRow, ...]
+    source: str = "rto"
 
 
 @dataclass(frozen=True)
@@ -111,7 +160,7 @@ class Grid:
     policy_types: frozenset[str]
     rules: tuple[RateRule, ...]
     business_types: frozenset[str] | None = None  # None: the grid does not split on business type
-    mappings: tuple[MappingTable, ...] = ()
+    mappings: tuple[MappingTable | CitySplitTable | RtoRegionTable, ...] = ()
     exceptions: tuple[ExceptionRule, ...] = ()
     unpublished: tuple[Unpublished, ...] = ()
     effective_from: date | None = None

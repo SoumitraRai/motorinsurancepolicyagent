@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 
+from rater import insurers
 from rater.facts import Facts
 from rater.grids.model import Grid, GridSet
 from rater.resolve.common import Refusal, Step
@@ -16,11 +17,7 @@ class Selection:
 
 
 def canonical_insurer(text: str, gridset: GridSet) -> str | None:
-    low = " ".join(str(text).lower().split())
-    for name, needles in gridset.aliases.items():
-        if any(n in low for n in needles):
-            return name
-    return None
+    return insurers.canonical(text, dict(gridset.aliases))
 
 
 def select_grid(facts: Facts, gridset: GridSet) -> Selection | Refusal:

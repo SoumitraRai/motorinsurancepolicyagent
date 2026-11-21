@@ -578,3 +578,34 @@ T14 and T15 reuse T7's primitives and extend `registry.py`. **Test:** the same
     - an exception needing an unknown fact is ambiguous;
     - definition/basis/out-of-scope notes never block.
   - (T9 commit)
+- **T10: adapters wave 1 departures (HDFC ERGO PDF, Go Digit 4W, Reliance private car, Tata AIG `Pvtcar`).**
+  - **PO decision 2026-11-21: a documented country-wide city → state list** (`grids/geo.py`
+    `CITY_STATE`) plus the RTO state-code table (`STATE_CODES`) cover every Indian RTO. They are used where
+    a grid names regions by state or city (HDFC ERGO state → zone; Reliance region names). A result that
+    rests on either is confidence-capped at medium and says so in the trace. README assumption.
+  - Model extensions, each with synthetic tests in `tests/resolve/test_engine_extensions.py`:
+    - `NotIn` dimension (Go Digit "Others" makes);
+    - `MappingTable.if_missing`/`missing_reason` (Tata AIG segment → `unsupported`, C8);
+    - `CitySplitTable` (HDFC ERGO states split by city);
+    - `RtoRegionTable` with state-code fallback;
+    - `MappingRow.note`/`cap`;
+    - list-valued facts match any keyword.
+  - New facts: `od_term_years` (Go Digit new business 1+3 vs 3+3), `add_ons`, `cpa_cover` (Reliance T&C),
+    and the derived dims `has_add_ons` and `ncb_flag`.
+  - New `textrules` kinds: `post_issue` (clawbacks after issue) and `process` (insurer internal
+    procedure). Both are trace notes only. "CV" counts as a commercial-vehicle word.
+  - `grids/makes.py` canonical make aliases ("Volks", "Citrone", "MARUTI SUZUKI").
+  - `grids/readback.py` is the shared citation checker (AC2), reused by the e2e test (AC21).
+  - Interpretations (README assumptions):
+    - Go Digit `All_India_Decline` rows → decline exceptions.
+    - Go Digit "A/B" clusters expand to both.
+    - Go Digit new-business CD2 applied to OD (basis not stated; confidence capped at medium).
+    - Tata AIG "Other Than Diesel" = petrol/LPG/hybrid (CNG and Electric have their own rows).
+    - Tata AIG row-4 DM/HOM flags are not used (meaning not stated).
+    - The Reliance `RTO List` zone must agree with the rate row's zone, otherwise `ambiguous`.
+  - Resulting coverage gaps:
+    - Reliance regions Chandigarh, Dehradun/Uttarakhand, Ladakh and Pondicherry fall in no rate row
+      (`unsupported`).
+    - Jaipur is the one zone conflict (`ambiguous`).
+  - Tata AIG tests take ~48 s because openpyxl loads the large hidden `checks` sheets. Accepted for now.
+  - (T10 commit)

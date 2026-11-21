@@ -108,6 +108,11 @@ class Facts(_Model):
     gvw: Fact = Field(default_factory=_unknown)
     seating_capacity: Fact = Field(default_factory=_unknown)
     segment: Fact = Field(default_factory=_unknown)
+    od_term_years: Fact = Field(default_factory=_unknown)  # OD tenure, e.g. 1 for "1+3", 3 for "3+3"
+    add_ons: Fact = Field(default_factory=_unknown)  # add-on covers listed on the schedule
+    cpa_cover: Fact = Field(
+        default_factory=_unknown
+    )  # "yes"/"no": compulsory personal accident (owner-driver)
 
     def get(self, name: str) -> Fact:
         """Fact by snake_case or camelCase name."""

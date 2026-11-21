@@ -91,3 +91,43 @@ def test_unknown_line_is_unclassified() -> None:
         classify("Kindly coordinate with the regional office for approvals", "private_car").kind
         == "unclassified"
     )
+
+
+def test_post_issue_recoveries() -> None:
+    for line in (
+        "4. NCB if found to be falsified, 2.5% PO shall be recovered.",
+        "2. For any discrepancy in risk attributes viz; RTO code ... full commision shall be recoverable.",
+    ):
+        assert classify(line, "private_car").kind == "post_issue"
+    cpa = classify(
+        "3.CPA is mandatoryfor all policies,Else 1% PO shall be deducted from the overall PO.", "private_car"
+    )
+    assert (cpa.kind, cpa.effect, cpa.percent) == ("policy_condition", "reduce", 1.0)
+
+
+TATA_GUIDELINES = [
+    ("Standard Grid to be inputted centally", "process"),
+    ("Payout % for CV on Net Premium", "out_of_scope"),
+    ("Payout% for TW to be applied on New  (1+5 premium) + Old(1+1 premium)", "out_of_scope"),
+    ("LTTP not be considered for premium slab as well as payout %", "basis"),
+    (
+        "RTO Cluster identification- for all policies_RTO mapped on policy; for Brand New- If RTO is not "
+        "available; producer tagged to branch and RTO of that branch to be used",
+        "definition",
+    ),
+    ("Sequence for calculation", "process"),
+    ("a. Policy specific", "process"),
+    ("e. Standard Grid", "process"),
+    ("Producers not on covered in pt 6 a/b/c shall by default fall under standard grid", "process"),
+    (
+        "Cancellation/Endorsement: For the purpose of Business Slab calculation Net premium will be "
+        "considered "
+        "post effect to cancellation/endorsement premium",
+        "process",
+    ),
+]
+
+
+@pytest.mark.parametrize(("text", "kind"), TATA_GUIDELINES)
+def test_tata_guideline_lines(text: str, kind: str) -> None:
+    assert classify(text, "private_car").kind == kind

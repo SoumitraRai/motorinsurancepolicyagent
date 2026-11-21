@@ -41,6 +41,8 @@ testpaths = ["tests"]
 addopts = "-ra"
 # Dump every thread's stack if a single test runs for 2 minutes (diagnoses hangs).
 faulthandler_timeout = 120
+# The Reliance workbook's Contest sheet holds only a WMF image, which openpyxl drops (no data lost).
+filterwarnings = ["ignore:wmf image format is not supported:UserWarning"]
 
 [tool.ruff]
 line-length = 110
