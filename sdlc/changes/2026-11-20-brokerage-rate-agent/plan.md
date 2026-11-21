@@ -608,4 +608,24 @@ T14 and T15 reuse T7's primitives and extend `registry.py`. **Test:** the same
       (`unsupported`).
     - Jaipur is the one zone conflict (`ambiguous`).
   - Tata AIG tests take ~48 s because openpyxl loads the large hidden `checks` sheets. Accepted for now.
+  - Insurer aliases moved to `rater/insurers.py`, so extraction can tell "same insurer" without importing
+    adapters.
   - (T10 commit)
+- **T11: OCR, verification and normalisation departures.**
+  - Pages are OCR'd one at a time by default (`OCR_WORKERS=1`), not in a `ProcessPoolExecutor` sized to
+    `os.cpu_count()`. The measured peak is ≈1 GB per page with both engines, and the worker has 2 GB.
+    Images are rendered one page at a time (`iter_pages`).
+  - Pages with a text layer of ≥ 40 characters skip OCR and verify against that layer (`text_layer`
+    verification → high confidence).
+  - Extractor output is `RawField(value, page, quote)` per camelCase field. Normalisation also reads
+    `registrationNumber` into the RTO code when no explicit RTO code is given.
+  - Business type for unknown insurers compares the non-generic words of the two names (e.g. "Acme" vs
+    "ACME GENERAL INSURANCE CO").
+  - Extra tests beyond the plan's list:
+    - Tesseract reads the same rows;
+    - an image-only PDF gets both engines;
+    - money and date formats;
+    - vehicle class, fuel, make and cc;
+    - add-ons and CPA;
+    - page citation and a failed quote check give low confidence.
+  - (T11 commit)
