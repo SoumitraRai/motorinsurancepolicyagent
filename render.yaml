@@ -46,10 +46,12 @@ services:
       - key: EXTRACTION_MODEL
         sync: false
       - key: GRID_DATE_POLICY
-        value: warn
+        value: strict
       - key: BROKER_ELIGIBILITY
         value: assume_base
       - key: LESSER_PERCENT_MEANS
         value: points
       - key: OCR_WORKERS
         value: "1"
+      - key: READ_PAGES
+        value: "20"
