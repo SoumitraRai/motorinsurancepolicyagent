@@ -763,3 +763,19 @@ T14 and T15 reuse T7's primitives and extend `registry.py`. **Test:** the same
   and Location wise`, `School & Staff Bus ` (+ RTO), Reliance `FEB'26 - Grid` and Tata AIG `CV` are built
   after the deploy, since Vaatun's answer #2 makes private cars plus a working hosted app the priority.
   Scope (A1) is unchanged. Until then those policies return `unsupported`.
+- **Local UI preview (not in the plan).** `npm run preview:local` serves `frontend/preview.html` with a
+  fake sign-in and the committed `samples/output/*.json`, so the PO can review the screens before Supabase
+  exists. `App` takes an optional `api` prop that only the preview passes. Not part of `vite build`.
+- **Frontend visual redesign (PO request, 2026-11-22; not in the plan).** Direction chosen by the PO on the
+  Impeccable decision page: "Security-Paper Schedule". `PRODUCT.md` (product record) and
+  `.impeccable/surfaces/frontend-src-app-tsx.md` (direction contract) record it.
+  - Layout: top bar; a 22rem run-list rail (`History`) beside the run page; `Home` start screen with a
+    large drop target; the rail hides on phones while a run is open.
+  - Run page: one rate-schedule panel (guilloché band, red run serial, Status | OD | TP | Confidence,
+    each rate above its citation; "Why there is no rate" for refusals), then Decision trace / Schedule
+    fields / JSON tabs following the ARIA tabs pattern (arrow keys, Home/End, labelled panel).
+  - Refused runs show "No rate" instead of "Not published"; the upload hint says 200 pages (the new limit).
+  - Hind and JetBrains Mono self-hosted via `@fontsource`; themed focus ring, selection, caret and
+    scrollbars; reduced motion respected (the band's one print animation is skipped).
+  - Tests: `RunPage.test.tsx` assertions moved to the new structure (region "TP rate" holds "20%", tab
+    "Schedule fields"); new tests for keyboard tabs and the refusal reason.

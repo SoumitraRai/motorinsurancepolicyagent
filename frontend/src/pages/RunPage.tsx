@@ -1,14 +1,88 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useApi, type RunDetail } from "../api";
+import { Cite } from "../components/Cite";
 import { ClarifyPanel } from "../components/ClarifyPanel";
 import { FactsTable } from "../components/FactsTable";
 import { RatesCard } from "../components/RatesCard";
-import { StatusBadge, statusLabel } from "../components/StatusBadge";
+import { statusLabel } from "../components/StatusBadge";
 import { TraceList } from "../components/TraceList";
 
 const PENDING = new Set(["queued", "processing"]);
-type Tab = "trace" | "facts" | "json";
+const TABS = [
+  { id: "trace", label: "Decision trace" },
+  { id: "facts", label: "Schedule fields" },
+  { id: "json", label: "JSON" },
+] as const;
+type Tab = (typeof TABS)[number]["id"];
+
+const when = new Intl.DateTimeFormat("en-IN", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
+/** True when the run finished while this page watched it: the schedule then prints once. */
+function useJustFinished(status: string | undefined): boolean {
+  const seenPending = useRef(false);
+  const [finished, setFinished] = useState(false);
+  useEffect(() => {
+    if (!status) return;
+    if (PENDING.has(status)) seenPending.current = true;
+    else if (seenPending.current) setFinished(true);
+  }, [status]);
+  return finished;
+}
+
+function Tabs({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) {
+  const refs = useRef<Record<string, HTMLButtonElement | null>>({});
+  function key(e: KeyboardEvent) {
+    const i = TABS.findIndex((t) => t.id === tab);
+    const next = {
+      ArrowRight: (i + 1) % TABS.length,
+      ArrowLeft: (i - 1 + TABS.length) % TABS.length,
+      Home: 0,
+      End: TABS.length - 1,
+    }[e.key];
+    if (next === undefined) return;
+    e.preventDefault();
+    onChange(TABS[next].id);
+    refs.current[TABS[next].id]?.focus();
+  }
+  return (
+    <div
+      role="tablist"
+      aria-label="Run details"
+      onKeyDown={key}
+      className="flex gap-6 overflow-x-auto border-b border-rule"
+    >
+      {TABS.map((t) => (
+        <button
+          key={t.id}
+          ref={(el) => {
+            refs.current[t.id] = el;
+          }}
+          type="button"
+          role="tab"
+          id={`tab-${t.id}`}
+          aria-selected={tab === t.id}
+          aria-controls={`panel-${t.id}`}
+          tabIndex={tab === t.id ? 0 : -1}
+          onClick={() => onChange(t.id)}
+          className={`-mb-px min-h-11 whitespace-nowrap border-b-2 px-1 transition-colors duration-150 ${
+            tab === t.id
+              ? "border-ink font-semibold text-ink"
+              : "border-transparent text-ink-muted hover:text-ink"
+          }`}
+        >
+          {t.label}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 export function RunPage({
   runId,
@@ -36,56 +110,73 @@ export function RunPage({
       window.location.hash = `#/runs/${id}`;
     },
   });
+  const printed = useJustFinished(run.data?.status);
 
-  async function openPdf() {
+  async function openPdf(page?: number) {
     const url = await api.pdfUrl(runId);
-    window.open(url, "_blank", "noopener");
+    window.open(page ? `${url}#page=${page}` : url, "_blank", "noopener");
   }
 
   if (run.isError)
     return (
-      <p role="alert">
-        Couldn't load this run. Go back to History and try again.
+      <p role="alert" className="text-refuse">
+        Couldn't load this run. Go back to the run list and try again.
       </p>
     );
-  if (!run.data) return <p className="text-slate-600">Loading…</p>;
+  if (!run.data)
+    return (
+      <div aria-hidden="true" className="space-y-4">
+        <div className="h-8 w-2/3 animate-pulse rounded bg-rule" />
+        <div className="h-48 animate-pulse rounded-sm bg-rule/60" />
+      </div>
+    );
   const r: RunDetail = run.data;
   const res = r.result;
 
   return (
-    <div className="space-y-6">
-      <p>
-        <a href="#/" className="text-sky-800 underline">
-          ← History
+    <div className="space-y-8">
+      <header className="space-y-1">
+        <a
+          href="#/"
+          className="mb-2 inline-flex min-h-11 items-center font-medium text-guard-deep underline lg:hidden"
+        >
+          All runs
         </a>
-      </p>
-      <header className="space-y-2">
-        <h2 className="text-xl font-semibold">{r.fileName}</h2>
-        <div className="flex items-center gap-3">
-          <StatusBadge status={r.status} />
-          <p role="status" aria-live="polite" className="sr-only">
-            {statusLabel(r.status)}
-          </p>
+        <h2 className="text-2xl font-semibold tracking-tight [overflow-wrap:anywhere]">
+          {r.fileName}
+        </h2>
+        <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-ink-muted">
+          <span>Uploaded {when.format(new Date(r.createdAt))}</span>
+          {r.pageCount > 0 && (
+            <span>
+              {r.pageCount} {r.pageCount === 1 ? "page" : "pages"}
+            </span>
+          )}
           <button
             type="button"
-            onClick={openPdf}
-            className="text-sm text-sky-800 underline"
+            onClick={() => openPdf()}
+            className="min-h-11 font-medium text-guard-deep underline decoration-guard/40 hover:decoration-guard"
           >
             Open the PDF
           </button>
           {r.parentRunId && (
             <a
               href={`#/runs/${r.parentRunId}`}
-              className="text-sm text-sky-800 underline"
+              className="font-medium text-guard-deep underline decoration-guard/40 hover:decoration-guard"
             >
               Original run (this one uses reviewer-supplied facts)
             </a>
           )}
-        </div>
+        </p>
+        <p role="status" aria-live="polite" className="sr-only">
+          {statusLabel(r.status)}
+        </p>
       </header>
 
+      <RatesCard run={r} res={res} printed={printed} />
+
       {PENDING.has(r.status) && (
-        <p className="rounded border border-sky-200 bg-sky-50 p-4">
+        <p className="max-w-[75ch] text-ink-soft">
           Analysing this policy: reading pages, extracting facts, checking
           quotes, resolving the grid. This page updates by itself; you can leave
           and come back.
@@ -93,46 +184,47 @@ export function RunPage({
       )}
 
       {r.status === "failed" && (
-        <div className="space-y-2 rounded border border-rose-300 bg-rose-50 p-4">
-          <p>{r.error ?? "Analysis failed."}</p>
+        <div
+          role="alert"
+          className="space-y-3 rounded-sm border border-refuse/40 bg-refuse-tint p-5"
+        >
+          <p className="font-medium text-refuse">
+            {r.error ?? "Analysis failed."}
+          </p>
           <button
             type="button"
             onClick={() => retry.mutate()}
             disabled={retry.isPending}
-            className="min-h-11 rounded bg-rose-800 px-4 font-medium text-white disabled:opacity-60"
+            className="btn-primary"
           >
-            Retry this run
+            {retry.isPending ? "Retrying…" : "Retry this run"}
           </button>
         </div>
       )}
 
       {res && (
         <>
-          <RatesCard od={res.rates.od} tp={res.rates.tp} />
-          <section
-            aria-labelledby="conf-h"
-            className="rounded border border-slate-200 p-4"
-          >
-            <h2 id="conf-h" className="font-semibold">
-              Confidence: {res.confidence.level}
-            </h2>
-            <p className="text-sm text-slate-700">{res.confidence.reason}</p>
-            <p className="mt-1 text-xs text-slate-600">
-              Facts read by OCR from scanned pages are capped at medium, even
-              when both OCR engines agree.
-            </p>
-          </section>
           {res.notApplied && res.notApplied.length > 0 && (
-            <section className="rounded border border-amber-300 bg-amber-50 p-4 text-sm">
-              <h2 className="font-semibold">Possible, not applied</h2>
-              <ul className="list-disc pl-5">
+            <section aria-labelledby="na-h" className="space-y-2">
+              <h2 id="na-h" className="text-lg font-semibold">
+                Possible, not applied
+              </h2>
+              <ul className="divide-y divide-rule border-y border-rule">
                 {res.notApplied.map((n) => (
-                  <li key={n.rule}>
-                    {n.rule}: {n.why}
-                    {n.gridCitation && (
-                      <span className="ml-1 font-mono text-xs">
-                        ({n.gridCitation})
+                  <li
+                    key={n.rule}
+                    className="grid gap-x-6 gap-y-1 py-3 md:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]"
+                  >
+                    <p className="max-w-[75ch]">
+                      {n.rule}
+                      <span className="block text-sm text-ink-muted">
+                        {n.why}
                       </span>
+                    </p>
+                    {n.gridCitation && (
+                      <p>
+                        <Cite text={n.gridCitation} />
+                      </p>
                     )}
                   </li>
                 ))}
@@ -146,42 +238,33 @@ export function RunPage({
               busy={clarify.isPending}
             />
           ) : null}
-          <div
-            role="tablist"
-            aria-label="Run details"
-            className="flex gap-2 border-b"
-          >
-            {(["trace", "facts", "json"] as Tab[]).map((t) => (
-              <button
-                key={t}
-                role="tab"
-                aria-selected={tab === t}
-                onClick={() => setTab(t)}
-                className={`min-h-11 px-3 ${tab === t ? "border-b-2 border-sky-700 font-semibold" : ""}`}
-              >
-                {{ trace: "Decision trace", facts: "Facts", json: "JSON" }[t]}
-              </button>
-            ))}
-          </div>
-          <div role="tabpanel">
-            {tab === "trace" && (
-              <TraceList steps={res.trace} onOpenPage={openPdf} />
-            )}
-            {tab === "facts" && <FactsTable facts={res.facts} />}
-            {tab === "json" && (
-              <div className="space-y-2">
-                <a
-                  className="text-sm text-sky-800 underline"
-                  download={`${r.fileName}.result.json`}
-                  href={`data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(res, null, 2))}`}
-                >
-                  Download JSON
-                </a>
-                <pre className="overflow-x-auto rounded bg-slate-50 p-3 text-xs">
-                  {JSON.stringify(res, null, 2)}
-                </pre>
-              </div>
-            )}
+          <div className="space-y-5">
+            <Tabs tab={tab} onChange={setTab} />
+            <div
+              role="tabpanel"
+              id={`panel-${tab}`}
+              aria-labelledby={`tab-${tab}`}
+              tabIndex={0}
+            >
+              {tab === "trace" && (
+                <TraceList steps={res.trace} onOpenPage={openPdf} />
+              )}
+              {tab === "facts" && <FactsTable facts={res.facts} />}
+              {tab === "json" && (
+                <div className="space-y-3">
+                  <a
+                    className="btn-quiet"
+                    download={`${r.fileName}.result.json`}
+                    href={`data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(res, null, 2))}`}
+                  >
+                    Download JSON
+                  </a>
+                  <pre className="max-h-[32rem] overflow-auto rounded-sm border border-rule bg-sheet-wash p-4 font-mono text-[0.8125rem] leading-relaxed">
+                    {JSON.stringify(res, null, 2)}
+                  </pre>
+                </div>
+              )}
+            </div>
           </div>
         </>
       )}

@@ -26,46 +26,53 @@ export function SignIn({
   return (
     <form
       onSubmit={submit}
-      className="mx-auto max-w-sm space-y-4"
       aria-labelledby="signin-h"
+      className="w-full max-w-md overflow-hidden rounded-lg border border-guard bg-sheet shadow-[0_1px_2px_rgba(28,36,64,0.06),0_8px_24px_-12px_rgba(28,36,64,0.18)]"
     >
-      <h2 id="signin-h" className="text-lg font-semibold">
-        Sign in
-      </h2>
-      <label className="block">
-        <span className="block text-sm font-medium">Email</span>
-        <input
-          type="email"
-          autoComplete="username"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 min-h-11 w-full rounded border border-slate-300 px-2"
-        />
-      </label>
-      <label className="block">
-        <span className="block text-sm font-medium">Password</span>
-        <input
-          type="password"
-          autoComplete="current-password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 min-h-11 w-full rounded border border-slate-300 px-2"
-        />
-      </label>
-      {error && (
-        <p role="alert" className="text-sm text-rose-800">
-          {error}
-        </p>
-      )}
-      <button
-        type="submit"
-        disabled={busy}
-        className="min-h-11 w-full rounded bg-sky-700 font-medium text-white disabled:opacity-60"
-      >
-        Sign in
-      </button>
+      <div
+        className="guard-band h-10 border-b border-guard"
+        aria-hidden="true"
+      />
+      <div className="space-y-5 p-6 sm:p-8">
+        <div className="space-y-1">
+          <h2 id="signin-h" className="text-2xl font-semibold tracking-tight">
+            Sign in
+          </h2>
+          <p className="text-ink-muted">
+            Use the reviewer login sent with the submission.
+          </p>
+        </div>
+        <label className="block">
+          <span className="block text-sm font-semibold">Email</span>
+          <input
+            type="email"
+            autoComplete="username"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="field"
+          />
+        </label>
+        <label className="block">
+          <span className="block text-sm font-semibold">Password</span>
+          <input
+            type="password"
+            autoComplete="current-password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="field"
+          />
+        </label>
+        {error && (
+          <p role="alert" className="text-sm font-medium text-refuse">
+            {error}
+          </p>
+        )}
+        <button type="submit" disabled={busy} className="btn-primary w-full">
+          {busy ? "Signing in…" : "Sign in"}
+        </button>
+      </div>
     </form>
   );
 }

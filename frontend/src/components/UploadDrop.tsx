@@ -15,10 +15,12 @@ export function UploadDrop({
   onUpload,
   busy,
   serverError,
+  large = false,
 }: {
   onUpload: (file: File) => void;
   busy: boolean;
   serverError?: string | null;
+  large?: boolean;
 }) {
   const [error, setError] = useState<string | null>(null);
   const [over, setOver] = useState(false);
@@ -47,18 +49,20 @@ export function UploadDrop({
         }}
         onDragLeave={() => setOver(false)}
         onDrop={drop}
-        className={`flex min-h-24 flex-col items-center justify-center gap-2 rounded border-2 border-dashed p-4 text-center ${over ? "border-sky-600 bg-sky-50" : "border-slate-300"}`}
+        className={`flex flex-col gap-2 rounded-sm border border-dashed transition-colors duration-150 ${
+          large ? "min-h-56 items-center justify-center p-8 text-center" : "p-3"
+        } ${over ? "border-guard bg-guard-tint" : "border-rule-strong bg-sheet"}`}
       >
         <button
           type="button"
           disabled={busy}
           onClick={() => input.current?.click()}
-          className="min-h-11 rounded bg-sky-700 px-4 font-medium text-white hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-600 focus:ring-offset-2 disabled:opacity-60"
+          className={`btn-primary ${large ? "" : "w-full"}`}
         >
           {busy ? "Uploading…" : "Upload a policy PDF"}
         </button>
-        <span className="text-sm text-slate-600">
-          Or drag a file here. PDF only, up to 25 MB and 60 pages.
+        <span className="text-sm text-ink-muted">
+          Or drag a file here. PDF only, up to 25 MB and 200 pages.
         </span>
         <input
           ref={input}
@@ -75,7 +79,7 @@ export function UploadDrop({
         />
       </div>
       {message && (
-        <p role="alert" className="mt-2 text-sm text-rose-800">
+        <p role="alert" className="mt-2 text-sm font-medium text-refuse">
           {message}
         </p>
       )}
