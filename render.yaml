@@ -5,6 +5,7 @@ services:
   - type: web
     name: rater-web
     runtime: docker
+    region: singapore  # nearest Render region to the Supabase project (Mumbai, ap-south-1)
     plan: starter
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health
@@ -26,6 +27,7 @@ services:
   - type: worker
     name: rater-worker
     runtime: docker
+    region: singapore  # nearest Render region to the Supabase project (Mumbai, ap-south-1)
     plan: standard
     dockerfilePath: ./Dockerfile
     dockerCommand: python -m rater.worker
