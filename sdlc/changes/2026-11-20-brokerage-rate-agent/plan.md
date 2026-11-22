@@ -759,3 +759,7 @@ T14 and T15 reuse T7's primitives and extend `registry.py`. **Test:** the same
     insurer (page 12) and Reliance its previous insurer (page 13); `meta.pagesRead`/`pageCount` recorded;
     upload page limit raised from 60 to 200 (`test_only_the_first_pages_are_read`, `test_upload_limits`).
   - (Vaatun answers commit)
+- **Order change (PO, 2026-11-22): the rest of T15 comes after T5.** Go Digit `HCV GRID`, `TAXI Segments
+  and Location wise`, `School & Staff Bus ` (+ RTO), Reliance `FEB'26 - Grid` and Tata AIG `CV` are built
+  after the deploy, since Vaatun's answer #2 makes private cars plus a working hosted app the priority.
+  Scope (A1) is unchanged. Until then those policies return `unsupported`.
