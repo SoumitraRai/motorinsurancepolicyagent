@@ -4,6 +4,7 @@ Pages with a real text layer are not OCR'd (their text is used directly, B2). Im
 at a time by default (`OCR_WORKERS`, default 1): one page with both engines peaks around 1 GB of memory.
 """
 
+import itertools
 import os
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass, field
@@ -106,12 +107,18 @@ def _ocr_page(args: tuple[int, Image.Image, tuple[OcrEngine, ...]]) -> PageEvide
     return PageEvidence(page=number, text_layer="", by_engine={e.name: e.ocr(image).text for e in engines})
 
 
-def ocr_document(pdf: bytes, engines: tuple[OcrEngine, ...], dpi: int = 300) -> list[PageEvidence]:
+def ocr_document(
+    pdf: bytes, engines: tuple[OcrEngine, ...], dpi: int = 300, max_pages: int | None = None
+) -> list[PageEvidence]:
+    """OCR evidence for the first `max_pages` pages (all when None)."""
     layers = text_layer(pdf)
+    if max_pages is not None:
+        layers = layers[:max_pages]
     workers = max(1, int(os.environ.get("OCR_WORKERS", "1")))
     jobs = []
     out: dict[int, PageEvidence] = {}
-    for number, (layer, image) in enumerate(zip(layers, iter_pages(pdf, dpi), strict=True), start=1):
+    pages = itertools.islice(iter_pages(pdf, dpi), len(layers))
+    for number, (layer, image) in enumerate(zip(layers, pages, strict=True), start=1):
         if len(layer) >= MIN_TEXT_LAYER_CHARS:
             out[number] = PageEvidence(page=number, text_layer=layer)
             continue

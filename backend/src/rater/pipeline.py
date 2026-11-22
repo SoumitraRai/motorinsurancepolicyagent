@@ -4,6 +4,7 @@ resolution. Only `extraction/providers` talks to an LLM; resolution sees typed f
 
 import hashlib
 import io
+import itertools
 import json
 import time
 from dataclasses import dataclass
@@ -11,7 +12,7 @@ from dataclasses import dataclass
 from rater.extraction.normalise import apply_overrides, normalise
 from rater.extraction.ocr import OcrEngine, ocr_document, versions
 from rater.extraction.providers.base import Extractor, PageInput, extract_with_fallback
-from rater.extraction.render import iter_pages
+from rater.extraction.render import iter_pages, page_count
 from rater.facts import Facts
 from rater.grids.model import GridSet
 from rater.resolve.engine import ENGINE_VERSION, resolve
@@ -30,6 +31,9 @@ class Deps:
     fallback: Extractor
     switches: Switches
     grid_manifest: str
+    # Vaatun 2026-11-22 says the key details are in the first 5-6 pages, but two samples print the insurer
+    # (Tata AIG, page 12) or the previous insurer (Reliance, page 13) later, so the default is 20.
+    read_pages: int | None = 20
 
 
 def _png(image: object) -> bytes:
@@ -51,9 +55,13 @@ def _no_facts(facts: Facts, file_name: str) -> Result:
 
 def run_pipeline(pdf: bytes, file_name: str, deps: Deps, overrides: dict[str, str] | None = None) -> Result:
     started = time.monotonic()
-    pages = ocr_document(pdf, deps.engines)
+    pages = ocr_document(pdf, deps.engines, max_pages=deps.read_pages)
     llm = deps.primary.name != deps.fallback.name
-    images = [_png(img) for img in iter_pages(pdf, LLM_IMAGE_DPI)] if llm else [None] * len(pages)
+    images = (
+        [_png(img) for img in itertools.islice(iter_pages(pdf, LLM_IMAGE_DPI), len(pages))]
+        if llm
+        else [None] * len(pages)
+    )
     inputs = [
         PageInput(page=p.page, text=p.best_text, image_png=img) for p, img in zip(pages, images, strict=True)
     ]
@@ -70,6 +78,8 @@ def run_pipeline(pdf: bytes, file_name: str, deps: Deps, overrides: dict[str, st
         {
             "engine": ENGINE_VERSION,
             "extractor": used,
+            "pagesRead": len(pages),
+            "pageCount": page_count(pdf),
             "extractorNote": note,
             "model": getattr(deps.primary, "model", None) if used != "rules" else None,
             "ocr": versions(deps.engines),

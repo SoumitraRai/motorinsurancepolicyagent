@@ -38,6 +38,7 @@
 | Fact | Value | Page | Check | Confidence | Quote |
 |---|---|---|---|---|---|
 | addOns | Not found | — | not_found | unknown |  |
+| bodyType | SUV | 1 | verified_both | medium | Yearof Manufacture 2023 BodyTypeSUV |
 | businessType | Not found | — | not_found | unknown |  |
 | cc | 1493 | 1 | verified_one | low | HARYANA - 122002 Te\|88MWELPCW2 CubicCapacityWatts 1493 Seats 7 Customerld 101163279601 |
 | cngLpgKitValue | Not found | — | not_found | unknown |  |
@@ -64,6 +65,7 @@
 | seatingCapacity | Not found | — | not_found | unknown |  |
 | segment | Not found | — | not_found | unknown |  |
 | tpPremium | 3816.0 | 1 | verified_one | low | Total-Less 852 Net Liability Premium (b) 3816 |
+| tppdRestricted | Not found | — | not_found | unknown |  |
 | vehicleClass | private_car | 1 | verified_one | low | CertificateofInsurancecumPolicySchedule [PHONE REMOVED] PRIVATECARCOMPREHENSIVEPOLICY 2302208393018307915 HREC |
 
-_Extractor: rules; OCR: {'rapidocr': '1.4.4', 'tesseract': '5.5.4'}; switches: {'BROKER_ELIGIBILITY': 'assume_base', 'GRID_DATE_POLICY': 'warn', 'LESSER_PERCENT_MEANS': 'points'}._
+_Extractor: rules; OCR: {'rapidocr': '1.4.4', 'tesseract': '5.5.4'}; switches: {'BROKER_ELIGIBILITY': 'assume_base', 'GRID_DATE_POLICY': 'strict', 'LESSER_PERCENT_MEANS': 'points'}._

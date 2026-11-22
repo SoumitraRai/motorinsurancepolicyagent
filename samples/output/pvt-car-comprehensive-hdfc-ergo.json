@@ -18,6 +18,16 @@
       "value": null,
       "verification": "not_found"
     },
+    "bodyType": {
+      "confidence": "medium",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "quote": "Yearof Manufacture 2023 BodyTypeSUV",
+      "raw": "SUV",
+      "value": "SUV",
+      "verification": "verified_both"
+    },
     "businessType": {
       "confidence": "unknown",
       "note": null,
@@ -278,6 +288,16 @@
       "value": 3816.0,
       "verification": "verified_one"
     },
+    "tppdRestricted": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
     "vehicleClass": {
       "confidence": "low",
       "note": null,
@@ -300,13 +320,15 @@
       "rapidocr": "1.4.4",
       "tesseract": "5.5.4"
     },
-    "pages": 9,
+    "pageCount": 9,
+    "pages": 6,
+    "pagesRead": 6,
     "pdfSha256": "c5d88a11b7341baef97ec531e5239e7afe803877eb31555a82b4bfdd5964ca70",
     "reviewerSupplied": [],
-    "seconds": 44.4,
+    "seconds": 30.3,
     "switches": {
       "BROKER_ELIGIBILITY": "assume_base",
-      "GRID_DATE_POLICY": "warn",
+      "GRID_DATE_POLICY": "strict",
       "LESSER_PERCENT_MEANS": "points"
     }
   },

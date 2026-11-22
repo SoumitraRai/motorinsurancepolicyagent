@@ -1,10 +1,12 @@
-"""Behaviour switches pending Vaatun's reply (intent D1, D2; spec C2). Each is one documented env var."""
+"""Behaviour switches (intent D1, D2; spec C2). Each is one documented env var; the first allowed value is the
+default. D1 defaults to `strict` per Vaatun's answer of 2026-11-22 (a policy outside the grid's effective
+period is an error with the reason)."""
 
 import os
 from dataclasses import dataclass
 
 _ALLOWED = {
-    "GRID_DATE_POLICY": ("warn", "strict"),  # D1
+    "GRID_DATE_POLICY": ("strict", "warn"),  # D1
     "BROKER_ELIGIBILITY": ("assume_base", "require_evidence"),  # D2
     "LESSER_PERCENT_MEANS": ("points", "relative"),  # C2: "5% lesser" = 5 points, or 5% of the rate
 }
@@ -12,7 +14,7 @@ _ALLOWED = {
 
 @dataclass(frozen=True)
 class Switches:
-    grid_date_policy: str = "warn"
+    grid_date_policy: str = "strict"
     broker_eligibility: str = "assume_base"
     lesser_percent_means: str = "points"
 

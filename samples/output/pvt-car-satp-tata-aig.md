@@ -5,15 +5,14 @@
 - **OD:** not applicable (Stand-alone TP policy: OD not applicable)
 - **TP:** — (Tata AIG segment: The Tata AIG workbook has no make/model → segment table (all 7 sheets checked, hidden ones included), and the policy does not print a Tata AIG segment.)
 
-**Confidence:** low (weakest link: policy_type (verified one, page 1); lowered for 1 date warning)
+**Confidence:** low (weakest link: policy_type (verified one, page 1))
 
 ## Steps
 
 1. **select**: Insurer Tata AIG, private car, satp policy: using the grid 'Tata AIG 'Pvtcar''.
    - Policy: `pvt-car-satp-tata-aig.pdf · page 12`
-2. **date**: Grid effective Standard Grid for Pvt Car LOB to be applicable from 1st Nov'25 policies; the policy date could not be read.
+2. **date**: The policy date could not be read, so the grid's effective period (Standard Grid for Pvt Car LOB to be applicable from 1st Nov'25 policies) cannot be checked.
    - Grid: `raters/tata-aig/march-2026/Tata AIG Standard Grid_Communication_Mar'26_F_v2_0212.xlsx · 'Pvtcar'!F1`
-   - Warning: grid effective Standard Grid for Pvt Car LOB to be applicable from 1st Nov'25 policies; policy date unknown; a newer grid may exist
 3. **result**: Tata AIG segment: The Tata AIG workbook has no make/model → segment table (all 7 sheets checked, hidden ones included), and the policy does not print a Tata AIG segment.
 
 ## Facts
@@ -21,6 +20,7 @@
 | Fact | Value | Page | Check | Confidence | Quote |
 |---|---|---|---|---|---|
 | addOns | Not found | — | not_found | unknown |  |
+| bodyType | HATCHBACK | 4 | verified_both | medium | Body Type HATCHBACK |
 | businessType | Not found | — | not_found | unknown |  |
 | cc | 998 | 4 | verified_one | low | Registration No. DL9CAB2893 CC/KW 998 |
 | cngLpgKitValue | 25.0 | 5 | verified_one | low | Add: CNG / LPG kit TP (IMT 25) 60 |
@@ -47,6 +47,7 @@
 | seatingCapacity | 5 | 4 | verified_one | low | Chassis No. MA3EMDE1S00365877 Seating Capacity 5 |
 | segment | Not found | — | not_found | unknown |  |
 | tpPremium | 2154.0 | 5 | verified_one | low | Total Liability Premium (A) 2154 |
+| tppdRestricted | Not found | — | not_found | unknown |  |
 | vehicleClass | private_car | 4 | verified_both | medium | Body Type HATCHBACK |
 
-_Extractor: rules; OCR: {'rapidocr': '1.4.4', 'tesseract': '5.5.4'}; switches: {'BROKER_ELIGIBILITY': 'assume_base', 'GRID_DATE_POLICY': 'warn', 'LESSER_PERCENT_MEANS': 'points'}._
+_Extractor: rules; OCR: {'rapidocr': '1.4.4', 'tesseract': '5.5.4'}; switches: {'BROKER_ELIGIBILITY': 'assume_base', 'GRID_DATE_POLICY': 'strict', 'LESSER_PERCENT_MEANS': 'points'}._

@@ -1,3 +1,4 @@
+import dataclasses
 import io
 import json
 
@@ -111,3 +112,20 @@ def test_pipeline_output_for_worker_is_valid_json() -> None:
     body = json.loads(out.result_json)
     assert out.status == body["status"] == "resolved"
     assert out.switches == Switches().as_dict() and out.versions["extractor"] == "rules"
+
+
+def multi_page_pdf(n: int) -> bytes:
+    doc = pdfium.PdfDocument.new()
+    for _ in range(n):
+        doc.new_page(595, 842)
+    buf = io.BytesIO()
+    doc.save(buf)
+    return buf.getvalue()
+
+
+def test_only_the_first_pages_are_read() -> None:
+    assert Deps.__dataclass_fields__["read_pages"].default == 20
+    d = dataclasses.replace(deps(CAR), read_pages=6)
+    result = run_pipeline(multi_page_pdf(9), "long.pdf", d)
+    assert len(d.primary.seen) == 6  # type: ignore[attr-defined]
+    assert result.meta["pagesRead"] == 6 and result.meta["pageCount"] == 9

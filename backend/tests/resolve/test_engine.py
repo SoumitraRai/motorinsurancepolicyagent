@@ -213,7 +213,7 @@ def test_out_of_scope_and_definition_lines_do_not_block() -> None:
 
 def test_d1_warn_and_strict() -> None:
     dated = acme(effective_from=date(2026, 4, 1), date_text="Effective from 1st Apr'26", date_cite=cite("A1"))
-    warn = run(car(), dated)
+    warn = run(car(), dated, switches=Switches(grid_date_policy="warn"))
     assert warn.status == "resolved"
     step = next(t for t in warn.trace if t.kind == "date")
     assert step.warnings and "a newer grid may exist" in step.warnings[0]
@@ -221,7 +221,18 @@ def test_d1_warn_and_strict() -> None:
     strict = run(car(), dated, switches=Switches(grid_date_policy="strict"))
     assert strict.status == "unsupported"
     ended = acme(effective_from=date(2025, 1, 1), effective_to=date(2025, 12, 31), date_cite=cite("A1"))
-    assert run(car(), ended).status == "unsupported"  # past a stated end date: refuse even in warn mode
+    # Past a stated end date: refuse even in warn mode.
+    assert run(car(), ended, switches=Switches(grid_date_policy="warn")).status == "unsupported"
+
+
+def test_unknown_policy_date_is_ambiguous_only_when_it_would_change_the_answer() -> None:
+    # Vaatun 2026-11-22: "ambiguous" only when the missing fact would change the result.
+    dated = acme(effective_from=date(2026, 1, 1), date_text="from Jan'26", date_cite=cite("A1"))
+    r = run(car(policy_start_date=None), dated)
+    assert r.status == "ambiguous" and "policy_start_date" in r.clarification["facts"]  # type: ignore[index]
+    # Unsupported anyway (RTO not in the grid's mapping): the unknown date can't change that.
+    r = run(car(policy_start_date=None, rto="QQ09"), dated)
+    assert r.status == "unsupported" and "not listed" in r.trace[-1].decision
 
 
 def test_no_stated_date_is_a_note_without_penalty() -> None:
@@ -242,6 +253,27 @@ def test_business_type_rules() -> None:
     assert unknown.status == "ambiguous" and "business_type" in unknown.clarification["facts"]  # type: ignore[index]
     # A grid that doesn't split on business type is not blocked by an unknown business type (A3).
     assert run(car(business_type=None)).status == "resolved"
+
+
+def test_unknown_business_type_resolves_when_every_grid_gives_the_same_rate() -> None:
+    # Vaatun 2026-11-22: "ambiguous" only when the missing fact would change the rate.
+    renewal = acme(id="acme/renewal", business_types=frozenset({"renewal", "rollover"}))
+    new = acme(id="acme/new", title="Acme new business", business_types=frozenset({"new"}))
+    same = run(car(business_type=None), renewal, new)
+    assert same.status == "resolved", same.trace[-1].decision
+    assert same.facts.business_type.value is None
+    assert any("business type" in t.decision.lower() and "same" in t.decision for t in same.trace)
+
+
+def test_unknown_business_type_stays_ambiguous_when_a_value_has_no_grid() -> None:
+    renewal = acme(id="acme/renewal", business_types=frozenset({"renewal"}))
+    assert run(car(business_type=None), renewal).status == "ambiguous"
+
+
+def test_grid_dates_are_strict_by_default() -> None:
+    # Vaatun 2026-11-22: a policy outside the grid's effective period is an error with the reason.
+    assert Switches().grid_date_policy == "strict"
+    assert Switches.from_env().grid_date_policy == "strict"
 
 
 def test_resolve_deterministic_bytes() -> None:

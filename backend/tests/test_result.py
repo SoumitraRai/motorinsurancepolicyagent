@@ -103,7 +103,7 @@ def test_switches_defaults_and_validation(monkeypatch: pytest.MonkeyPatch) -> No
         monkeypatch.delenv(k, raising=False)
     s = Switches.from_env()
     assert s.as_dict() == {
-        "GRID_DATE_POLICY": "warn",
+        "GRID_DATE_POLICY": "strict",  # Vaatun 2026-11-22
         "BROKER_ELIGIBILITY": "assume_base",
         "LESSER_PERCENT_MEANS": "points",
     }

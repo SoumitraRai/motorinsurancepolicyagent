@@ -11,7 +11,7 @@ from rater.api.auth import JwtVerifier
 from rater.api.routes import RateLimiter, router
 
 MAX_BYTES = 25 * 1024 * 1024
-MAX_PAGES = 60
+MAX_PAGES = 200  # only the first READ_PAGES (default 20) are OCR'd, so a long PDF stays cheap
 
 
 @dataclass

@@ -1,16 +1,22 @@
 {
-  "clarification": {
-    "facts": [
-      "fuel"
-    ]
-  },
+  "clarification": null,
   "confidence": {
     "cappedBy": [],
     "level": "low",
-    "reason": "weakest link: fuel (not found); lowered for 1 date warning"
+    "reason": "weakest link: insurer (verified one, page 2)"
   },
   "facts": {
     "addOns": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "bodyType": {
       "confidence": "unknown",
       "note": null,
       "page": null,
@@ -280,6 +286,16 @@
       "value": null,
       "verification": "not_found"
     },
+    "tppdRestricted": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
     "vehicleClass": {
       "confidence": "medium",
       "note": null,
@@ -302,13 +318,15 @@
       "rapidocr": "1.4.4",
       "tesseract": "5.5.4"
     },
+    "pageCount": 15,
     "pages": 15,
+    "pagesRead": 15,
     "pdfSha256": "c96ad51804c7195838f7faca446c068e48604e990be6c9a6d412cf7c0518efbb",
     "reviewerSupplied": [],
-    "seconds": 73.1,
+    "seconds": 87.9,
     "switches": {
       "BROKER_ELIGIBILITY": "assume_base",
-      "GRID_DATE_POLICY": "warn",
+      "GRID_DATE_POLICY": "strict",
       "LESSER_PERCENT_MEANS": "points"
     }
   },
@@ -320,7 +338,7 @@
       "gridCitation": null,
       "ratePercent": null,
       "rawCellValue": null,
-      "reason": "The OD rate depends on fuel, which could not be read from the policy."
+      "reason": "The policy is dated 2025-12-23, outside the grid's effective period (Pvt Car Old Business Grid- Jan-26)."
     },
     "tp": {
       "applicable": true,
@@ -328,10 +346,10 @@
       "gridCitation": null,
       "ratePercent": null,
       "rawCellValue": null,
-      "reason": "The OD rate depends on fuel, which could not be read from the policy."
+      "reason": "The policy is dated 2025-12-23, outside the grid's effective period (Pvt Car Old Business Grid- Jan-26)."
     }
   },
-  "status": "ambiguous",
+  "status": "unsupported",
   "trace": [
     {
       "citations": [
@@ -366,54 +384,17 @@
     {
       "citations": [
         {
-          "file": "pvt-car-comprehensive-reliance.pdf",
-          "page": 2,
-          "type": "policy"
-        },
-        {
           "file": "raters/reliance-indusind/feb-2026/Reliance Broking Premier  FEB 26 Grid.xlsx",
           "range": "A1",
           "sheet": "PRIVATE CAR COMP, SAOD & STP",
           "type": "xlsx"
         }
       ],
-      "decision": "Grid effective Pvt Car Old Business Grid- Jan-26; policy dated 2025-12-23.",
+      "decision": "The policy is dated 2025-12-23, outside the grid's effective period (Pvt Car Old Business Grid- Jan-26).",
       "gridCitation": "raters/reliance-indusind/feb-2026/Reliance Broking Premier  FEB 26 Grid.xlsx · 'PRIVATE CAR COMP, SAOD & STP'!A1",
-      "kind": "date",
-      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
-      "step": 2,
-      "warnings": [
-        "grid effective Pvt Car Old Business Grid- Jan-26; policy dated 2025-12-23; a newer grid may exist"
-      ]
-    },
-    {
-      "citations": [
-        {
-          "file": "pvt-car-comprehensive-reliance.pdf",
-          "page": 2,
-          "type": "policy"
-        },
-        {
-          "file": "raters/reliance-indusind/feb-2026/Reliance Broking Premier  FEB 26 Grid.xlsx",
-          "range": "A1253:E1253",
-          "sheet": "RTO List",
-          "type": "xlsx"
-        }
-      ],
-      "decision": "Reliance RTO → region: UP16 maps to Delhi.",
-      "gridCitation": "raters/reliance-indusind/feb-2026/Reliance Broking Premier  FEB 26 Grid.xlsx · 'RTO List'!A1253:E1253",
-      "kind": "map",
-      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
-      "step": 3,
-      "warnings": []
-    },
-    {
-      "citations": [],
-      "decision": "The OD rate depends on fuel, which could not be read from the policy.",
-      "gridCitation": null,
       "kind": "result",
       "policyCitation": null,
-      "step": 4,
+      "step": 2,
       "warnings": []
     }
   ]

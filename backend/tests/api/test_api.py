@@ -5,6 +5,7 @@ import uuid
 import pytest
 from fastapi.routing import APIRoute
 
+from rater.api.app import MAX_PAGES
 from rater.api.routes import router
 from rater.worker import NotReadyPipeline, process_one
 from tests.api.conftest import OTHER, encrypted_pdf_bytes, make_token, pdf_bytes
@@ -50,8 +51,8 @@ def test_upload_limits(wired, rsa_key) -> None:  # type: ignore[no-untyped-def]
     too_big = b"%PDF-1.7\n" + b"0" * (25 * 1024 * 1024 + 1)
     r = upload(client, h, too_big)
     assert r.status_code == 413 and "25 MB" in r.json()["detail"]
-    r = upload(client, h, pdf_bytes(61))
-    assert r.status_code == 422 and "60 pages" in r.json()["detail"]
+    r = upload(client, h, pdf_bytes(MAX_PAGES + 1))
+    assert r.status_code == 422 and f"{MAX_PAGES} pages" in r.json()["detail"]
     r = upload(client, h, b"hello, not a pdf", name="notes.txt")
     assert r.status_code == 422 and "PDF" in r.json()["detail"]
 

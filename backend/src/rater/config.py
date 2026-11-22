@@ -76,6 +76,7 @@ def build_deps() -> "Deps":
         fallback=RulesExtractor(),
         switches=Switches.from_env(),
         grid_manifest=info.manifest_sha256,
+        read_pages=int(os.environ.get("READ_PAGES", "20")) or None,  # 0 = read every page
     )
 
 

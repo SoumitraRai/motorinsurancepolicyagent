@@ -748,3 +748,14 @@ T14 and T15 reuse T7's primitives and extend `registry.py`. **Test:** the same
     term covering the policy is `ambiguous`, not `unsupported`; new dims `ContainsAny`/`NotContainsAny`.
   - Extraction: `bodyType`, `tppdRestricted`; vehicle classes `gcv_3w`, `pcv_2w`, e-rickshaw, Misc D, tractor.
   - (T15 part 1 commit)
+- **Vaatun's answers applied (2026-11-22, `vaatun-answers-2026-11-22.md`).**
+  - D1 reversed: `GRID_DATE_POLICY` defaults to `strict` (outside the grid's period → `unsupported` with
+    the reason). `test_d1_warn_and_strict` now passes `warn` explicitly; `test_switches_defaults_and_validation`
+    expects `strict`. An unreadable policy date is held back to the end of the run: it gives `ambiguous`
+    only if nothing else makes the policy `unsupported` (Tata AIG sample: C8 still decides).
+  - Business type: `engine.resolve` tries new/renewal/rollover when an `ambiguous` result is missing only
+    the business type; equal rates → resolved with a trace note (`test_unknown_business_type_*`).
+  - Pages: `READ_PAGES` limits OCR and extraction. Default 20, not 6: with 6, the Tata AIG sample lost its
+    insurer (page 12) and Reliance its previous insurer (page 13); `meta.pagesRead`/`pageCount` recorded;
+    upload page limit raised from 60 to 200 (`test_only_the_first_pages_are_read`, `test_upload_limits`).
+  - (Vaatun answers commit)

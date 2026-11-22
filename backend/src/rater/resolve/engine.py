@@ -9,7 +9,7 @@ from decimal import Decimal
 from typing import Any
 
 from rater.citations import PolicyCite
-from rater.facts import Facts
+from rater.facts import Fact, Facts
 from rater.grids.model import Grid, GridSet, RateCell, describe, dim_matches
 from rater.resolve.common import Refusal, Step
 from rater.resolve.confidence import Cap, overall
@@ -57,6 +57,9 @@ class _Run:
         self.warnings = 0
         self.grid: Grid | None = None
         self.caps: list[Cap] = []
+        # An unknown policy date (strict mode) is held back: it decides the answer only if nothing else
+        # makes the policy unsupported (Vaatun 2026-11-22: ambiguous only when it would change the result).
+        self.pending: Refusal | None = None
 
     # -- trace ------------------------------------------------------------------------------------
     def _policy_cite(self, names: tuple[str, ...]) -> tuple[str | None, list[dict[str, Any]]]:
@@ -98,6 +101,13 @@ class _Run:
 
     # -- outcomes ---------------------------------------------------------------------------------
     def refuse(self, r: Refusal) -> Result:
+        if self.pending is not None and r is not self.pending and r.status != "unsupported":
+            r = Refusal(
+                r.status,
+                f"{r.reason} Also: {self.pending.reason}",
+                cites=r.cites + self.pending.cites,
+                missing=tuple(dict.fromkeys(r.missing + self.pending.missing)),
+            )
         self.steps.append(Step("result", r.reason, cites=r.cites))
         applicable = _applicability(self.facts.value("policy_type"))
         rates = {}
@@ -166,12 +176,16 @@ class _Run:
         assert applicable is not None  # selection requires a known policy type
 
         dated = check_dates(self.facts, grid, self.switches)
-        if isinstance(dated, Refusal):
+        if isinstance(dated, Refusal) and dated.status == "ambiguous":
+            self.pending = dated
+            self.steps.append(Step("date", dated.reason, cites=dated.cites))
+        elif isinstance(dated, Refusal):
             return self.refuse(dated)
-        step, warned = dated
-        self.steps.append(step)
-        self.warnings += int(warned)
-        self.used.update(step.facts)
+        else:
+            step, warned = dated
+            self.steps.append(step)
+            self.warnings += int(warned)
+            self.used.update(step.facts)
 
         mapped_out = apply_mappings(self.facts, grid)
         if isinstance(mapped_out, Refusal):
@@ -244,6 +258,8 @@ class _Run:
             return self.refuse(applied)
         self.steps.extend(applied.steps)
         self.used.update(applied.used)
+        if self.pending is not None:
+            return self.refuse(self.pending)
 
         for comp, m in matches.items():
             final = applied.rates[comp]
@@ -287,5 +303,39 @@ class _Run:
         )
 
 
+BUSINESS_TYPES = ("new", "renewal", "rollover")
+
+
+def _rate_key(result: Result) -> tuple[tuple[str, Any, Any], ...]:
+    return tuple((c, o.applicable, o.rate_percent) for c, o in sorted(result.rates.items()))
+
+
 def resolve(facts: Facts, gridset: GridSet, switches: Switches, policy_file: str) -> Result:
-    return _Run(facts, gridset, switches, policy_file).run()
+    result = _Run(facts, gridset, switches, policy_file).run()
+    missing = (result.clarification or {}).get("facts")
+    if result.status != "ambiguous" or missing != ["business_type"]:
+        return result
+    if facts.value("business_type") is not None:
+        return result
+    # Vaatun 2026-11-22: "ambiguous" only when the missing fact would change the rate. Try every business
+    # type; if each one resolves to the same rates, the business type doesn't matter for this policy.
+    tries = []
+    for bt in BUSINESS_TYPES:
+        assumed = facts.model_copy(deep=True)
+        assumed.business_type = Fact(
+            value=bt, verification="derived", note="assumed to test whether it changes the rate"
+        )
+        tries.append(_Run(assumed, gridset, switches, policy_file).run())
+    if not all(t.status == "resolved" for t in tries) or len({_rate_key(t) for t in tries}) != 1:
+        return result
+    out = tries[0]
+    note = TraceStep(
+        step=0,
+        kind="business_type",
+        decision="The business type (new, renewal or rollover) could not be established from the policy, "
+        "but every business type gives the same rates, so it does not change the answer. The steps below "
+        f"use '{BUSINESS_TYPES[0]}'.",
+    )
+    out.trace = [t.model_copy(update={"step": i}) for i, t in enumerate([note, *out.trace], start=1)]
+    out.facts = facts
+    return out

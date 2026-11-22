@@ -3,7 +3,7 @@
   "confidence": {
     "cappedBy": [],
     "level": "low",
-    "reason": "weakest link: policy_type (verified one, page 1); lowered for 1 date warning"
+    "reason": "weakest link: policy_type (verified one, page 1)"
   },
   "facts": {
     "addOns": {
@@ -15,6 +15,16 @@
       "raw": null,
       "value": null,
       "verification": "not_found"
+    },
+    "bodyType": {
+      "confidence": "medium",
+      "note": null,
+      "page": 4,
+      "policyCitation": "pvt-car-satp-tata-aig.pdf · page 4",
+      "quote": "Body Type HATCHBACK",
+      "raw": "HATCHBACK",
+      "value": "HATCHBACK",
+      "verification": "verified_both"
     },
     "businessType": {
       "confidence": "unknown",
@@ -276,6 +286,16 @@
       "value": 2154.0,
       "verification": "verified_one"
     },
+    "tppdRestricted": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
     "vehicleClass": {
       "confidence": "medium",
       "note": null,
@@ -298,13 +318,15 @@
       "rapidocr": "1.4.4",
       "tesseract": "5.5.4"
     },
+    "pageCount": 12,
     "pages": 12,
+    "pagesRead": 12,
     "pdfSha256": "ec180dc9dfa947ccd388a08b2350988b490551072b52878c998a14a7c5e24249",
     "reviewerSupplied": [],
-    "seconds": 36.4,
+    "seconds": 40.4,
     "switches": {
       "BROKER_ELIGIBILITY": "assume_base",
-      "GRID_DATE_POLICY": "warn",
+      "GRID_DATE_POLICY": "strict",
       "LESSER_PERCENT_MEANS": "points"
     }
   },
@@ -363,14 +385,12 @@
           "type": "xlsx"
         }
       ],
-      "decision": "Grid effective Standard Grid for Pvt Car LOB to be applicable from 1st Nov'25 policies; the policy date could not be read.",
+      "decision": "The policy date could not be read, so the grid's effective period (Standard Grid for Pvt Car LOB to be applicable from 1st Nov'25 policies) cannot be checked.",
       "gridCitation": "raters/tata-aig/march-2026/Tata AIG Standard Grid_Communication_Mar'26_F_v2_0212.xlsx · 'Pvtcar'!F1",
       "kind": "date",
       "policyCitation": null,
       "step": 2,
-      "warnings": [
-        "grid effective Standard Grid for Pvt Car LOB to be applicable from 1st Nov'25 policies; policy date unknown; a newer grid may exist"
-      ]
+      "warnings": []
     },
     {
       "citations": [],

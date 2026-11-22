@@ -1,8 +1,8 @@
 # Vaatun answers, received 2026-11-22
 
 These are the hiring team's written answers to our clarification list. They take precedence over our own
-earlier readings (A1–A8, B1–B4, D1–D2, C1–C13), but they come after `challenge.md`. Nothing here has been
-applied to code yet. Each "Impact" line says what would change.
+earlier readings (A1–A8, B1–B4, D1–D2, C1–C13), but they come after `challenge.md`. Each "Impact" line says
+what would change; the "Applied" section at the end says what was done.
 
 | # | Answer (paraphrased; the quote is in the email) | Current build | Impact |
 |---|---|---|---|
@@ -21,3 +21,21 @@ applied to code yet. Each "Impact" line says what would change.
 | 13 | Review happens **within 3–4 days of submission. Keep the app and database running at least that long.** | Render starter web, standard worker; free Supabase pauses (C12). | Use paid or non-pausing tiers for at least 4 days after submission. T5 is still blocked on accounts. |
 | 14 | **The repository can be public.** | Planned private, with Vaatun invited. | PO may switch to public. Check the bundle can be published (Vaatun allows it) and that no secrets are in the history. |
 | — | Reviewers will upload policies, compare against the PDF and grid, and **ask for results to be traced back to the code**. No strict grading script. | Readable `.md` traces, citations, `file:line`-level code. | Make sure the README maps each trace step to its module. |
+
+## Applied (2026-11-22)
+
+- **#1 dates:** `GRID_DATE_POLICY` now defaults to `strict`. A policy outside the grid's stated period is
+  `unsupported`, and the reason gives both dates. A grid that states no period is still used (the trace
+  says so). An unreadable policy date gives `ambiguous` only when nothing else makes the policy
+  `unsupported`. Effect on the samples: Reliance is now `unsupported` (policy from 23 Dec 2025, grid
+  "Jan-26").
+- **#6 business type:** the engine tries every business type when it is the only missing fact; equal
+  rates → resolved with a trace note, otherwise `ambiguous`.
+- **#11 pages:** only the first `READ_PAGES` pages are OCR'd and extracted. The default is 20, not 6,
+  because the samples contradict "first 5–6 pages": Tata AIG prints its insurer name only on page 12 and
+  Reliance its previous insurer on page 13 (with 6 pages both samples got worse). Worth raising with
+  Vaatun at review; uploads may have up
+  to 200 pages; `meta.pagesRead` and `meta.pageCount` are recorded.
+- **#2 scope:** no code change needed; uncovered policies already return `unsupported` with the reason.
+  Whether to finish the rest of T15 is the PO's decision (see the session's recommendation).
+- **#12–#14** (login, hosting, public repo) are deployment steps for T5; **#10** still needs a key.

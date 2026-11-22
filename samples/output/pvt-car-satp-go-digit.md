@@ -26,6 +26,7 @@
 | Fact | Value | Page | Check | Confidence | Quote |
 |---|---|---|---|---|---|
 | addOns | Not found | — | not_found | unknown |  |
+| bodyType | Not found | — | not_found | unknown |  |
 | businessType | renewal | 2 | derived | medium | Previous Insurer GoDigitGeneral InsuranceLimited |
 | cc | 1086 | 1 | verified_one | low | Engine No. G4HGKM999181 Chassis No. MALAF51CLKM049328 Cubic Capacity 1086CC |
 | cngLpgKitValue | Not found | — | not_found | unknown |  |
@@ -52,6 +53,7 @@
 | seatingCapacity | 5 | 1 | verified_one | low | RTOLocation Kanpur Nagar,UTTAR PRADESH Seating Capacity 5 |
 | segment | Not found | — | not_found | unknown |  |
 | tpPremium | Not found | — | not_found | unknown |  |
+| tppdRestricted | Not found | — | not_found | unknown |  |
 | vehicleClass | private_car | 1 | verified_both | medium | Digit Private Car Liability OnlyPolicy UINNo.:IRDAN158RP0002V01201718 |
 
-_Extractor: rules; OCR: {'rapidocr': '1.4.4', 'tesseract': '5.5.4'}; switches: {'BROKER_ELIGIBILITY': 'assume_base', 'GRID_DATE_POLICY': 'warn', 'LESSER_PERCENT_MEANS': 'points'}._
+_Extractor: rules; OCR: {'rapidocr': '1.4.4', 'tesseract': '5.5.4'}; switches: {'BROKER_ELIGIBILITY': 'assume_base', 'GRID_DATE_POLICY': 'strict', 'LESSER_PERCENT_MEANS': 'points'}._

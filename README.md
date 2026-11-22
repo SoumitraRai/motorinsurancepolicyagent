@@ -81,10 +81,11 @@ cd backend && uv run python -m rater.cli run ../insurance-rater-agent-challenge/
 |---|---|---|
 | `EXTRACTION_PROVIDER` | `openrouter` | `rules` forces the local extractor |
 | `OPENROUTER_API_KEY`, `EXTRACTION_MODEL` | unset | both needed for LLM extraction; otherwise local rules |
-| `GRID_DATE_POLICY` | `warn` | D1: outside a grid's stated period → warning + lower confidence; `strict` → refuse |
+| `GRID_DATE_POLICY` | `strict` | D1 (Vaatun, 2026-11-22): outside a grid's stated period → `unsupported` with the reason; `warn` → warning + lower confidence |
 | `BROKER_ELIGIBILITY` | `assume_base` | D2: broker qualifies for base rates; volume bonuses listed, never added; `require_evidence` → refuse |
 | `LESSER_PERCENT_MEANS` | `points` | C2: "5% lesser" = 5 percentage points; `relative` = 5% of the rate |
 | `OCR_WORKERS` | `1` | pages OCR'd in parallel (each ≈1 GB) |
+| `READ_PAGES` | `20` | only the first N pages are OCR'd and extracted; `0` = all. Uploads may have up to 200 pages. Vaatun said the key details are in the first 5–6 pages, but the Tata AIG sample prints the insurer only on page 12 and Reliance the previous insurer on page 13, so 6 would lose them |
 
 Every run records the switch values in `meta.switches`.
 
@@ -149,8 +150,13 @@ D = default pending Vaatun) and [`spec.md`](sdlc/changes/2026-11-20-brokerage-ra
   - a model → fuel list, single-fuel models only (`backend/src/rater/grids/data/model_fuels.csv`, with a
     source per row; built and checked by the product owner; most rows are marked "not web-verified");
   - make spelling aliases (`backend/src/rater/grids/makes.py`).
-- **Dates (D1):** a policy dated outside a grid's stated period gets a warning and lower confidence.
-  Only a past stated end date refuses.
+- **Dates (D1, Vaatun 2026-11-22):** a policy dated outside a grid's stated period is `unsupported`, with
+  the period and the policy date in the reason. A grid that states no period is used, and the trace says so.
+  If the policy date can't be read, the result is `ambiguous`, unless the policy is `unsupported` for
+  another reason anyway (the date couldn't change that).
+- **Business type (Vaatun 2026-11-22):** when it can't be established, every value (new, renewal,
+  rollover) is tried. If all give the same rates, the result is resolved and the trace says so; otherwise
+  it is `ambiguous` and the reviewer is asked.
 - **Broker eligibility (D2):** base rates are assumed. Volume, GWP and synergy bonuses are listed as
   "possible, not applied".
 - **Policy skills (C11):** the organisation policy files are unfilled templates and were applied in

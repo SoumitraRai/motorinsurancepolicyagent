@@ -1,30 +1,25 @@
 # Decision trace: pvt-car-comprehensive-reliance.pdf
 
-**Status:** `ambiguous`
+**Status:** `unsupported`
 
-- **OD:** — (The OD rate depends on fuel, which could not be read from the policy.)
-- **TP:** — (The OD rate depends on fuel, which could not be read from the policy.)
+- **OD:** — (The policy is dated 2025-12-23, outside the grid's effective period (Pvt Car Old Business Grid- Jan-26).)
+- **TP:** — (The policy is dated 2025-12-23, outside the grid's effective period (Pvt Car Old Business Grid- Jan-26).)
 
-**Confidence:** low (weakest link: fuel (not found); lowered for 1 date warning)
+**Confidence:** low (weakest link: insurer (verified one, page 2))
 
 ## Steps
 
 1. **select**: Insurer Reliance, private car, comprehensive policy: using the grid 'Reliance 'PRIVATE CAR COMP, SAOD & STP''.
    - Policy: `pvt-car-comprehensive-reliance.pdf · page 2`
-2. **date**: Grid effective Pvt Car Old Business Grid- Jan-26; policy dated 2025-12-23.
-   - Policy: `pvt-car-comprehensive-reliance.pdf · page 2`
+2. **result**: The policy is dated 2025-12-23, outside the grid's effective period (Pvt Car Old Business Grid- Jan-26).
    - Grid: `raters/reliance-indusind/feb-2026/Reliance Broking Premier  FEB 26 Grid.xlsx · 'PRIVATE CAR COMP, SAOD & STP'!A1`
-   - Warning: grid effective Pvt Car Old Business Grid- Jan-26; policy dated 2025-12-23; a newer grid may exist
-3. **map**: Reliance RTO → region: UP16 maps to Delhi.
-   - Policy: `pvt-car-comprehensive-reliance.pdf · page 2`
-   - Grid: `raters/reliance-indusind/feb-2026/Reliance Broking Premier  FEB 26 Grid.xlsx · 'RTO List'!A1253:E1253`
-4. **result**: The OD rate depends on fuel, which could not be read from the policy.
 
 ## Facts
 
 | Fact | Value | Page | Check | Confidence | Quote |
 |---|---|---|---|---|---|
 | addOns | Not found | — | not_found | unknown |  |
+| bodyType | Not found | — | not_found | unknown |  |
 | businessType | renewal | 13 | derived | medium | 44. FullName ofprevious insurer RelianceGeneral InsuranceCompanyLtd. |
 | cc | 999 | 2 | verified_both | medium | Make/Model&Variant RENAULTKWID1.0RXT O CC/HP 999 |
 | cngLpgKitValue | 0.0 | 2 | verified_one | low | VehicleIDV 263,250.00CNG/LPGKit 0.00 |
@@ -51,6 +46,7 @@
 | seatingCapacity | 5 | 2 | verified_one | low | EngineNo./ChassisNo. B4DA416E029716 MEEBBA0MEEBBA005LB744759 Seating CapacityIncludingDriver 5 |
 | segment | Not found | — | not_found | unknown |  |
 | tpPremium | Not found | — | not_found | unknown |  |
+| tppdRestricted | Not found | — | not_found | unknown |  |
 | vehicleClass | private_car | 1 | verified_both | medium | YourReliancePrivateCarPackagePolicy- network garages. livevideo streaming. |
 
-_Extractor: rules; OCR: {'rapidocr': '1.4.4', 'tesseract': '5.5.4'}; switches: {'BROKER_ELIGIBILITY': 'assume_base', 'GRID_DATE_POLICY': 'warn', 'LESSER_PERCENT_MEANS': 'points'}._
+_Extractor: rules; OCR: {'rapidocr': '1.4.4', 'tesseract': '5.5.4'}; switches: {'BROKER_ELIGIBILITY': 'assume_base', 'GRID_DATE_POLICY': 'strict', 'LESSER_PERCENT_MEANS': 'points'}._
