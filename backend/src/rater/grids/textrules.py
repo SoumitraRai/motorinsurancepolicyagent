@@ -28,7 +28,7 @@ _PRODUCT_WORDS = {
 }
 _BROKER = re.compile(
     r"\bvolume\b|\b(lakh|lakhs|lac|crs?)\b.*\b(monthly|annual|business)\b|\bmonthly\b.*\b(lakh|lakhs|lac)\b"
-    r"|\bGWP\b.*\brule\b|\bsynergy\b|\bpartners?\b|\bIMDs?\b|\bdeal basis\b|\benabler",
+    r"|\bGWP\b|\bsynergy\b|\bpartners?\b|\bIMDs?\b|\bdeal basis\b|\benabler|\bcontest\b",
     re.I,
 )
 _PCT = r"(\d+(?:\.\d+)?)\s*%"
@@ -59,6 +59,10 @@ def classify(text: str, product: str) -> Classified:
         return Classified("broker_side", t)
     if re.search(r"\brecover(ed|able)\b", low):
         return Classified("post_issue", t)
+    if re.search(r"grid not applicable for", low):
+        return Classified("definition", t)
+    if re.search(r"\bposting\b|1/2 basis", low):
+        return Classified("process", t)
     if re.search(r"\bidentification\b", low):
         return Classified("definition", t)
     if re.search(
@@ -83,6 +87,9 @@ def classify(text: str, product: str) -> Classified:
     if m:
         pct = next(g for g in m.groups() if g and re.fullmatch(r"\d+(?:\.\d+)?", g))
         return Classified("policy_condition", t, effect="reduce", percent=float(pct))
+    m = re.search(r"\(\s*-\s*\)\s*(\d+(?:\.\d+)?)\s*%", t)
+    if m:
+        return Classified("policy_condition", t, effect="reduce", percent=float(m.group(1)))
     m = re.search(_PCT + r"\s*(additional|extra)", t, re.I)
     if m:
         return Classified("policy_condition", t, effect="add", percent=float(m.group(1)))

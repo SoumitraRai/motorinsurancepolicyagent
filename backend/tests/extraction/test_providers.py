@@ -161,3 +161,63 @@ def test_only_providers_make_llm_calls() -> None:
             assert rel.startswith(allowed_http), rel
         if rel.startswith(("grids/", "resolve/")):
             assert not any("extraction" in m for m in mods), rel
+
+
+def test_rules_tolerate_dropped_spaces_and_stop_at_next_label() -> None:
+    pages = [
+        PageInput(
+            1,
+            "Acme PrivateCarLiabilityOnlyPolicy Schedule\n"
+            "Make ACME Model/VehicleVariant(Sub-Type) ZOOM 1.2 LX\n"
+            "RTOLocation Zztown,SOMESTATE Seating Capacity 5\n"
+            "VehicleRegistrationNo. ZZ07AB1234",
+            None,
+        )
+    ]
+    raw = RulesExtractor().extract(pages)
+    assert raw["policyType"].value.lower().replace(" ", "") == "privatecarliabilityonlypolicy"
+    assert raw["vehicleClass"].value.lower().replace(" ", "") == "privatecar"
+    assert raw["model"].value == "ZOOM 1.2 LX"
+    assert raw["rtoLocation"].value == "Zztown,SOMESTATE"
+    assert raw["registrationNumber"].value == "ZZ07AB1234"
+
+
+def test_rules_labelled_business_type_previous_insurer_dates_and_joined_make() -> None:
+    pages = [
+        PageInput(
+            1,
+            "In case of a renewal, the benefits provided under the policy stay the same\n"
+            "PreviousPolicyNo. 123 Valid 01/01/2025 to 31/12/2025 of ZENITH GENERAL INSURANCE CO.LTD.\n"
+            "From 00:00 Hrs on 23-Dec-2025 to Midnight of 22-Dec-2026\n"
+            "Make/Model&Variant RENAULTKWID1.0RXT O CC/HP 999\n"
+            "RTO GURGAON Issuance Date 26/03/2026\n"
+            "Vehicle Type: HATCH BACK",
+            None,
+        )
+    ]
+    raw = RulesExtractor().extract(pages)
+    assert raw["businessType"].value is None  # free text about renewals is not a business-type field
+    assert raw["previousInsurer"].value.startswith("ZENITH GENERAL INSURANCE")
+    assert raw["policyStartDate"].value == "23-Dec-2025"
+    assert raw["make"].value == "RENAULT"
+    assert raw["rtoLocation"].value == "GURGAON"
+    assert raw["vehicleClass"].value.upper() == "HATCH BACK"
+
+
+def test_rules_model_after_make_model_variant_label() -> None:
+    pages = [
+        PageInput(2, "Make/Model&Variant ACMEZOOM1.2LX O CC/HP 999", None),
+        PageInput(7, "1.Changes invehiclemake&model/cubiccapacity/seating capacity", None),
+    ]
+    raw = RulesExtractor().extract(pages)
+    assert raw["model"].page == 2 and raw["model"].value == "ACMEZOOM1.2LX O"
+
+
+def test_rules_from_glued_to_time() -> None:
+    raw = RulesExtractor().extract(
+        [
+            PageInput(2, "From00:00Hrs on23-Dec-2025to Midnight of 22-Dec-2026", None),
+            PageInput(5, "Previous policy From:23/12/2024To:22/12/2025midnight", None),
+        ]
+    )
+    assert raw["policyStartDate"].value == "23-Dec-2025" and raw["policyStartDate"].page == 2

@@ -18,6 +18,16 @@ def test_load_all_verifies_and_loads_every_wave1_grid() -> None:
         "reliance/pvt-car",
         "tata-aig/Pvtcar",
     } <= ids
+    two_wheelers = {
+        "godigit/TW 1+1",
+        "godigit/TW SATP",
+        "godigit/TW 1+5",
+        "godigit/2W Grid 5+5",
+        "godigit/TW SAOD",
+        "reliance/tw-scooter",
+        "tata-aig/TW",
+    }
+    assert two_wheelers <= ids
     assert set(gs.aliases) == {g.insurer for g in gs.grids}
 
 

@@ -37,7 +37,17 @@ def parse_band(label: str, unit: str) -> Band | None:
     text = label.strip()
     if not text:
         return None
-    norm = re.sub(r"\s*(cc|years?|yrs?)\b", "", text, flags=re.I).strip()
+    norm = re.sub(r"\s*(cc|years?|yrs?|kw)\b", "", text, flags=re.I).strip()
+    norm = re.sub(r"([<>])\s*=", r"\1=", norm)  # "< =350" → "<=350"
+    m = re.fullmatch(rf"([<>])=\s*{_NUM}", norm, flags=re.I)
+    if m:
+        op, a, sa = m.groups()
+        v = _num(a, sa)
+        return (
+            Band(-math.inf, v, True, True, unit, label)
+            if op == "<"
+            else Band(v, math.inf, True, True, unit, label)
+        )
     if norm.lower() == "all":
         return Band(-math.inf, math.inf, True, True, unit, label)
 

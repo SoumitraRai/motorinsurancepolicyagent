@@ -1,0 +1,420 @@
+{
+  "clarification": {
+    "facts": [
+      "fuel"
+    ]
+  },
+  "confidence": {
+    "cappedBy": [],
+    "level": "low",
+    "reason": "weakest link: fuel (not found); lowered for 1 date warning"
+  },
+  "facts": {
+    "addOns": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "businessType": {
+      "confidence": "medium",
+      "note": "same current and previous insurer → renewal",
+      "page": 13,
+      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 13",
+      "quote": "44. FullName ofprevious insurer RelianceGeneral InsuranceCompanyLtd.",
+      "raw": "RELIANCe GENERAL INSURANCE / RelianceGeneral InsuranceCompanyLtd.",
+      "value": "renewal",
+      "verification": "derived"
+    },
+    "cc": {
+      "confidence": "medium",
+      "note": null,
+      "page": 2,
+      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
+      "quote": "Make/Model&Variant RENAULTKWID1.0RXT O CC/HP 999",
+      "raw": "999",
+      "value": 999,
+      "verification": "verified_both"
+    },
+    "cngLpgKitValue": {
+      "confidence": "low",
+      "note": null,
+      "page": 2,
+      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
+      "quote": "VehicleIDV 263,250.00CNG/LPGKit 0.00",
+      "raw": "0.00",
+      "value": 0.0,
+      "verification": "verified_one"
+    },
+    "cpaCover": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "fuel": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "gvw": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "insurer": {
+      "confidence": "low",
+      "note": null,
+      "page": 2,
+      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
+      "quote": "RELIANCe GENERAL INSURANCE Live Smart CompanyLimited Digitallysigned byReliance General Insurance reliancegeneral.co.in 02248903009",
+      "raw": "RELIANCe GENERAL INSURANCE",
+      "value": "RELIANCe GENERAL INSURANCE",
+      "verification": "verified_one"
+    },
+    "issueDate": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "make": {
+      "confidence": "medium",
+      "note": null,
+      "page": 2,
+      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
+      "quote": "Make/Model&Variant RENAULTKWID1.0RXT O CC/HP 999",
+      "raw": "RENAULT",
+      "value": "RENAULT",
+      "verification": "verified_both"
+    },
+    "manufactureYear": {
+      "confidence": "medium",
+      "note": null,
+      "page": 2,
+      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
+      "quote": "RegistrationNo. UP16CS5830 Mfg.Month&Year OCT-2020",
+      "raw": "OCT-2020",
+      "value": 2020,
+      "verification": "verified_both"
+    },
+    "model": {
+      "confidence": "medium",
+      "note": null,
+      "page": 2,
+      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
+      "quote": "Make/Model&Variant RENAULTKWID1.0RXT O CC/HP 999",
+      "raw": "RENAULTKWID1.0RXT O",
+      "value": "RENAULTKWID1.0RXT O",
+      "verification": "verified_both"
+    },
+    "ncb": {
+      "confidence": "medium",
+      "note": null,
+      "page": 2,
+      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
+      "quote": "Deduct25%forNCB -350.01 TotalPAPremium 375.00",
+      "raw": "25",
+      "value": 25.0,
+      "verification": "verified_both"
+    },
+    "netPremium": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "odPremium": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "odTermYears": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "policyStartDate": {
+      "confidence": "medium",
+      "note": null,
+      "page": 2,
+      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
+      "quote": "From00:00Hrson23-Dec-2025toMidnightof22-Dec-2026",
+      "raw": "23-Dec-2025",
+      "value": "2025-12-23",
+      "verification": "verified_both"
+    },
+    "policyType": {
+      "confidence": "medium",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 1",
+      "quote": "YourReliancePrivateCarPackagePolicy- network garages. livevideo streaming.",
+      "raw": "PrivateCarPackagePolicy",
+      "value": "comprehensive",
+      "verification": "verified_both"
+    },
+    "powerKw": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "previousInsurer": {
+      "confidence": "medium",
+      "note": null,
+      "page": 13,
+      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 13",
+      "quote": "44. FullName ofprevious insurer RelianceGeneral InsuranceCompanyLtd.",
+      "raw": "RelianceGeneral InsuranceCompanyLtd.",
+      "value": "RelianceGeneral InsuranceCompanyLtd.",
+      "verification": "verified_both"
+    },
+    "previousNcb": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "registrationYear": {
+      "confidence": "medium",
+      "note": null,
+      "page": 5,
+      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 5",
+      "quote": "Make/Model&Variant RENAULTKWID1.0RXT O DateofRegistration 24-Dec-2020",
+      "raw": "24-Dec-2020",
+      "value": 2020,
+      "verification": "verified_both"
+    },
+    "rto": {
+      "confidence": "medium",
+      "note": null,
+      "page": 2,
+      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
+      "quote": "RegistrationNo. UP16CS5830 Mfg.Month&Year OCT-2020",
+      "raw": "UP16CS5830",
+      "value": "UP16",
+      "verification": "verified_both"
+    },
+    "rtoLocation": {
+      "confidence": "low",
+      "note": null,
+      "page": 2,
+      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
+      "quote": "RTO Location UTTARPRADESH-Noida TotalPremium 8,535.00",
+      "raw": "UTTARPRADESH-Noida",
+      "value": "UTTARPRADESH-NOIDA",
+      "verification": "verified_one"
+    },
+    "seatingCapacity": {
+      "confidence": "low",
+      "note": null,
+      "page": 2,
+      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
+      "quote": "EngineNo./ChassisNo. B4DA416E029716 MEEBBA0MEEBBA005LB744759 Seating CapacityIncludingDriver 5",
+      "raw": "5",
+      "value": 5,
+      "verification": "verified_one"
+    },
+    "segment": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "tpPremium": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "vehicleClass": {
+      "confidence": "medium",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 1",
+      "quote": "YourReliancePrivateCarPackagePolicy- network garages. livevideo streaming.",
+      "raw": "PrivateCar",
+      "value": "private_car",
+      "verification": "verified_both"
+    }
+  },
+  "meta": {
+    "engine": "0.1.0",
+    "extractor": "rules",
+    "extractorNote": null,
+    "grid": "reliance/pvt-car",
+    "gridManifest": "d637af2af3e0eb951599150d6361746de679cb1e4ee68a1e2e5425036cd32faa",
+    "model": null,
+    "ocr": {
+      "rapidocr": "1.4.4",
+      "tesseract": "5.5.4"
+    },
+    "pages": 15,
+    "pdfSha256": "c96ad51804c7195838f7faca446c068e48604e990be6c9a6d412cf7c0518efbb",
+    "reviewerSupplied": [],
+    "seconds": 73.1,
+    "switches": {
+      "BROKER_ELIGIBILITY": "assume_base",
+      "GRID_DATE_POLICY": "warn",
+      "LESSER_PERCENT_MEANS": "points"
+    }
+  },
+  "notApplied": [],
+  "rates": {
+    "od": {
+      "applicable": true,
+      "citations": [],
+      "gridCitation": null,
+      "ratePercent": null,
+      "rawCellValue": null,
+      "reason": "The OD rate depends on fuel, which could not be read from the policy."
+    },
+    "tp": {
+      "applicable": true,
+      "citations": [],
+      "gridCitation": null,
+      "ratePercent": null,
+      "rawCellValue": null,
+      "reason": "The OD rate depends on fuel, which could not be read from the policy."
+    }
+  },
+  "status": "ambiguous",
+  "trace": [
+    {
+      "citations": [
+        {
+          "file": "pvt-car-comprehensive-reliance.pdf",
+          "page": 2,
+          "type": "policy"
+        },
+        {
+          "file": "pvt-car-comprehensive-reliance.pdf",
+          "page": 1,
+          "type": "policy"
+        },
+        {
+          "file": "pvt-car-comprehensive-reliance.pdf",
+          "page": 1,
+          "type": "policy"
+        },
+        {
+          "file": "pvt-car-comprehensive-reliance.pdf",
+          "page": 13,
+          "type": "policy"
+        }
+      ],
+      "decision": "Insurer Reliance, private car, comprehensive policy: using the grid 'Reliance 'PRIVATE CAR COMP, SAOD & STP''.",
+      "gridCitation": null,
+      "kind": "select",
+      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
+      "step": 1,
+      "warnings": []
+    },
+    {
+      "citations": [
+        {
+          "file": "pvt-car-comprehensive-reliance.pdf",
+          "page": 2,
+          "type": "policy"
+        },
+        {
+          "file": "raters/reliance-indusind/feb-2026/Reliance Broking Premier  FEB 26 Grid.xlsx",
+          "range": "A1",
+          "sheet": "PRIVATE CAR COMP, SAOD & STP",
+          "type": "xlsx"
+        }
+      ],
+      "decision": "Grid effective Pvt Car Old Business Grid- Jan-26; policy dated 2025-12-23.",
+      "gridCitation": "raters/reliance-indusind/feb-2026/Reliance Broking Premier  FEB 26 Grid.xlsx · 'PRIVATE CAR COMP, SAOD & STP'!A1",
+      "kind": "date",
+      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
+      "step": 2,
+      "warnings": [
+        "grid effective Pvt Car Old Business Grid- Jan-26; policy dated 2025-12-23; a newer grid may exist"
+      ]
+    },
+    {
+      "citations": [
+        {
+          "file": "pvt-car-comprehensive-reliance.pdf",
+          "page": 2,
+          "type": "policy"
+        },
+        {
+          "file": "raters/reliance-indusind/feb-2026/Reliance Broking Premier  FEB 26 Grid.xlsx",
+          "range": "A1253:E1253",
+          "sheet": "RTO List",
+          "type": "xlsx"
+        }
+      ],
+      "decision": "Reliance RTO → region: UP16 maps to Delhi.",
+      "gridCitation": "raters/reliance-indusind/feb-2026/Reliance Broking Premier  FEB 26 Grid.xlsx · 'RTO List'!A1253:E1253",
+      "kind": "map",
+      "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
+      "step": 3,
+      "warnings": []
+    },
+    {
+      "citations": [],
+      "decision": "The OD rate depends on fuel, which could not be read from the policy.",
+      "gridCitation": null,
+      "kind": "result",
+      "policyCitation": null,
+      "step": 4,
+      "warnings": []
+    }
+  ]
+}

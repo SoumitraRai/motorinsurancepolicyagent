@@ -1,0 +1,385 @@
+{
+  "clarification": null,
+  "confidence": {
+    "cappedBy": [],
+    "level": "low",
+    "reason": "weakest link: policy_type (verified one, page 1); lowered for 1 date warning"
+  },
+  "facts": {
+    "addOns": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "businessType": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "cc": {
+      "confidence": "low",
+      "note": null,
+      "page": 4,
+      "policyCitation": "pvt-car-satp-tata-aig.pdf · page 4",
+      "quote": "Registration No. DL9CAB2893 CC/KW 998",
+      "raw": "998",
+      "value": 998,
+      "verification": "verified_one"
+    },
+    "cngLpgKitValue": {
+      "confidence": "low",
+      "note": null,
+      "page": 5,
+      "policyCitation": "pvt-car-satp-tata-aig.pdf · page 5",
+      "quote": "Add: CNG / LPG kit TP (IMT 25) 60",
+      "raw": "25",
+      "value": 25.0,
+      "verification": "verified_one"
+    },
+    "cpaCover": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "fuel": {
+      "confidence": "low",
+      "note": null,
+      "page": 4,
+      "policyCitation": "pvt-car-satp-tata-aig.pdf · page 4",
+      "quote": "Fuel Type CNG",
+      "raw": "CNG",
+      "value": "cng",
+      "verification": "verified_one"
+    },
+    "gvw": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "insurer": {
+      "confidence": "medium",
+      "note": null,
+      "page": 12,
+      "policyCitation": "pvt-car-satp-tata-aig.pdf · page 12",
+      "quote": "belongs to Tata Sons Private Limited and AIG and is used by TATA AIG General Insurance Company Limited under License.",
+      "raw": "belongs to Tata Sons Private Limited and AIG and is used by TATA AIG General Insurance Company Limited",
+      "value": "belongs to Tata Sons Private Limited and AIG and is used by TATA AIG General Insurance Company Limited",
+      "verification": "verified_both"
+    },
+    "issueDate": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "make": {
+      "confidence": "medium",
+      "note": null,
+      "page": 4,
+      "policyCitation": "pvt-car-satp-tata-aig.pdf · page 4",
+      "quote": "Make/Model/ MARUTI/ZENESTILO/ Mfg. Year 2011",
+      "raw": "MARUTI",
+      "value": "MARUTI",
+      "verification": "verified_both"
+    },
+    "manufactureYear": {
+      "confidence": "medium",
+      "note": null,
+      "page": 4,
+      "policyCitation": "pvt-car-satp-tata-aig.pdf · page 4",
+      "quote": "Make/Model/ MARUTI/ZENESTILO/ Mfg. Year 2011",
+      "raw": "2011",
+      "value": 2011,
+      "verification": "verified_both"
+    },
+    "model": {
+      "confidence": "medium",
+      "note": null,
+      "page": 4,
+      "policyCitation": "pvt-car-satp-tata-aig.pdf · page 4",
+      "quote": "Make/Model/ MARUTI/ZENESTILO/ Mfg. Year 2011",
+      "raw": "MARUTI/ZENESTILO/",
+      "value": "MARUTI/ZENESTILO/",
+      "verification": "verified_both"
+    },
+    "ncb": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "netPremium": {
+      "confidence": "low",
+      "note": null,
+      "page": 5,
+      "policyCitation": "pvt-car-satp-tata-aig.pdf · page 5",
+      "quote": "Net Premium (B) 2154",
+      "raw": "2154",
+      "value": 2154.0,
+      "verification": "verified_one"
+    },
+    "odPremium": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "odTermYears": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "policyStartDate": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "policyType": {
+      "confidence": "low",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-satp-tata-aig.pdf · page 1",
+      "quote": "TATA INSURANCE AIG Auto Secure - Liability Only Policy Million 50",
+      "raw": "Liability Only Policy",
+      "value": "satp",
+      "verification": "verified_one"
+    },
+    "powerKw": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "previousInsurer": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "previousNcb": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "registrationYear": {
+      "confidence": "medium",
+      "note": null,
+      "page": 4,
+      "policyCitation": "pvt-car-satp-tata-aig.pdf · page 4",
+      "quote": "Date of Registration 02/11/2011",
+      "raw": "02/11/2011",
+      "value": 2011,
+      "verification": "verified_both"
+    },
+    "rto": {
+      "confidence": "low",
+      "note": null,
+      "page": 4,
+      "policyCitation": "pvt-car-satp-tata-aig.pdf · page 4",
+      "quote": "Registration No. DL9CAB2893 CC/KW 998",
+      "raw": "DL9CAB2893",
+      "value": "DL09",
+      "verification": "verified_one"
+    },
+    "rtoLocation": {
+      "confidence": "low",
+      "note": null,
+      "page": 4,
+      "policyCitation": "pvt-car-satp-tata-aig.pdf · page 4",
+      "quote": "RTO Location DELHI No.ofBatteries NA",
+      "raw": "DELHI",
+      "value": "DELHI",
+      "verification": "verified_one"
+    },
+    "seatingCapacity": {
+      "confidence": "low",
+      "note": null,
+      "page": 4,
+      "policyCitation": "pvt-car-satp-tata-aig.pdf · page 4",
+      "quote": "Chassis No. MA3EMDE1S00365877 Seating Capacity 5",
+      "raw": "5",
+      "value": 5,
+      "verification": "verified_one"
+    },
+    "segment": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "tpPremium": {
+      "confidence": "low",
+      "note": null,
+      "page": 5,
+      "policyCitation": "pvt-car-satp-tata-aig.pdf · page 5",
+      "quote": "Total Liability Premium (A) 2154",
+      "raw": "2154",
+      "value": 2154.0,
+      "verification": "verified_one"
+    },
+    "vehicleClass": {
+      "confidence": "medium",
+      "note": null,
+      "page": 4,
+      "policyCitation": "pvt-car-satp-tata-aig.pdf · page 4",
+      "quote": "Body Type HATCHBACK",
+      "raw": "HATCHBACK",
+      "value": "private_car",
+      "verification": "verified_both"
+    }
+  },
+  "meta": {
+    "engine": "0.1.0",
+    "extractor": "rules",
+    "extractorNote": null,
+    "grid": "tata-aig/Pvtcar",
+    "gridManifest": "d637af2af3e0eb951599150d6361746de679cb1e4ee68a1e2e5425036cd32faa",
+    "model": null,
+    "ocr": {
+      "rapidocr": "1.4.4",
+      "tesseract": "5.5.4"
+    },
+    "pages": 12,
+    "pdfSha256": "ec180dc9dfa947ccd388a08b2350988b490551072b52878c998a14a7c5e24249",
+    "reviewerSupplied": [],
+    "seconds": 36.4,
+    "switches": {
+      "BROKER_ELIGIBILITY": "assume_base",
+      "GRID_DATE_POLICY": "warn",
+      "LESSER_PERCENT_MEANS": "points"
+    }
+  },
+  "notApplied": [],
+  "rates": {
+    "od": {
+      "applicable": false,
+      "citations": [],
+      "gridCitation": null,
+      "ratePercent": null,
+      "rawCellValue": null,
+      "reason": "Stand-alone TP policy: OD not applicable"
+    },
+    "tp": {
+      "applicable": true,
+      "citations": [],
+      "gridCitation": null,
+      "ratePercent": null,
+      "rawCellValue": null,
+      "reason": "Tata AIG segment: The Tata AIG workbook has no make/model → segment table (all 7 sheets checked, hidden ones included), and the policy does not print a Tata AIG segment."
+    }
+  },
+  "status": "unsupported",
+  "trace": [
+    {
+      "citations": [
+        {
+          "file": "pvt-car-satp-tata-aig.pdf",
+          "page": 12,
+          "type": "policy"
+        },
+        {
+          "file": "pvt-car-satp-tata-aig.pdf",
+          "page": 4,
+          "type": "policy"
+        },
+        {
+          "file": "pvt-car-satp-tata-aig.pdf",
+          "page": 1,
+          "type": "policy"
+        }
+      ],
+      "decision": "Insurer Tata AIG, private car, satp policy: using the grid 'Tata AIG 'Pvtcar''.",
+      "gridCitation": null,
+      "kind": "select",
+      "policyCitation": "pvt-car-satp-tata-aig.pdf · page 12",
+      "step": 1,
+      "warnings": []
+    },
+    {
+      "citations": [
+        {
+          "file": "raters/tata-aig/march-2026/Tata AIG Standard Grid_Communication_Mar'26_F_v2_0212.xlsx",
+          "range": "F1",
+          "sheet": "Pvtcar",
+          "type": "xlsx"
+        }
+      ],
+      "decision": "Grid effective Standard Grid for Pvt Car LOB to be applicable from 1st Nov'25 policies; the policy date could not be read.",
+      "gridCitation": "raters/tata-aig/march-2026/Tata AIG Standard Grid_Communication_Mar'26_F_v2_0212.xlsx · 'Pvtcar'!F1",
+      "kind": "date",
+      "policyCitation": null,
+      "step": 2,
+      "warnings": [
+        "grid effective Standard Grid for Pvt Car LOB to be applicable from 1st Nov'25 policies; policy date unknown; a newer grid may exist"
+      ]
+    },
+    {
+      "citations": [],
+      "decision": "Tata AIG segment: The Tata AIG workbook has no make/model → segment table (all 7 sheets checked, hidden ones included), and the policy does not print a Tata AIG segment.",
+      "gridCitation": null,
+      "kind": "result",
+      "policyCitation": null,
+      "step": 3,
+      "warnings": []
+    }
+  ]
+}

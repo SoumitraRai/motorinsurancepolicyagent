@@ -3,10 +3,12 @@
 Spec SR18, SR19; intent NN2, D2; spec C2, C5.
 """
 
+import math
 from dataclasses import dataclass, field
 from decimal import Decimal
 
 from rater.facts import Facts
+from rater.grids.bands import Band
 from rater.grids.model import ExceptionRule, Grid, describe, dim_matches
 from rater.resolve.common import Refusal, Step
 from rater.resolve.mapping import dim_value
@@ -23,10 +25,18 @@ class Applied:
     used: set[str] = field(default_factory=set)
 
 
-def _holds(rule: ExceptionRule, facts: Facts, grid: Grid, mapped: dict[str, str]) -> bool | tuple[str, ...]:
-    """True/False, or the facts that are missing to decide."""
+def _holds(
+    rule: ExceptionRule, facts: Facts, grid: Grid, mapped: dict[str, str]
+) -> bool | str | tuple[str, ...]:
+    """True; False (a policy fact rules it out); "elsewhere" (scoped to another zone/cluster/region);
+    or the facts that are missing to decide."""
     missing: list[str] = []
     for dim, want in rule.when:
+        if dim in mapped and not dim_matches(want, mapped[dim]):
+            return "elsewhere"
+    for dim, want in rule.when:
+        if isinstance(want, Band) and math.isinf(want.lo) and math.isinf(want.hi):
+            continue  # "All": always holds
         have, srcs = dim_value(dim, facts, grid, mapped)
         if have is None:
             missing.extend(srcs or (dim,))
@@ -72,6 +82,8 @@ def apply_exceptions(
             )
 
         holds = _holds(rule, facts, grid, mapped)
+        if holds == "elsewhere":
+            continue
         if isinstance(holds, tuple):
             return Refusal(
                 "ambiguous",

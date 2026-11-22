@@ -10,12 +10,12 @@ from typing import Any
 
 from rater.citations import PolicyCite
 from rater.facts import Facts
-from rater.grids.model import Grid, GridSet, RateCell, describe
+from rater.grids.model import Grid, GridSet, RateCell, describe, dim_matches
 from rater.resolve.common import Refusal, Step
 from rater.resolve.confidence import Cap, overall
 from rater.resolve.dates import check_dates
 from rater.resolve.exceptions import BROKER_WHY, apply_exceptions
-from rater.resolve.mapping import apply_mappings
+from rater.resolve.mapping import apply_mappings, dim_value
 from rater.resolve.match import Match, match_component
 from rater.resolve.select import select_grid
 from rater.result import ConfidenceOut, NotApplied, RateOut, Result, TraceStep
@@ -122,6 +122,25 @@ class _Run:
             meta=self._meta(),
         )
 
+    def _explain(self, refusal: Refusal, grid: Grid, mapped: dict[str, str]) -> Refusal:
+        """For "no row matches", prefer a decline / no-rate note covering this policy, with its citation."""
+        if refusal.status != "unsupported" or not refusal.reason.startswith("No row"):
+            return refusal
+        for rule in grid.exceptions:
+            if rule.effect != "decline":
+                continue
+            if all(
+                dim_matches(w, v)
+                for d, w in rule.when
+                if (v := dim_value(d, self.facts, grid, mapped)[0]) is not None
+            ) and all(dim_value(d, self.facts, grid, mapped)[0] is not None for d, _ in rule.when):
+                return Refusal(
+                    "unsupported",
+                    f'The grid declines this policy or gives no rate: "{rule.text}".',
+                    cites=(rule.cite,),
+                )
+        return refusal
+
     def run(self) -> Result:
         sel = select_grid(self.facts, self.gridset)
         if isinstance(sel, Refusal):
@@ -177,18 +196,23 @@ class _Run:
                 self.steps.append(Step("match", f"{comp.upper()}: {stated.reason}.", cites=(stated.cite,)))
                 continue
             if isinstance(m, Refusal):
-                return self.refuse(m)
+                return self.refuse(self._explain(m, grid, mapped))
             matches[comp] = m
             self.used.update(m.used)
             rule = m.rules[0]
             what = rule.label or ", ".join(f"{d} {describe(w)}" for d, w in rule.dims)
             note = f" ({_rate_reason(m.cell)})" if m.cell.label else ""
+            if m.unneeded:
+                note += (
+                    f"; {', '.join(m.unneeded)} not read from the policy, but every value the grid lists "
+                    "gives the same rate"
+                )
             self.steps.append(
                 Step(
                     "match",
                     f"{comp.upper()} row matched ({what}): {m.cell.percent:g}%{note}.",
                     facts=tuple(sorted(m.used)),
-                    cites=(m.cell.cite,),
+                    cites=tuple(getattr(r, comp).cite for r in m.rules),
                 )
             )
 

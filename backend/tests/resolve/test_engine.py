@@ -298,3 +298,96 @@ def test_result_json_is_valid_and_keeps_example_keys() -> None:
     body = json.loads(run(car()).to_json())
     assert {"status", "facts", "rates", "trace", "confidence"} <= set(body)
     assert {"decision", "policyCitation", "gridCitation"} <= set(body["trace"][0])
+
+
+def test_all_band_needs_no_fact() -> None:
+    # A row whose age is "All" applies whatever the age, so an unknown manufacture year must not block it.
+    g = acme(rules=(rule(15.0, 2.5, 80, "any age", zone="Zone A", fuel="petrol", cc="All", age="All"),))
+    r = run(car(manufacture_year=None), g)
+    assert r.status == "resolved" and r.rates["od"].rate_percent == 15.0
+
+
+def test_exceptions_scoped_to_another_region_stay_out_of_the_trace() -> None:
+    elsewhere = ExceptionRule(
+        "policy_condition",
+        "Zone B diesel declined",
+        cite("H8"),
+        effect="decline",
+        when=(("zone", "Zone B"), ("fuel", "diesel")),
+    )
+    small_cc = ExceptionRule(
+        "policy_condition",
+        "<1000 CC 5% lesser",
+        cite("H3"),
+        effect="reduce",
+        percent=5.0,
+        when=(("cc", rule(0, 0, 0, cc="<1000").dim_map["cc"]),),
+    )
+    r = run(car(), acme(exceptions=(elsewhere, small_cc)))
+    decisions = [t.decision for t in r.trace if t.kind == "exception"]
+    assert not any("Zone B" in d for d in decisions)  # other zone: silently out of scope
+    assert any("<1000 CC" in d and "does not apply" in d for d in decisions)  # policy fact: shown
+
+
+def test_unknown_fact_that_cannot_change_the_rate_is_resolved() -> None:
+    # Every fuel the enum allows is covered, and both rows give the same rate: fuel cannot matter.
+    rows = (
+        rule(15.0, 2.5, 90, "petrol-like", zone="Zone A", fuel={"petrol", "electric", "hybrid"}, cc="All"),
+        rule(15.0, 2.5, 91, "others", zone="Zone A", fuel={"diesel", "cng", "lpg"}, cc="All"),
+    )
+    r = run(car(fuel=None), acme(rules=rows))
+    assert r.status == "resolved" and r.rates["od"].rate_percent == 15.0
+    step = next(t for t in r.trace if t.kind == "match")
+    assert "fuel" in step.decision and "same rate" in step.decision
+    assert cite("E90").render() in step.grid_citation and cite("E91").render() in step.grid_citation
+
+
+def test_unknown_fact_with_different_rates_stays_ambiguous() -> None:
+    rows = (
+        rule(
+            22.5,
+            2.5,
+            92,
+            "petrol",
+            zone="Zone A",
+            fuel={"petrol", "electric", "hybrid", "cng", "lpg"},
+            cc="All",
+        ),
+        rule(10.0, 2.5, 93, "diesel", zone="Zone A", fuel={"diesel"}, cc="All"),
+    )
+    r = run(car(fuel=None), acme(rules=rows))
+    assert r.status == "ambiguous" and r.clarification == {"facts": ["fuel"]}
+
+
+def test_unknown_fact_not_fully_covered_stays_ambiguous() -> None:
+    # Hybrid is not listed anywhere, so a missing fuel could fall outside the grid.
+    rows = (
+        rule(15.0, 2.5, 94, "a", zone="Zone A", fuel={"petrol", "cng", "lpg"}, cc="All"),
+        rule(15.0, 2.5, 95, "b", zone="Zone A", fuel={"diesel", "electric"}, cc="All"),
+    )
+    assert run(car(fuel=None), acme(rules=rows)).status == "ambiguous"
+
+
+def test_rows_for_another_policy_type_do_not_refuse_an_unpublished_component(unpublished_tp) -> None:  # type: ignore[no-untyped-def]
+    rows = (
+        rule(
+            22.5, None, 96, "package OD", zone="Zone A", fuel="petrol", cc="All", policy_type="comprehensive"
+        ),
+        rule(None, 0.0, 97, "STP", zone="Zone A", fuel="petrol", cc="All", policy_type="satp"),
+    )
+    r = run(car(), acme(rules=rows, unpublished=(unpublished_tp,)))
+    assert r.status == "resolved" and r.rates["od"].rate_percent == 22.5
+    assert r.rates["tp"].applicable is True and r.rates["tp"].rate_percent is None
+
+
+def test_no_rate_code_explains_the_refusal() -> None:
+    code = ExceptionRule(
+        "policy_condition",
+        "The grid gives 'MISP' instead of a rate (meaning not stated)",
+        cite("F70"),
+        effect="decline",
+        when=(("zone", "Zone A"), ("fuel", "diesel")),
+    )
+    r = run(car(fuel="diesel"), acme(exceptions=(code,)))
+    assert r.status == "unsupported" and "MISP" in r.trace[-1].decision
+    assert cite("F70").render() in r.trace[-1].grid_citation

@@ -131,3 +131,34 @@ TATA_GUIDELINES = [
 @pytest.mark.parametrize(("text", "kind"), TATA_GUIDELINES)
 def test_tata_guideline_lines(text: str, kind: str) -> None:
     assert classify(text, "private_car").kind == kind
+
+
+RELIANCE_TW = [
+    ("Tw Scooter Fresh (1+5 & 5+5):  EV Makes - FLAT 25 % PO", "policy_condition", ("flat", 25.0)),
+    ("Tw Scooter Fresh (1+5 & 5+5):  Yamaha & HMC- above grid (-)2.5%", "policy_condition", ("reduce", 2.5)),
+    (
+        "Tw Scooter Fresh (1+5 & 5+5): RTO regions: Kolhapur, Mysore, Mangolore, "
+        "West Bengal (Excluding Kolkata) - "
+        "PO Will Be FLAT 20%",
+        "policy_condition",
+        ("flat", 20.0),
+    ),
+    ("Grid Not applicable for Bike Comp (1+1 / 1+5 / 5+5) & STP", "definition", None),
+    (
+        "Payout Will be madeon 1/2 basis , 50%1st yearand 50% 2nd year(1st LT Posting) "
+        "-applicable for Tw Fresh "
+        "Business",
+        "process",
+        None,
+    ),
+    ("Tw- Scooter Contest ", "broker_side", None),
+    ("Minimum GWP ( January ) in Lakhs", "broker_side", None),
+]
+
+
+@pytest.mark.parametrize(("text", "kind", "effect"), RELIANCE_TW)
+def test_reliance_tw_lines(text: str, kind: str, effect: tuple[str, float] | None) -> None:
+    got = classify(text, "two_wheeler")
+    assert got.kind == kind, text
+    if effect:
+        assert (got.effect, got.percent) == effect

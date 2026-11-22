@@ -1,0 +1,559 @@
+{
+  "clarification": null,
+  "confidence": {
+    "cappedBy": [
+      "HDFC ERGO slab footnote mentions GWP / slab achievement; the policy's OD premium was used as the slab (C1)"
+    ],
+    "level": "low",
+    "reason": "weakest link: ncb (verified one, page 1); capped by HDFC ERGO slab footnote mentions GWP / slab achievement; the policy's OD premium was used as the slab (C1)"
+  },
+  "facts": {
+    "addOns": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "businessType": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "cc": {
+      "confidence": "low",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "quote": "HARYANA - 122002 Te|88MWELPCW2 CubicCapacityWatts 1493 Seats 7 Customerld 101163279601",
+      "raw": "1493",
+      "value": 1493,
+      "verification": "verified_one"
+    },
+    "cngLpgKitValue": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "cpaCover": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "fuel": {
+      "confidence": "medium",
+      "note": "fuel not printed; MAHINDRA BOLERO NEO-N10 (R) is sold in diesel only per the model → fuel reference list (rater/grids/data/model_fuels.csv)",
+      "page": 1,
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "quote": "CommunicationAddress: Model BOLERO NEO-N10 (R) Periodof From 29 Mar,202600:01hrs",
+      "raw": "MAHINDRA BOLERO NEO-N10 (R)",
+      "value": "diesel",
+      "verification": "derived"
+    },
+    "gvw": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "insurer": {
+      "confidence": "medium",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "quote": "HDFC ERGO General Insurance Company Limited. IRDAI Reg No.146 UIN:IRDAN125RP0001V02201415.Policy Issuing/ Customer Happiness Center: D 301,3rd Floor,",
+      "raw": "HDFC ERGO General Insurance Company Limited.",
+      "value": "HDFC ERGO General Insurance Company Limited.",
+      "verification": "verified_both"
+    },
+    "issueDate": {
+      "confidence": "medium",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "quote": "HARYANA 122002GURUGRAM PINCODE- 122002 GURGAON RTO GURGAON Issuance Date 26/03/2026",
+      "raw": "26/03/2026",
+      "value": "2026-03-26",
+      "verification": "verified_both"
+    },
+    "make": {
+      "confidence": "medium",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "quote": "M/S GLOBAL SOLUTIONS CO. LTD. Make MAHINDRA Policy No. 230221208393018307915",
+      "raw": "MAHINDRA",
+      "value": "MAHINDRA",
+      "verification": "verified_both"
+    },
+    "manufactureYear": {
+      "confidence": "medium",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "quote": "Yearof Manufacture 2023 BodyTypeSUV",
+      "raw": "2023",
+      "value": 2023,
+      "verification": "verified_both"
+    },
+    "model": {
+      "confidence": "medium",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "quote": "CommunicationAddress: Model BOLERO NEO-N10 (R) Periodof From 29 Mar,202600:01hrs",
+      "raw": "BOLERO NEO-N10 (R)",
+      "value": "BOLERO NEO-N10 (R)",
+      "verification": "verified_both"
+    },
+    "ncb": {
+      "confidence": "low",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "quote": "Less: No Claim Bonus (35%) 852 LL for Employees of Insured (for 7 Persons) (IMT-29) 350",
+      "raw": "35",
+      "value": 35.0,
+      "verification": "verified_one"
+    },
+    "netPremium": {
+      "confidence": "low",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "quote": "Net Own Damage Premium (a) 8053 Total Premium 14005",
+      "raw": "14005",
+      "value": 14005.0,
+      "verification": "verified_one"
+    },
+    "odPremium": {
+      "confidence": "low",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "quote": "Net Own Damage Premium (a) 8053 Total Premium 14005",
+      "raw": "8053",
+      "value": 8053.0,
+      "verification": "verified_one"
+    },
+    "odTermYears": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "policyStartDate": {
+      "confidence": "medium",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "quote": "CommunicationAddress: Model BOLERO NEO-N10 (R) Periodof From 29 Mar,202600:01hrs",
+      "raw": "29 Mar,2026",
+      "value": "2026-03-29",
+      "verification": "verified_both"
+    },
+    "policyType": {
+      "confidence": "low",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "quote": "CertificateofInsurancecumPolicySchedule [PHONE REMOVED] PRIVATECARCOMPREHENSIVEPOLICY 2302208393018307915 HREC",
+      "raw": "PRIVATECARCOMPREHENSIVEPOLICY",
+      "value": "comprehensive",
+      "verification": "verified_one"
+    },
+    "powerKw": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "previousInsurer": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "previousNcb": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "registrationYear": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "rto": {
+      "confidence": "low",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "quote": "TECH PARK A 2 UNIT 12 URGAONGURUGRAM RegistrationNo HR-26-FB-8239 Insurance To 28 Mar, 2027 23:59",
+      "raw": "HR-26-FB-8239",
+      "value": "HR26",
+      "verification": "verified_one"
+    },
+    "rtoLocation": {
+      "confidence": "medium",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "quote": "HARYANA 122002GURUGRAM PINCODE- 122002 GURGAON RTO GURGAON Issuance Date 26/03/2026",
+      "raw": "GURGAON",
+      "value": "GURGAON",
+      "verification": "verified_both"
+    },
+    "seatingCapacity": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "segment": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "tpPremium": {
+      "confidence": "low",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "quote": "Total-Less 852 Net Liability Premium (b) 3816",
+      "raw": "3816",
+      "value": 3816.0,
+      "verification": "verified_one"
+    },
+    "vehicleClass": {
+      "confidence": "low",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "quote": "CertificateofInsurancecumPolicySchedule [PHONE REMOVED] PRIVATECARCOMPREHENSIVEPOLICY 2302208393018307915 HREC",
+      "raw": "PRIVATECAR",
+      "value": "private_car",
+      "verification": "verified_one"
+    }
+  },
+  "meta": {
+    "engine": "0.1.0",
+    "extractor": "rules",
+    "extractorNote": null,
+    "grid": "hdfc-ergo/pvt-car",
+    "gridManifest": "d637af2af3e0eb951599150d6361746de679cb1e4ee68a1e2e5425036cd32faa",
+    "model": null,
+    "ocr": {
+      "rapidocr": "1.4.4",
+      "tesseract": "5.5.4"
+    },
+    "pages": 9,
+    "pdfSha256": "c5d88a11b7341baef97ec531e5239e7afe803877eb31555a82b4bfdd5964ca70",
+    "reviewerSupplied": [],
+    "seconds": 44.4,
+    "switches": {
+      "BROKER_ELIGIBILITY": "assume_base",
+      "GRID_DATE_POLICY": "warn",
+      "LESSER_PERCENT_MEANS": "points"
+    }
+  },
+  "notApplied": [],
+  "rates": {
+    "od": {
+      "applicable": true,
+      "citations": [
+        {
+          "file": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf",
+          "page": 1,
+          "row": "<10k",
+          "table": "Zone 2 / Package / Non - Petrol / NCB",
+          "type": "pdf_grid"
+        }
+      ],
+      "gridCitation": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf · page 1 · table 'Zone 2 / Package / Non - Petrol / NCB' · row '<10k'",
+      "ratePercent": 15.0,
+      "rawCellValue": "15.00%",
+      "reason": ""
+    },
+    "tp": {
+      "applicable": true,
+      "citations": [
+        {
+          "file": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf",
+          "page": 1,
+          "row": "Package",
+          "table": "Zone 1 / Package",
+          "type": "pdf_grid"
+        }
+      ],
+      "gridCitation": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf · page 1 · table 'Zone 1 / Package' · row 'Package'",
+      "ratePercent": null,
+      "rawCellValue": null,
+      "reason": "HDFC ERGO's grid publishes package (OD) rates only; no TP rate is published"
+    }
+  },
+  "status": "resolved",
+  "trace": [
+    {
+      "citations": [
+        {
+          "file": "pvt-car-comprehensive-hdfc-ergo.pdf",
+          "page": 1,
+          "type": "policy"
+        },
+        {
+          "file": "pvt-car-comprehensive-hdfc-ergo.pdf",
+          "page": 1,
+          "type": "policy"
+        },
+        {
+          "file": "pvt-car-comprehensive-hdfc-ergo.pdf",
+          "page": 1,
+          "type": "policy"
+        }
+      ],
+      "decision": "Insurer HDFC ERGO, private car, comprehensive policy: using the grid 'HDFC ERGO private car grid (PDF)'.",
+      "gridCitation": null,
+      "kind": "select",
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "step": 1,
+      "warnings": []
+    },
+    {
+      "citations": [
+        {
+          "file": "pvt-car-comprehensive-hdfc-ergo.pdf",
+          "page": 1,
+          "type": "policy"
+        },
+        {
+          "file": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf",
+          "page": 1,
+          "row": "Effective from 1st Feb'25",
+          "table": "Header",
+          "type": "pdf_grid"
+        }
+      ],
+      "decision": "Policy dated 2026-03-29 is within the grid's effective period (Effective from 1st Feb'25).",
+      "gridCitation": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf · page 1 · table 'Header' · row 'Effective from 1st Feb'25'",
+      "kind": "date",
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "step": 2,
+      "warnings": []
+    },
+    {
+      "citations": [
+        {
+          "file": "pvt-car-comprehensive-hdfc-ergo.pdf",
+          "page": 1,
+          "type": "policy"
+        },
+        {
+          "file": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf",
+          "page": 2,
+          "row": "Haryana",
+          "table": "State → zone",
+          "type": "pdf_grid"
+        }
+      ],
+      "decision": "HDFC ERGO state → zone: HARYANA maps to Zone 2.",
+      "gridCitation": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf · page 2 · table 'State → zone' · row 'Haryana'",
+      "kind": "map",
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "step": 3,
+      "warnings": []
+    },
+    {
+      "citations": [
+        {
+          "file": "pvt-car-comprehensive-hdfc-ergo.pdf",
+          "page": 1,
+          "type": "policy"
+        },
+        {
+          "file": "pvt-car-comprehensive-hdfc-ergo.pdf",
+          "page": 1,
+          "type": "policy"
+        },
+        {
+          "file": "pvt-car-comprehensive-hdfc-ergo.pdf",
+          "page": 1,
+          "type": "policy"
+        },
+        {
+          "file": "pvt-car-comprehensive-hdfc-ergo.pdf",
+          "page": 1,
+          "type": "policy"
+        },
+        {
+          "file": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf",
+          "page": 1,
+          "row": "<10k",
+          "table": "Zone 2 / Package / Non - Petrol / NCB",
+          "type": "pdf_grid"
+        }
+      ],
+      "decision": "OD row matched (Zone 2 · Package · Non - Petrol · NCB · OD premium <10k): 15%.",
+      "gridCitation": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf · page 1 · table 'Zone 2 / Package / Non - Petrol / NCB' · row '<10k'",
+      "kind": "match",
+      "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
+      "step": 4,
+      "warnings": []
+    },
+    {
+      "citations": [
+        {
+          "file": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf",
+          "page": 1,
+          "row": "Package",
+          "table": "Zone 1 / Package",
+          "type": "pdf_grid"
+        }
+      ],
+      "decision": "TP: HDFC ERGO's grid publishes package (OD) rates only; no TP rate is published.",
+      "gridCitation": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf · page 1 · table 'Zone 1 / Package' · row 'Package'",
+      "kind": "match",
+      "policyCitation": null,
+      "step": 5,
+      "warnings": []
+    },
+    {
+      "citations": [
+        {
+          "file": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf",
+          "page": 1,
+          "row": "*Non Petrol includes Diesel, CNG, LPG",
+          "table": "Footnotes",
+          "type": "pdf_grid"
+        }
+      ],
+      "decision": "Grid note (definition): *Non Petrol includes Diesel, CNG, LPG",
+      "gridCitation": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf · page 1 · table 'Footnotes' · row '*Non Petrol includes Diesel, CNG, LPG'",
+      "kind": "note",
+      "policyCitation": null,
+      "step": 6,
+      "warnings": []
+    },
+    {
+      "citations": [
+        {
+          "file": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf",
+          "page": 1,
+          "row": "#New Business will be considered as NCB",
+          "table": "Footnotes",
+          "type": "pdf_grid"
+        }
+      ],
+      "decision": "Grid note (definition): #New Business will be considered as NCB",
+      "gridCitation": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf · page 1 · table 'Footnotes' · row '#New Business will be considered as NCB'",
+      "kind": "note",
+      "policyCitation": null,
+      "step": 7,
+      "warnings": []
+    },
+    {
+      "citations": [
+        {
+          "file": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf",
+          "page": 1,
+          "row": "# EV and Hybrid is to be considered in Petrol Grid",
+          "table": "Footnotes",
+          "type": "pdf_grid"
+        }
+      ],
+      "decision": "Grid note (definition): # EV and Hybrid is to be considered in Petrol Grid",
+      "gridCitation": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf · page 1 · table 'Footnotes' · row '# EV and Hybrid is to be considered in Petrol Grid'",
+      "kind": "note",
+      "policyCitation": null,
+      "step": 8,
+      "warnings": []
+    },
+    {
+      "citations": [
+        {
+          "file": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf",
+          "page": 1,
+          "row": "Slab will be calculated basis comprehensive + SAOD GWP on PVT CAR (SATP premium is excluded for slab achievement)",
+          "table": "Footnotes",
+          "type": "pdf_grid"
+        }
+      ],
+      "decision": "Grid note (slab basis): Slab will be calculated basis comprehensive + SAOD GWP on PVT CAR (SATP premium is excluded for slab achievement)",
+      "gridCitation": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf · page 1 · table 'Footnotes' · row 'Slab will be calculated basis comprehensive + SAOD GWP on PVT CAR (SATP premium is excluded for slab achievement)'",
+      "kind": "note",
+      "policyCitation": null,
+      "step": 9,
+      "warnings": []
+    },
+    {
+      "citations": [
+        {
+          "file": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf",
+          "page": 1,
+          "row": "<10k",
+          "table": "Zone 2 / Package / Non - Petrol / NCB",
+          "type": "pdf_grid"
+        }
+      ],
+      "decision": "Resolved: TP not published; OD 15%.",
+      "gridCitation": "raters/hdfc-ergo/feb-2025/Pvt Car New Grid Eff 1st Feb'25 (HDFC ergo) 1.pdf · page 1 · table 'Zone 2 / Package / Non - Petrol / NCB' · row '<10k'",
+      "kind": "result",
+      "policyCitation": null,
+      "step": 10,
+      "warnings": []
+    }
+  ]
+}

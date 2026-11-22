@@ -14,6 +14,7 @@ from rater import insurers
 from rater.extraction.ocr import PageEvidence
 from rater.extraction.verify import verify_quote
 from rater.facts import Fact, Facts
+from rater.grids import model_fuels
 from rater.grids.makes import canonical_make
 
 
@@ -54,6 +55,7 @@ FIELDS: dict[str, str] = {
     "segment": "segment",
     "odTermYears": "od_term_years",
     "addOns": "add_ons",
+    "cngLpgKitValue": "cng_lpg_kit_value",
     "cpaCover": "cpa_cover",
 }
 
@@ -122,7 +124,8 @@ def _date(text: str) -> str:
 
 
 def _rto(text: str) -> str:
-    m = re.search(r"\b([A-Z]{2})[\s-]*(\d{1,2})\b", text.upper())
+    # Registration numbers are often one token ("ZZ07AB1234"): no word boundary after the digits.
+    m = re.search(r"\b([A-Z]{2})[\s-]*(\d{1,2})(?!\d)", text.upper())
     if not m:
         raise _Unknown("no RTO code found")
     return f"{m.group(1)}{int(m.group(2)):02d}"
@@ -155,8 +158,11 @@ def _vehicle_class(text: str) -> str:
         (r"goods carrying|gcv|truck|lorry", "gcv"),
         (r"tractor", "tractor"),
         (r"scooter", "scooter"),
-        (r"two wheeler|2w|motorcycle|motor cycle|bike", "two_wheeler"),
+        (r"motorcycle|motor cycle|motorbike|\bbike\b", "motorcycle"),
+        (r"\bmoped\b", "moped"),
+        (r"two wheeler|2w", "two_wheeler"),
         (r"private car|car|4w|four wheeler", "private_car"),
+        (r"hatch ?back|sedan|saloon|\bsuv\b|\bmuv\b", "private_car"),  # car body styles
         (r"misc", "misc_d"),
     )
     for pattern, value in table:
@@ -228,6 +234,7 @@ _PARSERS: dict[str, Any] = {
     "segment": str.strip,
     "od_term_years": _int,
     "add_ons": _add_ons,
+    "cng_lpg_kit_value": _money,
     "cpa_cover": _yes_no,
 }
 
@@ -238,6 +245,34 @@ def _same_insurer(a: str, b: str) -> bool:
         return ca == cb
     words = lambda s: {w for w in re.findall(r"[a-z]+", s.lower()) if w not in _GENERIC}  # noqa: E731
     return bool(words(a)) and words(a) == words(b)
+
+
+def _fuel_from_model(facts: Facts) -> None:
+    """PO decision 2026-11-22: a model sold in one fuel only supplies the fuel the policy doesn't print."""
+    if facts.fuel.known or not (facts.make.known and facts.model.known):
+        return
+    fuels = model_fuels.fuels_for(str(facts.make.value), str(facts.model.value))
+    if fuels is None or len(fuels) != 1:
+        return
+    (fuel,) = fuels
+    kit = facts.cng_lpg_kit_value.value
+    if fuel == "petrol" and kit is not None and float(kit) > 0:
+        facts.fuel = Fact(
+            value=None,
+            verification="not_found",
+            note="the model is petrol-only but a CNG/LPG kit is fitted; fuel not decided",
+        )
+        return
+    facts.fuel = Fact(
+        value=fuel,
+        raw=f"{facts.make.value} {facts.model.value}",
+        page=facts.model.page,
+        quote=facts.model.quote,
+        verification="derived",
+        policy_citation=facts.model.policy_citation,
+        note=f"fuel not printed; {facts.make.value} {facts.model.value} is sold in {fuel} only per the "
+        f"{model_fuels.SOURCE}",
+    )
 
 
 def normalise(raw: RawExtraction, pages: list[PageEvidence], file_name: str) -> Facts:
@@ -292,6 +327,8 @@ def normalise(raw: RawExtraction, pages: list[PageEvidence], file_name: str) -> 
             }
         )
 
+    _fuel_from_model(facts)
+
     # SR8: business type from the insurers when the policy doesn't state it.
     if not facts.business_type.known and facts.insurer.known and facts.previous_insurer.known:
         same = _same_insurer(str(facts.insurer.value), str(facts.previous_insurer.value))
@@ -305,5 +342,41 @@ def normalise(raw: RawExtraction, pages: list[PageEvidence], file_name: str) -> 
             note="same current and previous insurer → renewal"
             if same
             else "different previous insurer → rollover",
+        )
+    return facts
+
+
+def apply_overrides(facts: Facts, overrides: dict[str, str]) -> Facts:
+    """Reviewer-supplied facts from /clarify (SR25), marked so they are never mistaken for document facts."""
+    snake = {**{k: v for k, v in FIELDS.items()}, **{v: v for v in FIELDS.values()}}
+    for name, text in overrides.items():
+        attr = snake.get(name) or snake.get(
+            "".join(w.capitalize() if i else w for i, w in enumerate(name.split("_")))
+        )
+        if attr is None:
+            continue
+        try:
+            value = _PARSERS[attr](str(text))
+        except _Unknown as exc:
+            setattr(
+                facts,
+                attr,
+                Fact(
+                    value=None,
+                    raw=str(text),
+                    verification="not_found",
+                    note=f"reviewer-supplied value could not be read: {exc}",
+                ),
+            )
+            continue
+        setattr(
+            facts,
+            attr,
+            Fact(
+                value=value,
+                raw=str(text),
+                verification="reviewer_supplied",
+                note="reviewer-supplied fact (SR25), not read from the document",
+            ),
         )
     return facts

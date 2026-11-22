@@ -36,6 +36,10 @@ def dim_value(name: str, facts: Facts, grid: Grid, mapped: dict[str, str]) -> tu
     if name == "age":
         made, start = _year(facts.value("manufacture_year")), _year(facts.value("policy_start_date"))
         return (start - made if made is not None and start is not None else None), SOURCES["age"]
+    if name == "tw_type":
+        vc = facts.value("vehicle_class")
+        types = {"scooter": "scooter", "motorcycle": "motorcycle", "moped": "moped"}
+        return (types.get(str(vc)) if vc else None), ("vehicle_class",)
     if name == "has_add_ons":
         add_ons = facts.value("add_ons")
         return (None if add_ons is None else ("yes" if len(add_ons) > 0 else "no")), ("add_ons",)
@@ -146,6 +150,8 @@ def apply_mappings(
                     missing=srcs or (table.source,),
                 )
             rows = table.lookup(str(source))
+            if not rows and table.optional:
+                continue  # an optional lookup (used only by some T&C lines) leaves the dimension unknown
             if not rows:
                 return Refusal(
                     "unsupported", f"{table.name}: '{source}' is not listed in the grid's mapping table."

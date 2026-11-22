@@ -112,3 +112,69 @@ def test_page_citation_and_verification_recorded() -> None:
     assert f.cc.policy_citation == "upload.pdf · page 1" and f.cc.verification == "verified_both"
     unseen = normalise({"cc": raw("1197", "Cubic Capacity 1197")}, [page(rapid="x", tess="y")], "upload.pdf")
     assert unseen.cc.verification == "unverified" and unseen.cc.confidence == "low"
+
+
+def test_rto_from_joined_registration_number() -> None:
+    assert run(registrationNumber=raw("ZZ07AB1234")).rto.value == "ZZ07"
+    assert run(registrationNumber=raw("ZZ 7 AB 1234")).rto.value == "ZZ07"
+
+
+def test_same_insurer_ignores_dropped_spaces() -> None:
+    from rater import insurers
+
+    assert insurers.canonical("DigitGeneral InsuranceLimited") == "Go Digit"
+    assert insurers.canonical("TATAAIG GENERAL INSURANCE") == "Tata AIG"
+    f = run(
+        insurer=raw("Go Digit General Insurance Ltd."), previousInsurer=raw("GoDigitGeneral InsuranceLimited")
+    )
+    assert f.business_type.value == "renewal"
+
+
+def test_body_style_means_private_car() -> None:
+    for body in ("HATCH BACK", "Hatchback", "SEDAN", "SUV", "MUV"):
+        assert run(vehicleClass=raw(body)).vehicle_class.value == "private_car", body
+
+
+def test_single_fuel_model_supplies_fuel_from_reference_list() -> None:
+    f = run(make=raw("Mahindra"), model=raw("BOLERO NEO-N10 (R)"))
+    assert f.fuel.value == "diesel" and f.fuel.verification == "derived"
+    assert "model → fuel reference list" in (f.fuel.note or "")
+    assert f.fuel.confidence == "medium"
+    joined = run(make=raw("MAHINDRA"), model=raw("MAHINDRABOLERONEO N10"))
+    assert joined.fuel.value == "diesel"
+
+
+def test_multi_fuel_or_unlisted_model_leaves_fuel_unknown() -> None:
+    assert run(make=raw("Maruti"), model=raw("SWIFT VXI")).fuel.value is None  # petrol, diesel and CNG
+    assert run(make=raw("Renault"), model=raw("KWID 1.0 RXT O")).fuel.value is None  # petrol and CNG
+    assert (
+        run(make=raw("Mahindra"), model=raw("BOLERO SLX")).fuel.value is None
+    )  # parent model: diesel|petrol
+    assert run(make=raw("Zenith"), model=raw("ROADSTER 9")).fuel.value is None  # not listed
+
+
+def test_short_model_names_only_match_at_the_start() -> None:
+    # "800" must not match inside "ALTO 800"; the longer ALTO row (multi-fuel) applies instead.
+    assert run(make=raw("Maruti"), model=raw("ALTO 800 LXI")).fuel.value is None
+
+
+def test_printed_fuel_always_wins() -> None:
+    f = run(make=raw("Maruti"), model=raw("JIMNY ZETA"), fuel=raw("Diesel"))
+    assert f.fuel.value == "diesel" and f.fuel.verification != "derived"
+
+
+def test_cng_kit_amount_blocks_a_petrol_only_reading() -> None:
+    f = run(make=raw("Maruti"), model=raw("JIMNY ZETA"), cngLpgKitValue=raw("25,000.00"))
+    assert f.fuel.value is None and "CNG/LPG kit" in (f.fuel.note or "")
+    zero = run(make=raw("Maruti"), model=raw("JIMNY ZETA"), cngLpgKitValue=raw("0.00"))
+    assert zero.fuel.value == "petrol"
+
+
+def test_ev_in_model_name_means_electric() -> None:
+    assert run(make=raw("Tata"), model=raw("NEXON EV MAX")).fuel.value == "electric"
+
+
+def test_two_wheeler_body_types() -> None:
+    assert run(vehicleClass=raw("Two Wheeler")).vehicle_class.value == "two_wheeler"
+    assert run(vehicleClass=raw("Motor Cycle")).vehicle_class.value == "motorcycle"
+    assert run(vehicleClass=raw("Scooter")).vehicle_class.value == "scooter"

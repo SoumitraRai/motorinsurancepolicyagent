@@ -41,8 +41,10 @@ class BusinessType(StrEnum):
 
 class VehicleClass(StrEnum):
     PRIVATE_CAR = "private_car"
-    TWO_WHEELER = "two_wheeler"
+    TWO_WHEELER = "two_wheeler"  # body type not stated
     SCOOTER = "scooter"
+    MOTORCYCLE = "motorcycle"
+    MOPED = "moped"
     GCV = "gcv"
     PCV_TAXI = "pcv_taxi"
     PCV_3W = "pcv_3w"
@@ -108,8 +110,10 @@ class Facts(_Model):
     gvw: Fact = Field(default_factory=_unknown)
     seating_capacity: Fact = Field(default_factory=_unknown)
     segment: Fact = Field(default_factory=_unknown)
+    power_kw: Fact = Field(default_factory=_unknown)  # electric motor power (two-wheeler EV segments)
     od_term_years: Fact = Field(default_factory=_unknown)  # OD tenure, e.g. 1 for "1+3", 3 for "3+3"
     add_ons: Fact = Field(default_factory=_unknown)  # add-on covers listed on the schedule
+    cng_lpg_kit_value: Fact = Field(default_factory=_unknown)  # ₹ value of a fitted CNG/LPG kit (0 = none)
     cpa_cover: Fact = Field(
         default_factory=_unknown
     )  # "yes"/"no": compulsory personal accident (owner-driver)

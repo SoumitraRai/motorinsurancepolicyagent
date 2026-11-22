@@ -9,9 +9,14 @@ ALIASES: dict[str, tuple[str, ...]] = {
 }
 
 
+def _squash(text: str) -> str:
+    return "".join(ch for ch in str(text).lower() if ch.isalnum())
+
+
 def canonical(text: str, aliases: dict[str, tuple[str, ...]] | None = None) -> str | None:
-    low = " ".join(str(text).lower().split())
+    """Spacing-insensitive: OCR often drops spaces ("GoDigitGeneral InsuranceLimited")."""
+    squashed = _squash(text)
     for name, needles in (aliases or ALIASES).items():
-        if any(n in low for n in needles):
+        if any(_squash(n) in squashed for n in needles):
             return name
     return None

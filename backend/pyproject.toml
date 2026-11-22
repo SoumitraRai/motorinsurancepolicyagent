@@ -38,7 +38,8 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-ra"
+addopts = "-ra -m 'not e2e'"
+markers = ["e2e: end-to-end runs on the supplied samples (slow; `make e2e`)"]
 # Dump every thread's stack if a single test runs for 2 minutes (diagnoses hangs).
 faulthandler_timeout = 120
 # The Reliance workbook's Contest sheet holds only a WMF image, which openpyxl drops (no data lost).

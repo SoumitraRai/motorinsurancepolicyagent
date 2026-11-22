@@ -1,0 +1,437 @@
+{
+  "clarification": null,
+  "confidence": {
+    "cappedBy": [],
+    "level": "low",
+    "reason": "weakest link: cc (verified one, page 1)"
+  },
+  "facts": {
+    "addOns": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "businessType": {
+      "confidence": "medium",
+      "note": "same current and previous insurer → renewal",
+      "page": 2,
+      "policyCitation": "pvt-car-satp-go-digit.pdf · page 2",
+      "quote": "Previous Insurer GoDigitGeneral InsuranceLimited",
+      "raw": "GoDigit General Insurance Ltd. / GoDigitGeneral InsuranceLimited",
+      "value": "renewal",
+      "verification": "derived"
+    },
+    "cc": {
+      "confidence": "low",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
+      "quote": "Engine No. G4HGKM999181 Chassis No. MALAF51CLKM049328 Cubic Capacity 1086CC",
+      "raw": "1086",
+      "value": 1086,
+      "verification": "verified_one"
+    },
+    "cngLpgKitValue": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "cpaCover": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "fuel": {
+      "confidence": "medium",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
+      "quote": "Fuel Type Petrol Year of Mfg. 0001-01-01 Year of Regn. 2019",
+      "raw": "Petrol",
+      "value": "petrol",
+      "verification": "verified_both"
+    },
+    "gvw": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "insurer": {
+      "confidence": "medium",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
+      "quote": "GoDigit General Insurance Ltd. Schedule/Certificate",
+      "raw": "GoDigit General Insurance Ltd.",
+      "value": "GoDigit General Insurance Ltd.",
+      "verification": "verified_both"
+    },
+    "issueDate": {
+      "confidence": "low",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
+      "quote": "Policy No. D240744942 / 24031550 PolicyIssueDate 24-Mar-2026 Invoice No. IA224410314",
+      "raw": "24-Mar-2026",
+      "value": "2026-03-24",
+      "verification": "verified_one"
+    },
+    "make": {
+      "confidence": "medium",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
+      "quote": "Make HYUNDAI Model/VehicleVariant(Sub-Type) SANTRONEW/1.1MT CORPORATE",
+      "raw": "HYUNDAI",
+      "value": "HYUNDAI",
+      "verification": "verified_both"
+    },
+    "manufactureYear": {
+      "confidence": "unknown",
+      "note": "placeholder date on the policy (e.g. 0001-01-01): manufacture year unknown",
+      "page": 1,
+      "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
+      "quote": "Fuel Type Petrol Year of Mfg. 0001-01-01 Year of Regn. 2019",
+      "raw": "0001-01-01",
+      "value": null,
+      "verification": "not_found"
+    },
+    "model": {
+      "confidence": "medium",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
+      "quote": "Make HYUNDAI Model/VehicleVariant(Sub-Type) SANTRONEW/1.1MT CORPORATE",
+      "raw": "SANTRONEW/1.1MT CORPORATE",
+      "value": "SANTRONEW/1.1MT CORPORATE",
+      "verification": "verified_both"
+    },
+    "ncb": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "netPremium": {
+      "confidence": "low",
+      "note": null,
+      "page": 2,
+      "policyCitation": "pvt-car-satp-go-digit.pdf · page 2",
+      "quote": "Net Premium ( 3466.00",
+      "raw": "3466.00",
+      "value": 3466.0,
+      "verification": "verified_one"
+    },
+    "odPremium": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "odTermYears": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "policyStartDate": {
+      "confidence": "low",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
+      "quote": "Period of Policy From 25-Mar-2026 00:00:01 InvoiceDate 24-Mar-2026",
+      "raw": "25-Mar-2026",
+      "value": "2026-03-25",
+      "verification": "verified_one"
+    },
+    "policyType": {
+      "confidence": "medium",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
+      "quote": "Digit Private Car Liability OnlyPolicy UINNo.:IRDAN158RP0002V01201718",
+      "raw": "Private Car Liability OnlyPolicy",
+      "value": "satp",
+      "verification": "verified_both"
+    },
+    "powerKw": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "previousInsurer": {
+      "confidence": "medium",
+      "note": null,
+      "page": 2,
+      "policyCitation": "pvt-car-satp-go-digit.pdf · page 2",
+      "quote": "Previous Insurer GoDigitGeneral InsuranceLimited",
+      "raw": "GoDigitGeneral InsuranceLimited",
+      "value": "GoDigitGeneral InsuranceLimited",
+      "verification": "verified_both"
+    },
+    "previousNcb": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "registrationYear": {
+      "confidence": "medium",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
+      "quote": "Fuel Type Petrol Year of Mfg. 0001-01-01 Year of Regn. 2019",
+      "raw": "2019",
+      "value": 2019,
+      "verification": "verified_both"
+    },
+    "rto": {
+      "confidence": "low",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
+      "quote": "Name REENA KUMARI VehicleRegistrationNo. UP78FZ1372",
+      "raw": "UP78FZ1372",
+      "value": "UP78",
+      "verification": "verified_one"
+    },
+    "rtoLocation": {
+      "confidence": "low",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
+      "quote": "RTOLocation Kanpur Nagar,UTTAR PRADESH Seating Capacity 5",
+      "raw": "Kanpur Nagar,UTTAR PRADESH",
+      "value": "KANPUR NAGAR,UTTAR PRADESH",
+      "verification": "verified_one"
+    },
+    "seatingCapacity": {
+      "confidence": "low",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
+      "quote": "RTOLocation Kanpur Nagar,UTTAR PRADESH Seating Capacity 5",
+      "raw": "5",
+      "value": 5,
+      "verification": "verified_one"
+    },
+    "segment": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "tpPremium": {
+      "confidence": "unknown",
+      "note": null,
+      "page": null,
+      "policyCitation": null,
+      "quote": null,
+      "raw": null,
+      "value": null,
+      "verification": "not_found"
+    },
+    "vehicleClass": {
+      "confidence": "medium",
+      "note": null,
+      "page": 1,
+      "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
+      "quote": "Digit Private Car Liability OnlyPolicy UINNo.:IRDAN158RP0002V01201718",
+      "raw": "Private Car",
+      "value": "private_car",
+      "verification": "verified_both"
+    }
+  },
+  "meta": {
+    "engine": "0.1.0",
+    "extractor": "rules",
+    "extractorNote": null,
+    "grid": "godigit/4W SATP",
+    "gridManifest": "d637af2af3e0eb951599150d6361746de679cb1e4ee68a1e2e5425036cd32faa",
+    "model": null,
+    "ocr": {
+      "rapidocr": "1.4.4",
+      "tesseract": "5.5.4"
+    },
+    "pages": 4,
+    "pdfSha256": "4854e968d2280cb4ca6022b0b385328e14847d059a60bf186edf248df4bd4a26",
+    "reviewerSupplied": [],
+    "seconds": 17.9,
+    "switches": {
+      "BROKER_ELIGIBILITY": "assume_base",
+      "GRID_DATE_POLICY": "warn",
+      "LESSER_PERCENT_MEANS": "points"
+    }
+  },
+  "notApplied": [],
+  "rates": {
+    "od": {
+      "applicable": false,
+      "citations": [],
+      "gridCitation": null,
+      "ratePercent": null,
+      "rawCellValue": null,
+      "reason": "Stand-alone TP policy: OD not applicable"
+    },
+    "tp": {
+      "applicable": true,
+      "citations": [
+        {
+          "file": "raters/godigit/march-2026/Large Insurance Brokers Mar'26 - Shared.xlsx",
+          "range": "E293",
+          "sheet": "4W SATP",
+          "type": "xlsx"
+        }
+      ],
+      "gridCitation": "raters/godigit/march-2026/Large Insurance Brokers Mar'26 - Shared.xlsx · '4W SATP'!E293",
+      "ratePercent": 29.5,
+      "rawCellValue": "0.295",
+      "reason": "insurer's published maximum (Max CD2)"
+    }
+  },
+  "status": "resolved",
+  "trace": [
+    {
+      "citations": [
+        {
+          "file": "pvt-car-satp-go-digit.pdf",
+          "page": 1,
+          "type": "policy"
+        },
+        {
+          "file": "pvt-car-satp-go-digit.pdf",
+          "page": 1,
+          "type": "policy"
+        },
+        {
+          "file": "pvt-car-satp-go-digit.pdf",
+          "page": 1,
+          "type": "policy"
+        }
+      ],
+      "decision": "Insurer Go Digit, private car, satp policy: using the grid 'Go Digit '4W SATP''.",
+      "gridCitation": null,
+      "kind": "select",
+      "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
+      "step": 1,
+      "warnings": []
+    },
+    {
+      "citations": [],
+      "decision": "Grid 'Go Digit '4W SATP'': effective period not stated.",
+      "gridCitation": null,
+      "kind": "date",
+      "policyCitation": null,
+      "step": 2,
+      "warnings": []
+    },
+    {
+      "citations": [
+        {
+          "file": "pvt-car-satp-go-digit.pdf",
+          "page": 1,
+          "type": "policy"
+        },
+        {
+          "file": "raters/godigit/march-2026/Large Insurance Brokers Mar'26 - Shared.xlsx",
+          "range": "B1609:C1609",
+          "sheet": "4W  RTO",
+          "type": "xlsx"
+        }
+      ],
+      "decision": "Go Digit RTO → 4WTP cluster: UP78 maps to UP_Bad.",
+      "gridCitation": "raters/godigit/march-2026/Large Insurance Brokers Mar'26 - Shared.xlsx · '4W  RTO'!B1609:C1609",
+      "kind": "map",
+      "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
+      "step": 3,
+      "warnings": []
+    },
+    {
+      "citations": [
+        {
+          "file": "pvt-car-satp-go-digit.pdf",
+          "page": 1,
+          "type": "policy"
+        },
+        {
+          "file": "pvt-car-satp-go-digit.pdf",
+          "page": 1,
+          "type": "policy"
+        },
+        {
+          "file": "raters/godigit/march-2026/Large Insurance Brokers Mar'26 - Shared.xlsx",
+          "range": "E293",
+          "sheet": "4W SATP",
+          "type": "xlsx"
+        }
+      ],
+      "decision": "TP row matched (UP_Bad · Petrol>1000 · age All): 29.5% (insurer's published maximum (Max CD2)).",
+      "gridCitation": "raters/godigit/march-2026/Large Insurance Brokers Mar'26 - Shared.xlsx · '4W SATP'!E293",
+      "kind": "match",
+      "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
+      "step": 4,
+      "warnings": []
+    },
+    {
+      "citations": [
+        {
+          "file": "raters/godigit/march-2026/Large Insurance Brokers Mar'26 - Shared.xlsx",
+          "range": "E293",
+          "sheet": "4W SATP",
+          "type": "xlsx"
+        }
+      ],
+      "decision": "Resolved: OD not applicable; TP 29.5%.",
+      "gridCitation": "raters/godigit/march-2026/Large Insurance Brokers Mar'26 - Shared.xlsx · '4W SATP'!E293",
+      "kind": "result",
+      "policyCitation": null,
+      "step": 5,
+      "warnings": []
+    }
+  ]
+}

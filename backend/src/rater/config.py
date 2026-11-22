@@ -3,10 +3,14 @@
 import os
 from dataclasses import dataclass
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from rater.api.auth import JwtVerifier, jwks_fetcher
 from rater.storage.objects import LocalObjectStore, ObjectStore, SupabaseObjectStore
-from rater.worker import NotReadyPipeline, Pipeline
+from rater.worker import Pipeline
+
+if TYPE_CHECKING:
+    from rater.pipeline import Deps
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 
@@ -55,6 +59,27 @@ def build_objects(settings: Settings) -> ObjectStore:
     )
 
 
+def build_deps() -> "Deps":
+    from rater.bundle import BUNDLE_ROOT, verify_bundle
+    from rater.extraction.ocr import RapidOcrEngine, TesseractEngine
+    from rater.extraction.providers.base import choose_extractor
+    from rater.extraction.providers.rules import RulesExtractor
+    from rater.grids.registry import load_all
+    from rater.pipeline import Deps
+    from rater.switches import Switches
+
+    info = verify_bundle(BUNDLE_ROOT)  # a mismatch raises and stops the worker (SR11)
+    return Deps(
+        gridset=load_all(BUNDLE_ROOT),
+        engines=(RapidOcrEngine(), TesseractEngine()),
+        primary=choose_extractor(),
+        fallback=RulesExtractor(),
+        switches=Switches.from_env(),
+        grid_manifest=info.manifest_sha256,
+    )
+
+
 def build_pipeline(settings: Settings) -> Pipeline:
-    # Replaced by the real analysis pipeline in plan T13.
-    return NotReadyPipeline()
+    from rater.pipeline import AnalysisPipeline
+
+    return AnalysisPipeline(build_deps())

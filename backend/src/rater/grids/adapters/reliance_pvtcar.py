@@ -80,17 +80,19 @@ class _Row:
     rest: bool  # "Rest of …": the states minus cities that other rows name
 
 
-def _parse_row(label: str, zone: str) -> _Row:
+def parse_region_row(label: str, zone: str, sheet: str = SHEET) -> _Row:
     text = label.strip()
     rest = text.lower().startswith("rest of")
     body = re.sub(r"(?i)^rest of\s*", "", text)
     states: set[str] = set()
     cities: set[str] = set()
-    for raw in re.split(r"\s*,\s*", body):
+    for raw in re.split(r"\s*[,&]\s*", body):
         tok = " ".join(raw.upper().split())
         if not tok:
             continue
         tok = _ROW_TOKENS.get(tok.replace(" ", ""), tok)
+        if len(tok) == 2 and tok != "NE":  # two-letter state codes ("MH,GA", "BH" = Bihar)
+            tok = {"BH": "BIHAR"}.get(tok) or geo.STATE_CODES.get(tok, tok)
         if tok == "NE":
             states |= geo.NORTH_EAST
         elif tok in _STATES:
@@ -98,7 +100,7 @@ def _parse_row(label: str, zone: str) -> _Row:
         elif geo.state_of_city(tok):
             cities.add(tok)
         else:
-            raise ValueError(f"Reliance '{SHEET}': unknown region token {raw!r} in {label!r}")
+            raise ValueError(f"Reliance '{sheet}': unknown region token {raw!r} in {label!r}")
     return _Row(text, zone, frozenset(states), frozenset(cities), rest)
 
 
@@ -151,7 +153,7 @@ def load(root: Path) -> list[Grid]:
             label = sheet.value(f"B{r}")
             if not label:
                 continue
-            row = _parse_row(str(label), zone)
+            row = parse_region_row(str(label), zone)
             rows.append(row)
             row_cite = XlsxCite(file, SHEET, f"A{r}:F{r}")
             for col, policy, fuel in (
@@ -178,41 +180,7 @@ def load(root: Path) -> list[Grid]:
                     )
                 )
 
-        rto = wb.sheet("RTO List")
-        by_code: list[MappingRow] = []
-        for r in range(2, rto.max_row + 1):
-            code, region, rto_zone = rto.value(f"A{r}"), rto.value(f"C{r}"), rto.value(f"E{r}")
-            if not code or not region:
-                continue
-            hit, note, cap = _resolve_region(str(region), rows)
-            if hit is None:
-                continue
-            cite = XlsxCite(file, "RTO List", f"A{r}:E{r}")
-            by_code.append(MappingRow(str(code), hit.label, cite, raw=code, note=note, cap=cap))
-            if rto_zone and _norm(rto_zone) != _norm(hit.zone):
-                by_code.append(
-                    MappingRow(
-                        str(code),
-                        f"zone {rto_zone} per 'RTO List' (grid row '{hit.label}' is {hit.zone})",
-                        cite,
-                        raw=code,
-                    )
-                )
-
-        by_state: list[MappingRow] = []
-        for state in sorted({s for row in rows for s in row.states}):
-            covering = _state_row(state, rows)
-            if covering is not None:
-                by_state.append(
-                    MappingRow(
-                        state,
-                        covering.label,
-                        XlsxCite(file, SHEET, "B2"),
-                        raw="RTO region",
-                        note=f"via the RTO's state code ({state})",
-                        cap=STATE_CAP,
-                    )
-                )
+        region_table = build_region_table(wb, file, rows, SHEET, "Reliance RTO → region")
 
         exceptions = _tc(wb, file)
         a1 = str(sheet.value("A1"))
@@ -226,14 +194,7 @@ def load(root: Path) -> list[Grid]:
                 policy_types=frozenset({"comprehensive", "saod", "satp"}),
                 business_types=frozenset({"renewal", "rollover"}),
                 rules=tuple(rules),
-                mappings=(
-                    RtoRegionTable(
-                        name="Reliance RTO → region",
-                        target="region",
-                        by_code=tuple(by_code),
-                        by_state=tuple(by_state),
-                    ),
-                ),
+                mappings=(region_table,),
                 exceptions=exceptions,
                 unpublished=(
                     Unpublished(
@@ -251,6 +212,45 @@ def load(root: Path) -> list[Grid]:
         ]
     finally:
         wb.close()
+
+
+def build_region_table(wb: Workbook, file: str, rows: list[_Row], sheet: str, name: str) -> RtoRegionTable:
+    """RTO code → rate-row label via the `RTO List`, with the RTO's state code as the fallback."""
+    rto = wb.sheet("RTO List")
+    by_code: list[MappingRow] = []
+    for r in range(2, rto.max_row + 1):
+        code, region, rto_zone = rto.value(f"A{r}"), rto.value(f"C{r}"), rto.value(f"E{r}")
+        if not code or not region:
+            continue
+        hit, note, cap = _resolve_region(str(region), rows)
+        if hit is None:
+            continue
+        cite = XlsxCite(file, "RTO List", f"A{r}:E{r}")
+        by_code.append(MappingRow(str(code), hit.label, cite, raw=code, note=note, cap=cap))
+        if rto_zone and _norm(rto_zone) != _norm(hit.zone):
+            by_code.append(
+                MappingRow(
+                    str(code),
+                    f"zone {rto_zone} per 'RTO List' (grid row '{hit.label}' is {hit.zone})",
+                    cite,
+                    raw=code,
+                )
+            )
+    by_state: list[MappingRow] = []
+    for state in sorted({s for row in rows for s in row.states}):
+        covering = _state_row(state, rows)
+        if covering is not None:
+            by_state.append(
+                MappingRow(
+                    state,
+                    covering.label,
+                    XlsxCite(file, sheet, "B2"),
+                    raw=str(wb.sheet(sheet).value("B2")),
+                    note=f"via the RTO's state code ({state})",
+                    cap=STATE_CAP,
+                )
+            )
+    return RtoRegionTable(name=name, target="region", by_code=tuple(by_code), by_state=tuple(by_state))
 
 
 def _tc(wb: Workbook, file: str) -> tuple[ExceptionRule, ...]:

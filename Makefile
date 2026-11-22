@@ -2,7 +2,7 @@
 # Healthy output markers: build -> "Build succeeded", test -> "passed", lint -> "All checks passed".
 SHELL := /bin/bash
 .SHELLFLAGS := -eu -o pipefail -c
-.PHONY: build test lint format run run-api run-worker
+.PHONY: build test e2e lint format run run-api run-worker
 
 BACKEND := backend
 FRONTEND := frontend
@@ -15,6 +15,10 @@ build:
 test:
 	cd $(BACKEND) && uv run pytest -q
 	cd $(FRONTEND) && npx vitest --run
+
+# End-to-end on the four samples (slow: OCR of 40 pages). Must pass before submission.
+e2e:
+	cd $(BACKEND) && uv run pytest -q -m e2e
 
 lint:
 	cd $(BACKEND) && uv run ruff check . && uv run ruff format --check . && uv run mypy src

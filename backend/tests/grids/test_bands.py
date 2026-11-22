@@ -52,3 +52,12 @@ def test_band_gap_values() -> None:
         a, b = parse_band(low, unit), parse_band(high, unit)
         assert a is not None and b is not None
         assert not a.contains(edge) and not b.contains(edge)
+
+
+def test_inclusive_comparisons() -> None:
+    le = parse_band("<=155", "cc")
+    assert le is not None and le.contains(155) and not le.contains(156)
+    le2 = parse_band("< =350", "cc")
+    assert le2 is not None and le2.contains(350)
+    ge = parse_band(">=3", "kw")
+    assert ge is not None and ge.contains(3) and not ge.contains(2.9)

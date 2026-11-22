@@ -642,3 +642,93 @@ T14 and T15 reuse T7's primitives and extend `registry.py`. **Test:** the same
   - Spec amended in this commit (SR5 wording, extraction call, Approaches 2, AC15, security egress/secrets,
     C10 wording, `meta.extractor`), keeping `status: accepted`, per the PO's plan-interview decision.
   - (T12 commit)
+- **T13: pipeline, CLI and sample-output departures.**
+  - The e2e test is marked `e2e` and runs with `make e2e` (new Makefile target), not in `make test`. OCR of
+    the 40 sample pages takes ~3–4 minutes. It must pass before submission (Proof 1).
+  - Running the real samples exposed resolver and extractor bugs, each fixed with a failing test first:
+    - an "All" band required its fact (e.g. age with an unknown manufacture year);
+    - exceptions scoped to another cluster, zone or region flooded the trace (now silently out of
+      scope);
+    - OCR drops spaces ("LiabilityOnlyPolicy", "PrivateCar", "GoDigitGeneral InsuranceLimited"), so
+      labels and insurer names now match spacing-insensitively;
+    - joined registration numbers ("ZZ07AB1234");
+    - labels bleeding into the next value;
+    - "From 00:00 Hrs on <date>";
+    - a make glued to its model ("RENAULTKWID" → `grids/makes.split_make`);
+    - business type only from a labelled field, never free text mentioning "renewal".
+  - New resolver rule (`match._irrelevant`). An unknown fact with a closed set of values (fuel, NCB flag,
+    add-ons, CPA, business type) does not block a result when the grid's candidate rows cover every value
+    and all give the same rate. The trace says so and cites every candidate cell. This is exhaustive
+    checking, not inference. If the rates differ or a value is uncovered, the result stays `ambiguous`.
+  - A car body style printed on the policy (hatchback, sedan, SUV, MUV) normalises to `private_car`.
+  - Pipeline `meta` adds `extractor`, `extractorNote`, `model`, `ocr`, `gridManifest`, `pdfSha256`,
+    `pages`, `reviewerSupplied` and `seconds`. `seconds` makes pipeline output non-byte-identical across
+    runs. Resolution itself stays deterministic (AC11).
+  - README drafted during T13 (setup, deploy, persistence, configuration, privacy). T16 completes it.
+  - Sample outputs were generated with the local `rules` extractor (no OpenRouter key yet). They are to be
+    regenerated with OpenRouter once the PO has a key.
+  - **PO decision 2026-11-22: model → fuel reference list, single-fuel models only**
+    (`grids/model_fuels.py`).
+    - Used only when the policy prints no fuel.
+    - A model sold in one fuel supplies it (`verification: derived`, medium confidence, trace note).
+    - Multi-fuel models are listed so they deliberately stay unknown, and so `ambiguous`.
+    - A printed fuel always wins.
+    - A printed CNG/LPG kit value above 0 blocks a petrol-only reading (new fact `cng_lpg_kit_value`).
+    - An "EV"/"Electric" model name means electric.
+    - README assumption.
+    - **List data supplied by the PO on 2026-11-22.** It is stored as `grids/data/model_fuels.csv`
+      (make, model, fuels, years, source), validated on load: known fuels only, one row per make+model.
+    - The PO built it externally. Most rows are marked "not web-verified"; single-fuel rows are the ones
+      that change results.
+    - Matching is "starts with", after stripping a glued make prefix, and the longest name wins. This
+      fixes short-name collisions such as "800" inside "ALTO 800".
+    - With this list the Renault Kwid is petrol|CNG (Renault's Jan-2025 CNG kit release), so the Reliance
+      sample stays `ambiguous` on fuel by design.
+  - Also fixed during T13 with failing tests first:
+    - "Make/Model&Variant" labels (the model came from a page-7 line);
+    - "From00:00Hrs" dates;
+    - component rows filtered to the policy's own type, so a package policy's TP is "not published" (C3),
+      not "no row matches" from the STP rows.
+  - (T13 commit)
+- **T14: two-wheeler adapters departures.**
+  - New adapters:
+    - `godigit_tw.py`: five grids, `TW 1+1` (comprehensive, renewal/rollover), `TW SATP`, `TW 1+5` (new,
+      OD term 1), `2W Grid 5+5` (new, OD term 5) and `TW SAOD` (OD term 1–4 via the "Max N year CD2"
+      columns), with the `2W RTO's` columns C/D/E.
+    - `reliance_tw.py`: `TW SCOOTER GRID`. Motorcycles get only the SA OD column, per its own T&C K5.
+    - `tata_cv_tw.py` `load_tw`: Tata AIG `TW`, 70 clusters; "All" splits into an OD and a TP rule.
+  - `grids/twsegments.py` parses segment labels into OR-of-AND dimension sets:
+    - scooter/motorcycle, CC band, make group, "Others" relative to sibling labels;
+    - "Other than RE", model families ("Avenger"), EV kW bands, "EV", "SC/EV" (OR) vs "SC_EV" (AND).
+    - Unknown labels or makes raise at load time.
+  - Model and engine extensions:
+    - `Contains` dimension;
+    - `<=`/`>=` bands and a kW unit;
+    - `tw_type` derived dimension (scooter/motorcycle/moped) from the new `motorcycle` and `moped` vehicle
+      classes ("two wheeler" alone leaves it unknown);
+    - `power_kw` fact;
+    - optional mapping tables;
+    - an engine `_explain` step that turns "no row matches" into a cited decline / no-rate refusal when a
+      decline note covers the policy.
+  - Interpretations (README assumptions):
+    - "Max CD2" is the payout; CD1 columns are not brokerage.
+    - Text codes "D" and "MISP" in rate cells give no rate; their meaning isn't stated, so the result is
+      refused, quoting the code.
+    - A package two-wheeler rate is one rate on a stated basis ("Slab Net 5", "OD plus Add on", or "total
+      premium" for Tata AIG). It is reported as OD, with TP unpublished and confidence capped.
+    - Go Digit SAOD uses "Max N year CD2" by OD term; the plain "CD2" column is not used (capped).
+    - 5+5 "W/O Add on" / "W/O CPA" CD2 reductions become row-scoped policy conditions. "Format error"
+      notes are row-scoped `unclassified` → `ambiguous`.
+    - Reliance TW T&C are applied to fresh business only (EV flat 25%; Yamaha/Hero −2.5%; Kolhapur,
+      Mysore, Mangalore and West Bengal excluding Kolkata flat 20%, matched via the `RTO List` region
+      name). The contest/GWP table is broker-side.
+  - New classifier rules, each tested on the real lines:
+    - contest/GWP lines are broker-side;
+    - "posting" / "1/2 basis" payment schedules are process notes;
+    - "(-)2.5%" is a reduction;
+    - "Grid not applicable for" lines are definitions.
+  - Reliance region helpers generalised (`parse_region_row` with two-letter state codes and "&",
+    `build_region_table`) and shared by private car and scooter.
+  - `tests/grids/test_vehicle_classes.py` runs one synthetic policy per two-wheeler grid through the real
+    grids and engine.
+  - (T13+T14 commit)
