@@ -221,3 +221,19 @@ def test_rules_from_glued_to_time() -> None:
         ]
     )
     assert raw["policyStartDate"].value == "23-Dec-2025" and raw["policyStartDate"].page == 2
+
+
+def test_rules_extracts_commercial_vehicle_fields() -> None:
+    pages = [
+        PageInput(
+            1,
+            "Goods Carrying Vehicle - Three Wheeler Package Policy\nBody Type: Closed Body\nGVW: 2450 kg\n"
+            "Seating Capacity 2\nTPPD restricted to Rs. 6000",
+            None,
+        )
+    ]
+    raw = RulesExtractor().extract(pages)
+    assert raw["vehicleClass"].value.lower().startswith("goods carrying vehicle - three wheeler")
+    assert raw["bodyType"].value.strip().lower() == "closed body"
+    assert raw["gvw"].value == "2450"
+    assert "restricted" in raw["tppdRestricted"].value.lower()

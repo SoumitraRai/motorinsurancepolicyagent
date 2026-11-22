@@ -74,14 +74,19 @@ def apply_exceptions(
                 Step("note", f"Grid note ({rule.kind.replace('_', ' ')}): {rule.text}", cites=(rule.cite,))
             )
             continue
-        if rule.kind == "unclassified":
+        if rule.kind == "catch_all":
+            continue  # "everything not listed above": only matters when no row matches (engine._explain)
+        holds = _holds(rule, facts, grid, mapped)
+        if rule.kind == "unclassified" and holds not in ("elsewhere", False):
+            # In scope, or its scope can't be decided: either way the term can't be ignored.
             return Refusal(
                 "ambiguous",
                 f'A grid term in scope could not be interpreted: "{rule.text}".',
                 cites=(rule.cite,),
             )
+        if rule.kind == "unclassified":
+            continue
 
-        holds = _holds(rule, facts, grid, mapped)
         if holds == "elsewhere":
             continue
         if isinstance(holds, tuple):

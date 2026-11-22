@@ -178,3 +178,22 @@ def test_two_wheeler_body_types() -> None:
     assert run(vehicleClass=raw("Two Wheeler")).vehicle_class.value == "two_wheeler"
     assert run(vehicleClass=raw("Motor Cycle")).vehicle_class.value == "motorcycle"
     assert run(vehicleClass=raw("Scooter")).vehicle_class.value == "scooter"
+
+
+def test_commercial_vehicle_classes() -> None:
+    def vc(text: str) -> object:
+        return run(vehicleClass=raw(text)).vehicle_class.value
+
+    assert vc("Goods Carrying Vehicle - Three Wheeler") == "gcv_3w"
+    assert vc("Goods Carrying Vehicle") == "gcv"
+    assert vc("Passenger Carrying Vehicle - Three Wheeler") == "pcv_3w"
+    assert vc("E-Rickshaw") == "pcv_3w"
+    assert vc("Passenger Carrying Two Wheeler") == "pcv_2w"
+    assert vc("Miscellaneous and Special Type of Vehicle") == "misc_d"
+    assert vc("Agricultural Tractor") == "tractor"
+
+
+def test_body_type_and_tppd() -> None:
+    f = run(bodyType=raw(" Oil  tanker "), tppdRestricted=raw("TPPD restricted to Rs. 6,000"))
+    assert f.body_type.value == "OIL TANKER" and f.tppd_restricted.value == "yes"
+    assert run(tppdRestricted=raw("TPPD: No")).tppd_restricted.value == "no"

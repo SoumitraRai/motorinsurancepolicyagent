@@ -28,8 +28,22 @@ class Contains:
     text: str
 
 
+@dataclass(frozen=True)
+class ContainsAny:
+    """The fact contains any of these texts (e.g. body types "BACKHOE", "FORKLIFT", "EXCAVATOR")."""
+
+    texts: frozenset[str]
+
+
+@dataclass(frozen=True)
+class NotContainsAny:
+    """The fact contains none of these texts (e.g. an "All" row beside an "Oil Tanker" row)."""
+
+    texts: frozenset[str]
+
+
 # A rule dimension is an exact value, any of a set of values, "anything but", a substring, or a band.
-DimValue = str | frozenset[str] | NotIn | Contains | Band
+DimValue = str | frozenset[str] | NotIn | Contains | ContainsAny | NotContainsAny | Band
 
 
 def norm_key(text: str) -> str:
@@ -49,6 +63,10 @@ def dim_matches(want: DimValue, have: Any) -> bool:
         return norm_key(have) not in {norm_key(v) for v in want.values}
     if isinstance(want, Contains):
         return norm_key(want.text) in norm_key(have)
+    if isinstance(want, ContainsAny):
+        return any(norm_key(t) in norm_key(have) for t in want.texts)
+    if isinstance(want, NotContainsAny):
+        return not any(norm_key(t) in norm_key(have) for t in want.texts)
     if isinstance(want, frozenset):
         return norm_key(have) in {norm_key(v) for v in want}
     return norm_key(have) == norm_key(want)
@@ -61,6 +79,10 @@ def describe(want: DimValue) -> str:
         return "not " + " / ".join(sorted(want.values))
     if isinstance(want, Contains):
         return f"contains {want.text}"
+    if isinstance(want, ContainsAny):
+        return "contains " + " / ".join(sorted(want.texts))
+    if isinstance(want, NotContainsAny):
+        return "contains none of " + " / ".join(sorted(want.texts))
     if isinstance(want, frozenset):
         return " / ".join(sorted(want))
     return want
@@ -110,6 +132,8 @@ class MappingTable:
     if_missing: str = "ambiguous"
     missing_reason: str = ""
     optional: bool = False  # a key the table doesn't list leaves the target unknown instead of refusing
+    # The table applies only to policies meeting all of these (e.g. one RTO-map column per vehicle type).
+    when: tuple[tuple[str, "DimValue"], ...] = ()
 
     def lookup(self, key: str) -> list[MappingRow]:
         k = norm_key(key)

@@ -31,8 +31,9 @@ _LABELS: dict[str, tuple[str, ...]] = {
         r"(new(?:\s*business)?|brand\s*new|renewal|roll\s*over)",
     ),
     "vehicleClass": (
-        r"(private\s*car|two\s*wheeler|goods\s*carrying|passenger\s*carrying|school\s*bus|"
-        r"motor\s*cycle|scooter|taxi)",
+        r"((?:goods|passenger)\s*carrying(?:\s*vehicle)?(?:\s*[-–]?\s*(?:three|two|3|2)\s*-?\s*wheeler)?|"
+        r"private\s*car|two\s*wheeler|school\s*bus|staff\s*bus|e-?\s*rickshaw|miscellaneous|"
+        r"(?:agricultural\s*)?tractor|motor\s*cycle|scooter|taxi)",
         r"(?:vehicle\s*type|body\s*type)\s*[:\-]?\s*(hatch\s*back|sedan|suv|muv|saloon)",
     ),
     "policyType": (
@@ -69,7 +70,9 @@ _LABELS: dict[str, tuple[str, ...]] = {
     ),
     "issueDate": (rf"(?:issuance|issue)\s*date\s*[:\-]?\s*({_DATE})",),
     "seatingCapacity": (r"seat(?:ing)?\s*(?:capacity)?(?:\s*including\s*driver)?\s*[:\-]?\s*(\d{1,3})\b",),
-    "gvw": (r"\bgvw\b\s*[:\-]?\s*(\d{3,6})",),
+    "gvw": (r"\b(?:gvw|gross\s*vehicle\s*weight)\b\s*(?:\(\s*kgs?\s*\))?\s*[:\-]?\s*(\d{3,6})",),
+    "bodyType": (r"body\s*type\s*[:\-]?\s*([A-Za-z][A-Za-z /&\-]{2,30}?)\s*(?:$|\n|\s{2,})",),
+    "tppdRestricted": (r"(tppd\s*(?:cover\s*)?(?:restricted|limited)\s*to[^\n]{0,30}|restricted\s*tppd)",),
     "cngLpgKitValue": (rf"cng\s*/?\s*lpg\s*kit\D{{0,15}}?({_AMOUNT})",),
 }
 

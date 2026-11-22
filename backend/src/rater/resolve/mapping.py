@@ -8,7 +8,15 @@ from typing import Any
 
 from rater.facts import Facts
 from rater.grids import geo
-from rater.grids.model import CitySplitTable, Grid, MappingRow, RtoRegionTable, norm_key
+from rater.grids.model import (
+    CitySplitTable,
+    Grid,
+    MappingRow,
+    MappingTable,
+    RtoRegionTable,
+    dim_matches,
+    norm_key,
+)
 from rater.resolve.common import Refusal, Step
 from rater.resolve.confidence import Cap
 
@@ -36,6 +44,18 @@ def dim_value(name: str, facts: Facts, grid: Grid, mapped: dict[str, str]) -> tu
     if name == "age":
         made, start = _year(facts.value("manufacture_year")), _year(facts.value("policy_start_date"))
         return (start - made if made is not None and start is not None else None), SOURCES["age"]
+    if name == "gvw_t":
+        gvw = facts.value("gvw")
+        if gvw is None:
+            return None, ("gvw",)
+        g = float(gvw)
+        return (g / 1000 if g > 100 else g), ("gvw",)  # policies print GVW in kg; grids band it in tonnes
+    if name == "zero_dep":
+        add_ons = facts.value("add_ons")
+        if add_ons is None:
+            return None, ("add_ons",)
+        has = any(k in str(a).lower() for a in add_ons for k in ("zero dep", "nil dep", "depreciation"))
+        return ("yes" if has else "no"), ("add_ons",)
     if name == "tw_type":
         vc = facts.value("vehicle_class")
         types = {"scooter": "scooter", "motorcycle": "motorcycle", "moped": "moped"}
@@ -126,7 +146,16 @@ def apply_mappings(
     steps: list[Step] = []
     used: set[str] = set()
     caps: list[Cap] = []
+    conditional: dict[str, list[str]] = {}  # target -> names of conditional tables that did not apply
     for table in grid.mappings:
+        if isinstance(table, MappingTable) and table.when:
+            applies = _applies(table, facts, grid, mapped)
+            if isinstance(applies, Refusal):
+                return applies
+            if not applies:
+                conditional.setdefault(table.target, []).append(table.name)
+                continue
+            conditional[table.target] = []
         if isinstance(table, RtoRegionTable):
             got_r = _rto_region(table, facts)
             if isinstance(got_r, Refusal):
@@ -177,4 +206,30 @@ def apply_mappings(
                 cites=tuple(r.cite for r in rows),
             )
         )
+    for target, skipped in conditional.items():
+        if skipped and target not in mapped:
+            return Refusal(
+                "unsupported",
+                f"None of the grid's mapping tables for {target} covers this policy ({'; '.join(skipped)}).",
+            )
     return mapped, steps, used, caps
+
+
+def _applies(table: MappingTable, facts: Facts, grid: Grid, mapped: dict[str, str]) -> bool | Refusal:
+    """Whether a conditional table applies. A known fact that fails rules it out before any unknown one
+    can make the answer ambiguous."""
+    missing: list[str] = []
+    for dim, want in table.when:
+        have, srcs = dim_value(dim, facts, grid, mapped)
+        if have is None:
+            missing.extend(srcs or (dim,))
+        elif not dim_matches(want, have):
+            return False
+    if missing:
+        return Refusal(
+            "ambiguous",
+            f"{table.name}: whether this table applies depends on {', '.join(missing)}, which could not "
+            "be read from the policy.",
+            missing=tuple(missing),
+        )
+    return True

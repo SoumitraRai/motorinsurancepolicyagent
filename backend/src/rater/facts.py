@@ -45,7 +45,9 @@ class VehicleClass(StrEnum):
     SCOOTER = "scooter"
     MOTORCYCLE = "motorcycle"
     MOPED = "moped"
-    GCV = "gcv"
+    GCV = "gcv"  # goods carrying, 4+ wheels
+    GCV_3W = "gcv_3w"  # goods carrying three-wheeler
+    PCV_2W = "pcv_2w"  # passenger-carrying two-wheeler (bike taxi)
     PCV_TAXI = "pcv_taxi"
     PCV_3W = "pcv_3w"
     SCHOOL_BUS = "school_bus"
@@ -111,6 +113,8 @@ class Facts(_Model):
     seating_capacity: Fact = Field(default_factory=_unknown)
     segment: Fact = Field(default_factory=_unknown)
     power_kw: Fact = Field(default_factory=_unknown)  # electric motor power (two-wheeler EV segments)
+    body_type: Fact = Field(default_factory=_unknown)  # e.g. TIPPER, OIL TANKER, CRANE, JCB, HATCHBACK
+    tppd_restricted: Fact = Field(default_factory=_unknown)  # "yes" if third-party property damage is limited
     od_term_years: Fact = Field(default_factory=_unknown)  # OD tenure, e.g. 1 for "1+3", 3 for "3+3"
     add_ons: Fact = Field(default_factory=_unknown)  # add-on covers listed on the schedule
     cng_lpg_kit_value: Fact = Field(default_factory=_unknown)  # ₹ value of a fitted CNG/LPG kit (0 = none)

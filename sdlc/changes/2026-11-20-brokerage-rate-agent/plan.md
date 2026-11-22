@@ -732,3 +732,19 @@ T14 and T15 reuse T7's primitives and extend `registry.py`. **Test:** the same
   - `tests/grids/test_vehicle_classes.py` runs one synthetic policy per two-wheeler grid through the real
     grids and engine.
   - (T13+T14 commit)
+- **T15 (part 1), Go Digit `CV Grid (excl. HCV)` + `CV RTO Mapping`.** Built as `grids/adapters/godigit_cv.py`
+  and `grids/cvsegments.py` (segment labels → dims); the rest of T15 is not started.
+  - Mapping tables gained `when`: one `CV RTO Mapping` column per vehicle type (GCV3, LCV/MCV/HCV by GVW,
+    PCV 2W/3W by fuel, PCV by seats, Misc D). LCV/MCV/HCV use the Motor Vehicles Act weight classes
+    (≤7.5 t, ≤12 t, >12 t), as the sheet doesn't define them. Tractors use the Misc D column (capped).
+  - "Low CD2 RTOs" rows are placed only where the sheet defines them (`_LOWCD2_n` mapping suffix or an
+    "Only for <RTOs>" note); RTO-scoped rows take precedence over the cluster's general rows. "All"/"Others"
+    rows exclude what sibling rows name (makes, Oil Tanker). Multi-rate cells (CD1-dependent) and undefined
+    scopes are row-scoped `ambiguous`; catch-all rows ("GCV4 excl above") count only when no row matches.
+  - Cluster labels that differ from the mapping only in spelling are aliased; `KA 1 Good`/`KA 2 Bad` and
+    mapping values like `DELHI-1` are not guessed (→ `unsupported`).
+  - Resolver fixes, failing test first: a scoped `unclassified` term only refuses policies in its scope
+    (it used to block the whole grid, which also affected the 2W 5+5 notes); "no row" plus an undefined
+    term covering the policy is `ambiguous`, not `unsupported`; new dims `ContainsAny`/`NotContainsAny`.
+  - Extraction: `bodyType`, `tppdRestricted`; vehicle classes `gcv_3w`, `pcv_2w`, e-rickshaw, Misc D, tractor.
+  - (T15 part 1 commit)

@@ -100,3 +100,52 @@ def test_list_valued_fact_matches_any_keyword() -> None:
     assert dim_matches(frozenset({"tyre", "rti"}), ["Zero Depreciation", "Tyre Protect"])
     assert not dim_matches(frozenset({"tyre", "rti"}), ["Zero Depreciation"])
     assert not dim_matches(frozenset({"tyre", "rti"}), [])
+
+
+def test_scoped_unclassified_term_only_blocks_policies_in_its_scope() -> None:
+    from rater.grids.model import ExceptionRule
+
+    note = ExceptionRule("unclassified", "OSN 1+ Declined", cite("H9"), when=(("zone", "Zone B"),))
+    g = acme(exceptions=(note,))
+    assert resolve(car(rto="ZZ01"), gridset(g), S, "p.pdf").status == "resolved"  # Zone A
+    r = resolve(car(rto="ZZ02"), gridset(g), S, "p.pdf")
+    assert r.status == "ambiguous" and "OSN 1+ Declined" in r.trace[-1].decision
+
+
+def test_no_row_but_an_undefined_scope_covers_the_policy_is_ambiguous() -> None:
+    from rater.grids.model import ExceptionRule
+
+    undefined = ExceptionRule(
+        "unclassified",
+        "applies only to 'Low CD2 RTOs', which the sheet does not list",
+        cite("C9"),
+        when=(("zone", "Zone A"), ("fuel", "diesel")),
+    )
+    g = acme(exceptions=(undefined,))
+    r = resolve(car(fuel="diesel"), gridset(g), S, "p.pdf")
+    assert r.status == "ambiguous" and "Low CD2" in r.trace[-1].decision
+
+
+def test_mapping_table_applies_only_when_its_condition_holds() -> None:
+    from rater.grids.bands import Band
+
+    light = MappingTable(
+        name="RTO → cluster (LCV)",
+        source="rto",
+        target="zone",
+        rows=(MappingRow("ZZ01", "Zone A", cite("E2", "CV RTO")),),
+        when=(("gvw_t", Band(0, 7.5, True, True, "t", "upto 7.5T")),),
+    )
+    heavy = MappingTable(
+        name="RTO → cluster (HCV)",
+        source="rto",
+        target="zone",
+        rows=(MappingRow("ZZ01", "Zone B", cite("G2", "CV RTO")),),
+        when=(("gvw_t", Band(12, float("inf"), False, True, "t", ">12T")),),
+    )
+    g = acme(mappings=(light, heavy))
+    run = lambda **kw: resolve(car(**kw), gridset(g), S, "p.pdf")  # noqa: E731
+    assert run(gvw=3500).rates["od"].rate_percent == 15.0  # Zone A, cc > 1000
+    assert run(gvw=16000).rates["od"].rate_percent == 9.0  # Zone B
+    assert run(gvw=None).status == "ambiguous"
+    assert run(gvw=9000).status == "unsupported"  # no table for 7.5-12T in this grid

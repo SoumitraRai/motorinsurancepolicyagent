@@ -134,6 +134,15 @@ D = default pending Vaatun) and [`spec.md`](sdlc/changes/2026-11-20-brokerage-ra
     `unsupported` (C8).
   - "Other Than Diesel" means petrol/LPG/hybrid; CNG and Electric have their own rows.
 
+- **Go Digit commercial vehicles (`CV Grid (excl. HCV)`):**
+  - Goods vehicles pick the LCV / MCV / HCV column of `CV RTO Mapping` by gross vehicle weight, using the
+    Motor Vehicles Act classes (up to 7.5 t, up to 12 t, above 12 t), since the sheet doesn't define them.
+  - Tractors use the Misc D column (there is no tractor column); confidence is capped at medium.
+  - Grid cluster names that differ from the mapping only in spelling are linked. Names that differ in
+    substance (`KA 1 Good` vs `KA1 (EX BLR)`, `DELHI-1`) are not guessed: the result is `unsupported`.
+  - A rate cell with several rates depends on the OD discount (CD1) chosen, which the policy doesn't show:
+    `ambiguous`.
+
 **Reference data and switches**
 - **Reference lists (PO decisions), each confidence-capped at medium when used:**
   - RTO state codes and a city → state list (`backend/src/rater/grids/geo.py`);

@@ -5,6 +5,7 @@ from pathlib import Path
 from rater.bundle import verify_bundle
 from rater.grids.adapters import (
     godigit_4w,
+    godigit_cv,
     godigit_tw,
     hdfc_pvtcar_pdf,
     reliance_pvtcar,
@@ -15,7 +16,16 @@ from rater.grids.adapters import (
 from rater.grids.model import GridSet
 from rater.insurers import ALIASES
 
-ADAPTERS = (hdfc_pvtcar_pdf, godigit_4w, godigit_tw, reliance_pvtcar, reliance_tw, tata_pvtcar, tata_cv_tw)
+ADAPTERS = (
+    hdfc_pvtcar_pdf,
+    godigit_4w,
+    godigit_tw,
+    godigit_cv,
+    reliance_pvtcar,
+    reliance_tw,
+    tata_pvtcar,
+    tata_cv_tw,
+)
 
 
 def load_all(root: Path) -> GridSet:

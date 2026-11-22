@@ -123,9 +123,23 @@ class _Run:
         )
 
     def _explain(self, refusal: Refusal, grid: Grid, mapped: dict[str, str]) -> Refusal:
-        """For "no row matches", prefer a decline / no-rate note covering this policy, with its citation."""
+        """For "no row matches", prefer a decline / no-rate note covering this policy, with its citation.
+        A term that can't be interpreted and covers the policy makes the answer ambiguous instead."""
         if refusal.status != "unsupported" or not refusal.reason.startswith("No row"):
             return refusal
+        for rule in grid.exceptions:
+            if rule.kind not in ("unclassified", "catch_all") or not rule.when:
+                continue
+            if all(
+                (v := dim_value(d, self.facts, grid, mapped)[0]) is not None and dim_matches(w, v)
+                for d, w in rule.when
+            ):
+                return Refusal(
+                    "ambiguous",
+                    f"No row gives a defined rate; a grid term covering this policy could not be "
+                    f'interpreted: "{rule.text}".',
+                    cites=(rule.cite,),
+                )
         for rule in grid.exceptions:
             if rule.effect != "decline":
                 continue

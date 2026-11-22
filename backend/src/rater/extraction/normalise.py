@@ -57,6 +57,8 @@ FIELDS: dict[str, str] = {
     "addOns": "add_ons",
     "cngLpgKitValue": "cng_lpg_kit_value",
     "cpaCover": "cpa_cover",
+    "bodyType": "body_type",
+    "tppdRestricted": "tppd_restricted",
 }
 
 _MONTHS = {
@@ -151,6 +153,10 @@ def _fuel(text: str) -> str:
 def _vehicle_class(text: str) -> str:
     t = text.lower()
     table = (
+        (r"goods.*(three|3)\s*-?\s*wheeler|goods.*\b3w\b", "gcv_3w"),
+        (r"passenger.*(two|2)\s*-?\s*wheeler|\bbike taxi\b", "pcv_2w"),
+        (r"passenger.*(three|3)\s*-?\s*wheeler|e-?\s*rickshaw|e-?\s*auto\b", "pcv_3w"),
+        (r"misc(ellaneous)?\b|special type", "misc_d"),
         (r"school bus", "school_bus"),
         (r"staff bus", "staff_bus"),
         (r"taxi|passenger carrying|pcv", "pcv_taxi"),
@@ -202,6 +208,22 @@ def _yes_no(text: str) -> str:
     raise _Unknown("not a yes/no value")
 
 
+def _body_type(text: str) -> str:
+    t = " ".join(text.split()).upper()
+    if not t:
+        raise _Unknown("no body type")
+    return t
+
+
+def _tppd(text: str) -> str:
+    t = text.lower()
+    if re.search(r"restrict|limited\s*to", t):
+        return "yes"
+    if re.search(r"tppd\s*[:\-]?\s*(no|nil|not)\b|unrestricted", t):
+        return "no"
+    raise _Unknown("TPPD restriction not stated")
+
+
 def _add_ons(text: str) -> list[str]:
     if text.strip().lower() in {"none", "nil", "na", "n/a", "-", ""}:
         return []
@@ -236,6 +258,8 @@ _PARSERS: dict[str, Any] = {
     "add_ons": _add_ons,
     "cng_lpg_kit_value": _money,
     "cpa_cover": _yes_no,
+    "body_type": _body_type,
+    "tppd_restricted": _tppd,
 }
 
 
