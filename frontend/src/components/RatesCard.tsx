@@ -90,7 +90,8 @@ function weakFact(
   };
 }
 
-const SHARE = /^(\d+ of \d+) facts the result used confirmed (\(\d+%\))(?:; )?(.*)$/s;
+const SHARE =
+  /^(\d+ of \d+) facts the result used confirmed (\(\d+%\))(?:; )?(.*)$/s;
 const WEAK =
   /^(weakest link|a fact that picked the rate row is weak): (\w+) \(([^,)]+)(?:, page (\d+))?\)(.*)$/s;
 
@@ -106,7 +107,10 @@ export function confidenceText(
   const weak = WEAK.exec(rest);
   const tail = weak
     ? weakFact(weak, facts)
-    : { text: rest ? rest.charAt(0).toUpperCase() + rest.slice(1) : "", quote: null };
+    : {
+        text: rest ? rest.charAt(0).toUpperCase() + rest.slice(1) : "",
+        quote: null,
+      };
   if (!share) return weak ? tail : { text: reason, quote: null };
   return {
     text: tail.text ? `${lead}. ${tail.text}` : lead,
