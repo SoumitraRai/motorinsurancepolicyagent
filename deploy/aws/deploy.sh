@@ -4,5 +4,6 @@ set -euo pipefail
 ENV_FILE=/opt/rater/rater.env
 [ -f "$ENV_FILE" ] || { echo "Missing $ENV_FILE (see deploy/aws/env.template)"; exit 1; }
 cd /opt/rater/app
-sudo docker compose --env-file "$ENV_FILE" -f deploy/aws/compose.yml up -d --build
+sudo docker compose --env-file "$ENV_FILE" -f deploy/aws/compose.yml build web
+sudo docker compose --env-file "$ENV_FILE" -f deploy/aws/compose.yml up -d
 sudo docker compose --env-file "$ENV_FILE" -f deploy/aws/compose.yml ps

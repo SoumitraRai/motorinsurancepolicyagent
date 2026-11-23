@@ -6,7 +6,7 @@ REPO=https://github.com/SoumitraRai/motorinsurancepolicyagent.git
 BRANCH=${BRANCH:-sdlc/2026-11-20-brokerage-rate-agent}
 
 sudo apt-get update
-sudo apt-get install -y docker.io docker-compose-v2 git
+sudo apt-get install -y docker.io docker-compose-v2 docker-buildx git
 sudo systemctl enable --now docker
 
 if ! swapon --show | grep -q /swapfile; then

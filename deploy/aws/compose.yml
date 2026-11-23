@@ -1,15 +1,12 @@
 # One EC2 host runs the whole app: the web API, the background worker and Caddy (HTTPS).
 # Both app containers use the same image; neither keeps state on disk (PDFs and runs live in Supabase).
 # Run from the repo root on the host (or use deploy/aws/deploy.sh):
-#   sudo docker compose --env-file /opt/rater/rater.env -f deploy/aws/compose.yml up -d --build
+#   sudo docker compose --env-file /opt/rater/rater.env -f deploy/aws/compose.yml build web
+#   sudo docker compose --env-file /opt/rater/rater.env -f deploy/aws/compose.yml up -d
 # The env file lives on the host only (outside the repo); deploy/aws/env.template lists its variables.
 
+# Only `web` builds the image; the worker reuses it (building it twice in parallel races on the tag).
 x-app: &app
-  build:
-    context: ../..
-    args:
-      VITE_SUPABASE_URL: ${VITE_SUPABASE_URL:?set in the env file}
-      VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY:?set in the env file}
   image: rater:latest
   env_file: /opt/rater/rater.env
   restart: unless-stopped
@@ -17,6 +14,11 @@ x-app: &app
 services:
   web:
     <<: *app
+    build:
+      context: ../..
+      args:
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL:?set in the env file}
+        VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY:?set in the env file}
     expose: ["8000"]
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
@@ -26,6 +28,7 @@ services:
 
   worker:
     <<: *app
+    pull_policy: never  # local image built by `web`, never on Docker Hub
     command: ["python", "-m", "rater.worker"]
 
   caddy:
