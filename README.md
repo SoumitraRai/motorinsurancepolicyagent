@@ -249,5 +249,5 @@ D = default pending Vaatun) and [`spec.md`](sdlc/changes/2026-11-20-brokerage-ra
   it is `ambiguous` and the reviewer is asked.
 - **Broker eligibility (D2):** base rates are assumed. Volume, GWP and synergy bonuses are listed as
   "possible, not applied".
-- **Policy skills (C11):** the organisation policy files are unfilled templates and were applied in
-  spirit (generic controls).
+- **Organisation policies (C11):** no organisation security, compliance or brand policy was supplied, so
+  generic controls were applied (secrets outside the repo, private storage, sign-in for every route).

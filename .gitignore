@@ -9,3 +9,17 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 *.tsbuildinfo
+
+# AI coding-assistant configuration (kept locally, not part of the project)
+.github/workflows/sdlc-*.yml
+evals/
+sdlc.config.json
+REVIEW.md
+.impeccable/
+managed-settings.*
+CODEOWNERS.example
+monitoring/
+sdlc/README.md
+sdlc/lessons.md
+sdlc/changes/_template/
+sdlc/incidents/
