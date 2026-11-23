@@ -97,7 +97,9 @@ def classify(text: str, product: str) -> Classified:
     if m:
         return Classified("policy_condition", t, effect="flat", percent=float(m.group(1)))
 
-    if re.search(r"\bpayout\b.*\bon\b.*\bpremium\b|not be considered for .*payout", low):
+    if re.search(
+        r"\bpayout\b.*\bon\b.*\bpremium\b|^all\s*%\s*on\s+\w+\s+premium$|not be considered for .*payout", low
+    ):
         return Classified("basis", t)
     if re.search(r"\bincludes?\b|\bconsidered (as|in)\b|\bidentification\b", low):
         return Classified("definition", t)

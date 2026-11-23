@@ -7,6 +7,8 @@ from rater.grids.textrules import classify
 CASES = [
     # Reliance `PRIVATE CAR COMP, SAOD & STP` column H
     ("payout will made on OD Premium", "private_car", "basis", None),
+    # Tata AIG `CV`!A2
+    ("All % on Net Premium", "gcv", "basis", None),
     (
         "Payout for < 1000 CC, PO will be 5% lesser than the above Grid",
         "private_car",

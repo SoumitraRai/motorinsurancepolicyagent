@@ -823,3 +823,20 @@ T14 and T15 reuse T7's primitives and extend `registry.py`. **Test:** the same
     "no row" already did. A CD1-ladder row used to read as "falls between the published bands"
     (`test_a_row_with_no_single_rate_is_named_not_reported_as_a_gap`).
   - Tests: `tests/grids/adapters/test_godigit_hcv.py` (17).
+- **T15 (part 3), Go Digit taxi and bus sheets.**
+  - `grids/adapters/godigit_taxi.py` reads `TAXI Segments and Location wise` into `godigit/CV Comp` and
+    `godigit/CV SATP` (same reason as HCV: taxis are `pcv_taxi`, which those grids already cover).
+  - `grids/adapters/godigit_bus.py` reads `School & Staff Bus ` and `School & Staff Bus RTO` as a new grid
+    `godigit/Bus Comp` (school and staff buses), not in `godigit_cv.py` as the plan's file list had it.
+  - The bus rate splits on who runs the bus, which no fact carries. The engine now names such a grid
+    dimension in the refusal without treating it as a fact (`Facts.has`); confidence scores facts only.
+  - Readings: README. Tests: `test_godigit_taxi.py` (13), `test_godigit_bus.py` (14).
+- **T15 (part 4), Reliance `FEB'26 - Grid` and Tata AIG `CV`.** T15 is complete.
+  - `grids/adapters/reliance_cv.py`, not `reliance_feb_grid.py` (plan's name): grids `reliance/CV Comp`
+    and `reliance/CV SATP`, mapped through the `RTO List` region column directly. Tata AIG `CV` is
+    `load_cv` in `tata_cv_tw.py` (grid `tata-aig/CV`). Readings: README.
+  - Terms that depend on things the policy doesn't show (Kaali Peeli, OD discount over 85%, residency
+    clause, booking location) are grid dimensions without a fact, so those policies are `ambiguous`.
+  - `textrules`: "All % on Net Premium" is a premium basis, not an unreadable term.
+  - Tests: `test_reliance_cv.py` (12), `test_tata_cv.py` (8), one `test_textrules.py` case.
+

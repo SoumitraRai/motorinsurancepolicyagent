@@ -119,7 +119,10 @@ class _Run:
                 rates[comp] = RateOut.not_applicable(NOT_APPLICABLE[comp])
             else:
                 rates[comp] = RateOut(applicable=True, rate_percent=None, reason=r.reason)
-        used = {n: self.facts.get(n) for n in sorted(self.used | set(r.missing))}
+        # A grid can split on something no policy fact carries (e.g. who runs a bus): it is named in the
+        # reason and the clarification, but has no fact to score.
+        names = sorted(n for n in self.used | set(r.missing) if Facts.has(n))
+        used = {n: self.facts.get(n) for n in names}
         conf = overall(
             used, self.warnings, (list(self.grid.caps) if self.grid else []) + self.caps, row=self.row_used
         )

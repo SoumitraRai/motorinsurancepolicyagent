@@ -192,6 +192,47 @@ D = default pending Vaatun) and [`spec.md`](sdlc/changes/2026-11-20-brokerage-ra
     `LOWCD2_12TO20_10`) names no cluster: `ambiguous`.
   - `KA1`/`KA2` are linked to the mapping's `KA1 (EX BLR)`/`KA2 (EX BLR)`: the same block has its own
     Bangalore rows. `GJ REF` is linked to `GUJARAT REF`.
+- **Go Digit taxis (`TAXI Segments and Location wise`), read into the same CV grids:**
+  - "With Add on cover" means the schedule lists an add-on cover. Exactly 1000 cc sits between the
+    "< 1000 cc" and "> 1000 cc" rows: `ambiguous`.
+  - "Other"/"All" beside named makes cover the makes their sibling rows don't name. Ages in the make column
+    ("Hyundai Age 0", "Maruti (all age) & Hyundai age 1+") split the row.
+  - "Kaali peeli" (black-and-yellow taxi) rows: the policy can't show whether a taxi is one, so a taxi they
+    could cover (Mumbai non-diesel, DELHI-NCR CNG Maruti/Hyundai) is `ambiguous`.
+  - WagonR takes the "> 1000 cc" rows wherever the cluster's notes say so. The models named in "(including
+    Ertiga, Maruti XI6, ECO, Invicto)" take that row whatever their seats ("XI6" read as XL6). Where an
+    all-makes row also covers them (Goa 6-9 seaters, Goa Innova), the grid contradicts itself: `ambiguous`.
+  - "Only <RTOs>" notes restrict the rows they span. The monthly-volume bonus is listed, not applied (D2).
+  - Spellings linked: `Bhubuneshwar`, `Jharkhand (Excl Ranchi)`, `Good GJ (excl Ahmedabad & Surat)`,
+    `Good Vizag/Vijayawada`. `KA 1 Good` is not guessed (`unsupported`).
+- **Go Digit school and staff buses (`School & Staff Bus `):** one comprehensive grid (no SATP rates),
+  applying from 1 March 2026.
+  - The rate depends on who runs the bus (school / corporate / transporter / individual), which no policy
+    fact carries. Where the columns differ, the result is `ambiguous` and names `bus_operator`. Where
+    every column gives the same answer (e.g. all "D"), it is decided.
+  - A school bus under 8 seats gets no school-bus rate (the taxi grid is not applied to a bus): `unsupported`.
+    Staff buses up to 10 seats ("CD2_20% in all open cohorts", undefined) are `ambiguous`. Electric staff
+    buses are outside the staff grid. Short-term reductions depend on the policy term, which isn't read.
+- **Reliance commercial vehicles (`FEB'26 - Grid`):** one row per `RTO List` region (`Trivandrum` and
+  `Leh & Lahdhk` linked to the list's spellings), COMP reported as OD (TP unpublished), STP as TP. A 0 is
+  the published payout (0%).
+  - GVW in kg ("2.5K" = 2.5 t). 3.5-7.5 t has no column (`unsupported`). From 12 t, COMP is only for TATA,
+    Ashok Leyland and Eicher. Taxi "< 6 Seater" = up to 5 seats, "7+1STR" = 8; "Nil Dep" = a zero-dep
+    add-on. Tractor "Fresh" = new business, "without Trailer" = a body type not naming a trailer.
+  - Kaali Peeli is not a policy fact: where its rate differs from the ordinary taxi rate, `ambiguous`.
+    Flat Bed rows go by body type, so an unknown body type is `ambiguous` where their rate differs.
+  - M&HCV terms: no towing cover, 1.5% less; OD discount over 85% and the residency clause, 2.5% less each.
+    The policy shows neither of the last two, so heavy goods vehicles are `ambiguous`. The West Zone
+    booking-location rules make Ahmedabad, Vadodara, Surat, Pune and Nagpur over 12 t `ambiguous`.
+    No CPA, 1% less. School-bus enablers and volume slabs are partner terms: listed, not applied (D2).
+  - Not read: Employee Pick up and Car Carrier (deal-only, all 0) and "PC STP Non-Diesel" (all 0; private
+    cars use the private-car sheet).
+- **Tata AIG commercial vehicles (`CV`):** cluster from the printed RTO location (as for `TW`); "All % on
+  Net Premium", so a package rate is reported as OD (TP unpublished).
+  - "Brand New" = new business; ">=1<=6" and ">6" = vehicle age. "Other Than Diesel" = petrol/LPG/hybrid.
+  - "PCV 4W" = up to 11 seats (school: a school bus; non-school: a taxi). "PCV Bus Non School" = a staff
+    bus or a passenger vehicle of 12+ seats. "Harvester" = a misc vehicle whose body type says harvester.
+  - "Trade Road Risk" and "Trailer" rows are not read: no policy vehicle class matches them.
 
 **Reference data and switches**
 - **Reference lists (PO decisions), each confidence-capped at medium when used:**

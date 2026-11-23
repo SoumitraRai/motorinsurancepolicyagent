@@ -5,9 +5,11 @@ from pathlib import Path
 from rater.bundle import verify_bundle
 from rater.grids.adapters import (
     godigit_4w,
+    godigit_bus,
     godigit_cv,
     godigit_tw,
     hdfc_pvtcar_pdf,
+    reliance_cv,
     reliance_pvtcar,
     reliance_tw,
     tata_cv_tw,
@@ -21,8 +23,10 @@ ADAPTERS = (
     godigit_4w,
     godigit_tw,
     godigit_cv,
+    godigit_bus,
     reliance_pvtcar,
     reliance_tw,
+    reliance_cv,
     tata_pvtcar,
     tata_cv_tw,
 )

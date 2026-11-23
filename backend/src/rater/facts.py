@@ -131,6 +131,11 @@ class Facts(_Model):
     def value(self, name: str) -> Any:
         return self.get(name).value
 
+    @classmethod
+    def has(cls, name: str) -> bool:
+        """Whether `name` (snake_case or camelCase) is a policy fact."""
+        return name in cls.model_fields or _snake(name) in cls.model_fields
+
 
 def _snake(name: str) -> str:
     return "".join("_" + c.lower() if c.isupper() else c for c in name)
