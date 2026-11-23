@@ -1,0 +1,8 @@
+# HTTPS with an automatic Let's Encrypt certificate for SITE_ADDRESS (e.g. 13-233-10-20.sslip.io).
+{$SITE_ADDRESS} {
+	encode gzip
+	request_body {
+		max_size 26MB
+	}
+	reverse_proxy web:8000
+}

@@ -38,7 +38,7 @@ layout in `backend/src/rater/grids/adapters/`) after their SHA-256s are verified
 |---|---|---|
 | Uploaded PDF | Supabase Storage, private bucket `policies`, key `<uuid>/<sha256>.pdf` | everything below |
 | Run, status, full result JSON, switches, versions | Supabase Postgres table `runs` (+ `jobs`, `audit_events`) | everything below |
-| Containers (web, worker) | Render; **stateless**, no local data | — |
+| Containers (web, worker, Caddy) | one AWS EC2 host (Mumbai); app containers are **stateless**, no local data | — |
 
 - **Browser refresh / close and reopen:** history is read from Postgres on every page load (`GET /api/runs`).
 - **Sign-out / sign-in:** runs belong to the reviewer's Supabase user id, not to the browser session.
@@ -64,16 +64,30 @@ cd backend && uv run python -m rater.cli run ../insurance-rater-agent-challenge/
   --out ../samples/output/<file>
 ```
 
-## Deploy (Render + Supabase)
+## Deploy (AWS EC2 + Supabase)
 
-1. **Supabase:** create a project (Pro tier so it never pauses during review). Run `migrations/*.sql` in
-   order in the SQL editor. Create a **private** Storage bucket `policies`. Under Authentication, disable
-   sign-ups and create the reviewer user (email + password).
-2. **Render:** create a Blueprint from this repo (`render.yaml`): web service (`starter`, 512 MB) and
-   worker (`standard`, 2 GB — OCR peaks ≈1 GB per page). Set the secret env vars in the dashboard:
-   `DATABASE_URL`, `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`,
-   and optionally `OPENROUTER_API_KEY` + `EXTRACTION_MODEL`.
-3. Deploy, sign in at the web service URL, upload a policy.
+The hosted app runs on one EC2 host with Docker Compose (`deploy/aws/`): the web API, the worker and
+Caddy (automatic HTTPS). Both OCR engines together peak at ≈1.2 GB, so the host needs 4 GB of RAM.
+
+1. **Supabase:** create a project (Mumbai, `ap-south-1`). Run `migrations/*.sql` in order. Create a
+   **private** Storage bucket `policies`. Under Authentication: use asymmetric JWT signing keys (the API
+   verifies tokens against the project's JWKS), disable sign-ups, and create the reviewer user.
+2. **EC2:** in `ap-south-1`, launch Ubuntu 24.04 (x86_64) on `c7i-flex.large` (2 vCPU, 4 GB) with a
+   30 GB gp3 disk. Security group: SSH (22) from your IP only, HTTP (80) and HTTPS (443) from anywhere.
+   Attach an Elastic IP so the address survives restarts.
+3. **On the host:**
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/SoumitraRai/motorinsurancepolicyagent/sdlc/2026-11-20-brokerage-rate-agent/deploy/aws/bootstrap.sh | bash
+   sudo cp /opt/rater/app/deploy/aws/env.template /opt/rater/rater.env
+   sudo chmod 600 /opt/rater/rater.env && sudo nano /opt/rater/rater.env   # fill in the values
+   /opt/rater/app/deploy/aws/deploy.sh
+   ```
+   `SITE_ADDRESS` can be `<elastic-ip-with-dashes>.sslip.io`; Caddy fetches its certificate on first start.
+4. Sign in at `https://<SITE_ADDRESS>` and upload a policy. To update: re-run `bootstrap.sh`, then
+   `deploy.sh`.
+
+`render.yaml` describes the same two services on Render; it is kept but not used (Render's plans with
+enough memory are paid).
 
 ## Configuration
 

@@ -1,0 +1,43 @@
+# One EC2 host runs the whole app: the web API, the background worker and Caddy (HTTPS).
+# Both app containers use the same image; neither keeps state on disk (PDFs and runs live in Supabase).
+# Run from the repo root on the host (or use deploy/aws/deploy.sh):
+#   sudo docker compose --env-file /opt/rater/rater.env -f deploy/aws/compose.yml up -d --build
+# The env file lives on the host only (outside the repo); deploy/aws/env.template lists its variables.
+
+x-app: &app
+  build:
+    context: ../..
+    args:
+      VITE_SUPABASE_URL: ${VITE_SUPABASE_URL:?set in the env file}
+      VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY:?set in the env file}
+  image: rater:latest
+  env_file: /opt/rater/rater.env
+  restart: unless-stopped
+
+services:
+  web:
+    <<: *app
+    expose: ["8000"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  worker:
+    <<: *app
+    command: ["python", "-m", "rater.worker"]
+
+  caddy:
+    image: caddy:2.8.4
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:?set in the env file}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    depends_on: [web]
+
+volumes:
+  caddy_data:  # Let's Encrypt certificates survive restarts

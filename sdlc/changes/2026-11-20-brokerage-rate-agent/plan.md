@@ -779,3 +779,10 @@ T14 and T15 reuse T7's primitives and extend `registry.py`. **Test:** the same
     scrollbars; reduced motion respected (the band's one print animation is skipped).
   - Tests: `RunPage.test.tsx` assertions moved to the new structure (region "TP rate" holds "20%", tab
     "Schedule fields"); new tests for keyboard tabs and the refusal reason.
+- **T5: hosted on AWS EC2, not Render (PO, 2026-11-23).** Render's plans with enough memory need payment;
+  the PO has AWS free-plan credits. `deploy/aws/` holds `compose.yml` (web, worker and Caddy for HTTPS on
+  one host), `Caddyfile`, `env.template` (the variable list; the filled-in file lives only on the host at
+  `/opt/rater/rater.env`), `bootstrap.sh` and `deploy.sh`. Host: `c7i-flex.large` (4 GB) in `ap-south-1`,
+  next to Supabase; the 2 GB free-plan types are too small for both OCR engines (≈1.2 GB peak). Same
+  Dockerfile, no code change. `render.yaml` is kept but unused. Release authorised by the PO as release
+  manager (`RELEASE_APPROVAL`); there is no staging environment, so no rollback rehearsal precedes it.
