@@ -1,5 +1,7 @@
 """Go Digit commercial vehicles: `CV Grid (excl. HCV)` with the `CV RTO Mapping` RTO → cluster map.
 
+`HCV GRID` (goods vehicles over 12 t) is read by `godigit_hcv` into the same two grids.
+
 Columns: B cluster, C segment (parsed by `cvsegments`), D make / body / age scope, E CD1 (not brokerage),
 F Max CD2 for comprehensive, G Max CD2 for SATP, H note.
 
@@ -113,6 +115,13 @@ CLUSTER_ALIASES: dict[str, frozenset[str]] = {
     "GOOD VIZAG_VIJAYAWADA": frozenset({"GOOD VIZAG/VIJAYWADA"}),
     "BAD VIZAG_VIJAYAWADA": frozenset({"BAD VIZAG/VIJAYWADA"}),
     "KOLKATA/WEST BENGAL": frozenset({"KOLKATA", "WEST BENGAL"}),
+    # 'HCV GRID' spellings. "KA1"/"KA2" sit beside their own "Bangalore" rows: the mapping's "(EX BLR)".
+    "BAD GJ 1& BAD GJ 2": frozenset({"BAD GJ-1", "BAD GJ-2"}),
+    "BAD GJ - 1": frozenset({"BAD GJ-1"}),
+    "BAD GJ -2": frozenset({"BAD GJ-2"}),
+    "KA1": frozenset({"KA1 (EX BLR)"}),
+    "KA2": frozenset({"KA2 (EX BLR)"}),
+    "GJ REF": frozenset({"GUJARAT REF"}),  # GJ is Gujarat's RTO code
 }
 _RTO = re.compile(r"\b([A-Z]{2})\s?(\d{1,2})\b")
 
@@ -625,16 +634,19 @@ def load(root: Path) -> list[Grid]:
         shared = _shared_exceptions(rows, file, declined)
         comp, comp_exc = _grid_rules(wb, rows, file, "F", "od")
         satp, satp_exc = _grid_rules(wb, rows, file, "G", "tp")
+        from rater.grids.adapters import godigit_hcv  # it reuses this module's helpers
+
+        hcv_comp, hcv_satp = godigit_hcv.load_into(wb, file, lows)
     finally:
         wb.close()
     common = dict(insurer=INSURER, file=file, vehicle_classes=CLASSES, mappings=tuple(tables))
     return [
         Grid(
             id="godigit/CV Comp",
-            title=f"Go Digit '{SHEET}' (comprehensive)",
+            title=f"Go Digit '{SHEET}' and '{godigit_hcv.SHEET}' (comprehensive)",
             policy_types=frozenset({"comprehensive"}),
-            rules=tuple(comp),
-            exceptions=tuple(shared + comp_exc),
+            rules=tuple(comp + hcv_comp.rules),
+            exceptions=tuple(shared + comp_exc + hcv_comp.exceptions),
             unpublished=(
                 Unpublished(
                     "comprehensive",
@@ -649,10 +661,10 @@ def load(root: Path) -> list[Grid]:
         ),
         Grid(
             id="godigit/CV SATP",
-            title=f"Go Digit '{SHEET}' (SATP)",
+            title=f"Go Digit '{SHEET}' and '{godigit_hcv.SHEET}' (SATP)",
             policy_types=frozenset({"satp"}),
-            rules=tuple(satp),
-            exceptions=tuple(shared + satp_exc),
+            rules=tuple(satp + hcv_satp.rules),
+            exceptions=tuple(shared + satp_exc + hcv_satp.exceptions),
             **common,  # type: ignore[arg-type]
         ),
     ]

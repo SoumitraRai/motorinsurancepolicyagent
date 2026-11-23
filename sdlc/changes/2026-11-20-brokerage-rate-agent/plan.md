@@ -808,3 +808,18 @@ T14 and T15 reuse T7's primitives and extend `registry.py`. **Test:** the same
     (`test_cross_check_engine_reads_only_the_cited_pages`).
   - Frontend: the confidence text leads with the confirmed share; the progress estimate is 30 s + 16 s
     per page, from the 2-vCPU measurement. README has a new Confidence section. Sample outputs regenerated.
+- **T15 (part 2), Go Digit `HCV GRID`.** Built as `grids/adapters/godigit_hcv.py`, not in `godigit_cv.py`.
+  Its rules and exceptions join the existing `godigit/CV Comp` and `godigit/CV SATP` grids, because the
+  resolver picks a grid by vehicle class and policy type alone: a separate grid for goods vehicles over 12 t
+  would make every such policy "More than one grid applies".
+  - Blocks are read from their own header rows: the body-type columns move between blocks (Port Trailer only
+    in the first). Readings are in the module docstring and the README (strict: tankers that are neither oil
+    nor gas, North Bengal where a West Bengal cell doesn't name it, NL RTOs, Low-CD2-only mapping codes, and
+    the Additional Comments that contradict the Bad GJ rows are all `ambiguous`; Volvo/Scania decline).
+  - `Sheet.merged()` (xlsx) finds the "to be referred" text across merged tanker columns;
+    `parse_cv_segment` reads `44T+` / `40T+` as (x, ∞) (`test_tonnage_plus_starts_above_the_number`).
+  - Cluster aliases added: `Bad GJ` spellings, `KA1`/`KA2` → `(EX BLR)`, `GJ REF` → `GUJARAT REF`.
+  - Engine: a gap between bands now names an uninterpretable grid term or a decline covering the policy, as
+    "no row" already did. A CD1-ladder row used to read as "falls between the published bands"
+    (`test_a_row_with_no_single_rate_is_named_not_reported_as_a_gap`).
+  - Tests: `tests/grids/adapters/test_godigit_hcv.py` (17).

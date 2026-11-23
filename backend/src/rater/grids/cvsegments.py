@@ -7,7 +7,8 @@ part gets a cited `ambiguous`, never a guessed rate. Catch-all rows ("GCV4 excl 
 `catch_all`; they cover only what no other row covers, which the adapter cannot decide row by row.
 
 Readings (README assumptions): tonnage bands are gross vehicle weight in tonnes, `a to b T` = (a, b],
-`upto x T` = [0, x], `x T and above` = [x, ∞); "non-diesel" = petrol/CNG/LPG (EVs have their own segments);
+`upto x T` = [0, x], `x T and above` = [x, ∞), `x T+` = (x, ∞) (it follows an `a-x T` row);
+"non-diesel" = petrol/CNG/LPG (EVs have their own segments);
 "n+1 seater" = n+1 seats including the driver.
 """
 
@@ -137,6 +138,7 @@ def parse_cv_segment(label: str) -> CvSegment | str:
             (rf"^\s*{_NUM}\s*(?:to|-)\s*{_NUM}(?=\s|$)", "range"),
             (rf"up\s*to\s*{_NUM}\s*t\b", "upto"),
             (rf"{_NUM}\s*t\s*and\s*above", "above"),
+            (rf"{_NUM}\s*t\s*\+", "plus"),
         ):
             m, rest2 = _take(pattern, rest)
             if m:
@@ -148,7 +150,8 @@ def parse_cv_segment(label: str) -> CvSegment | str:
                 elif kind == "upto":
                     dims.append(("gvw_t", _band(0, float(m.group(1)), True, True, "t", m.group(0))))
                 else:
-                    dims.append(("gvw_t", _band(float(m.group(1)), math.inf, True, True, "t", m.group(0))))
+                    lo_incl = kind == "above"
+                    dims.append(("gvw_t", _band(float(m.group(1)), math.inf, lo_incl, True, "t", m.group(0))))
                 break
 
     # Vehicle age (years)

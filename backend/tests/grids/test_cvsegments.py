@@ -82,3 +82,11 @@ def test_catch_all_rows(label: str) -> None:
 
 def test_unknown_label_is_reported() -> None:
     assert isinstance(parse_cv_segment("Hovercraft deluxe"), str)
+
+
+def test_tonnage_plus_starts_above_the_number() -> None:
+    # 'HCV GRID': "40-44T" is (40, 44], so the "44T+" row next to it starts above 44 t.
+    assert ok("GCV4 44T+", vehicle_class="gcv", gvw_t=44.5)
+    assert not ok("GCV4 44T+", vehicle_class="gcv", gvw_t=44)
+    assert ok("GCV4 40T+", vehicle_class="gcv", gvw_t=49)
+    assert not ok("GCV4 40T+", vehicle_class="gcv", gvw_t=40)

@@ -136,9 +136,12 @@ class _Run:
         )
 
     def _explain(self, refusal: Refusal, grid: Grid, mapped: dict[str, str]) -> Refusal:
-        """For "no row matches", prefer a decline / no-rate note covering this policy, with its citation.
-        A term that can't be interpreted and covers the policy makes the answer ambiguous instead."""
-        if refusal.status != "unsupported" or not refusal.reason.startswith("No row"):
+        """For "no row matches" (or a gap between bands), prefer a decline / no-rate note covering this
+        policy, with its citation. A term that can't be interpreted and covers the policy makes the answer
+        ambiguous. A gap is often a row that gives no single rate (e.g. a CD1 ladder), which these name."""
+        no_row = refusal.status == "unsupported" and refusal.reason.startswith("No row")
+        gap = refusal.status == "ambiguous" and "falls between the grid's published bands" in refusal.reason
+        if not (no_row or gap):
             return refusal
         for rule in grid.exceptions:
             if rule.kind not in ("unclassified", "catch_all") or not rule.when:

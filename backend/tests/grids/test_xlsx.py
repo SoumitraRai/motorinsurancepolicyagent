@@ -31,3 +31,10 @@ def test_ref_and_subtotal_not_data() -> None:
 def test_sheet_names_exact() -> None:
     names = Workbook(GODIGIT).sheet_names
     assert "4W  RTO" in names and "School & Staff Bus " in names
+
+
+def test_merged_range_of_a_cell() -> None:
+    sheet = Workbook(GODIGIT).sheet("HCV GRID")
+    assert sheet.merged("U4") == "U4:AD4"  # "For 0-1 age Non Dumper Tipper grids to be referred"
+    assert sheet.merged("Z4") == "U4:AD4"
+    assert sheet.merged("F4") is None

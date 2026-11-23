@@ -44,6 +44,13 @@ class Sheet:
         f = self.formula(coord)
         return f is not None and f.upper().startswith(_AGGREGATES)
 
+    def merged(self, coord: str) -> str | None:
+        """The merged range holding `coord` (e.g. "U4:AD4"), or None when the cell is not merged."""
+        for rng in self._v.merged_cells.ranges:
+            if coord in rng:
+                return str(rng.coord)
+        return None
+
     def cells(self) -> Iterator[tuple[str, Any]]:
         """Non-empty cells in row order, as (coordinate, value); formula-without-cache cells yield MISSING."""
         for row in self._f.iter_rows():

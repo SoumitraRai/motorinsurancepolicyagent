@@ -173,6 +173,25 @@ D = default pending Vaatun) and [`spec.md`](sdlc/changes/2026-11-20-brokerage-ra
     substance (`KA 1 Good` vs `KA1 (EX BLR)`, `DELHI-1`) are not guessed: the result is `unsupported`.
   - A rate cell with several rates depends on the OD discount (CD1) chosen, which the policy doesn't show:
     `ambiguous`.
+- **Go Digit goods vehicles over 12 t (`HCV GRID`), read into the same CV grids:**
+  - Body types: dumper/tipper, oil tanker, gas (LPG/CNG) tanker and port trailer by the printed body type.
+    Every other body is "Non-Dumper/Tipper". A tanker that is neither oil nor gas, or (where the block has a
+    Port Trailer column) a trailer not stated as a port trailer, is `ambiguous`.
+  - "For 0-1 age Non Dumper Tipper grids to be referred" takes the row's Non-Dumper/Tipper rate. A TATA
+    row overrides the All-makes rows only at its own ages, and not where it says "Above rates to be
+    referred".
+  - Split cells are read by their labels: with/without add-ons, TATA/other makes, West Bengal/North Bengal,
+    40-44T/44T+, age 6-10/10+. Both age labels include 10, so a 10-year-old vehicle is `ambiguous`. A West
+    Bengal cell that doesn't name North Bengal gives North Bengal RTOs `ambiguous`.
+  - Volvo and Scania are declined ('Additional Notes'). In the first block, whose note keeps renewals going
+    "at CD2-2.5%", a comprehensive renewal is `ambiguous`.
+  - The 'Additional Comments' rates for Bad GJ-1/Bad GJ-2 (12-20 t, 6+ years) differ from the grid rows,
+    so those policies are `ambiguous` (the grid contradicts itself).
+  - NL-registered vehicles are `ambiguous`: the "For NL RTO vehicles" side tables apply only with address
+    proof, which the policy doesn't show. A mapping value that is only a Low CD2 code (e.g.
+    `LOWCD2_12TO20_10`) names no cluster: `ambiguous`.
+  - `KA1`/`KA2` are linked to the mapping's `KA1 (EX BLR)`/`KA2 (EX BLR)`: the same block has its own
+    Bangalore rows. `GJ REF` is linked to `GUJARAT REF`.
 
 **Reference data and switches**
 - **Reference lists (PO decisions), each confidence-capped at medium when used:**
