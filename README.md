@@ -32,6 +32,61 @@ are plain Python (`backend/src/rater/resolve/`), pure functions tested against s
 original grids are read in code from `insurance-rater-agent-challenge/raters/` (one adapter per sheet
 layout in `backend/src/rater/grids/adapters/`) after their SHA-256s are verified against `MANIFEST.json`.
 
+## Architecture
+
+**Parts**
+
+| Part | Code | Job |
+|---|---|---|
+| Browser app | `frontend/src/` (React) | sign-in, upload, run history, result page (rates, citations, trace, JSON) |
+| API | `backend/src/rater/api/` (FastAPI) | checks the PDF, stores it, queues a job, serves runs to their owner only |
+| Worker | `backend/src/rater/worker.py` | claims one job at a time (`SKIP LOCKED`), runs the pipeline, saves the result |
+| Pipeline | `backend/src/rater/pipeline.py` | OCR → extraction → quote checks → normalisation → resolution |
+| Extraction | `backend/src/rater/extraction/` | OCR engines, fact extractors (OpenRouter or local rules), quote check, normalising |
+| Grids | `backend/src/rater/grids/` | one adapter per sheet layout turns a grid file into cited rules |
+| Resolver | `backend/src/rater/resolve/` | deterministic grid lookup, no LLM |
+| Storage | `backend/src/rater/storage/` | Postgres runs/jobs and the PDF object store (Supabase) |
+
+**How a run flows**
+
+1. The reviewer uploads a PDF. The API checks it is a readable PDF of at most 200 pages, stores it in the
+   private bucket, and writes a `queued` run and a job.
+2. The worker claims the job. It OCRs the first `READ_PAGES` pages with RapidOCR (a text layer is used
+   when the PDF has one) and extracts facts, each with a page and a verbatim quote.
+3. Code checks every quote against that page's text. Tesseract re-reads only the pages the facts came
+   from, to confirm them. Values are normalised (dates, RTO codes, cc, rupee amounts).
+4. The resolver picks the grid, checks the dates, maps the RTO into the grid's zones, matches the row,
+   then applies the footnotes and terms. Every step carries its citations.
+5. The result (status, OD/TP rates, citations, confidence, trace, facts) is saved on the run. The
+   browser polls until the run is done.
+
+**Failure modes and what happens**
+
+- **A fact can't be read**: the result is `ambiguous` and names the fact, only if it would change the
+  rate; otherwise the run resolves and says the fact wasn't needed.
+- **No grid, row or region covers the policy**: `unsupported`, with the grid searched or the row missing.
+- **Two rows or terms give different rates, or a term can't be interpreted**: `ambiguous`, citing both.
+- **The grid declines the case** ("D", "Decline", a blocked make): `unsupported`, citing the cell.
+- **The policy date is outside the grid's period**: `unsupported` with both dates (Vaatun, 2026-11-22).
+- **The extractor fails or returns bad JSON**: the run falls back to the local rules extractor.
+- **The pipeline raises an error**: the run is marked `failed` ("Analysis failed. Retry this run.") and the
+  reviewer can retry it from the run page.
+- **The worker dies mid-run** (restart, redeploy): the job's lock times out and the job is claimed again.
+- **A grid file was changed**: the SHA-256 check against `MANIFEST.json` stops the app from starting.
+
+**Trade-offs**
+
+- **Refuse rather than guess.** Wherever the grid's wording leaves a choice, the stricter reading was
+  taken and recorded below. Fewer numbers, but each one is defensible.
+- **Adapters per sheet, not a generic reader.** Every grid has its own layout and footnotes; one adapter
+  per layout is more code but each rule cites the exact cell it came from, and a test re-reads every one.
+- **LLM only for reading.** Extraction may use a model; selection, mapping and matching are plain Python,
+  so the same policy always gives the same answer and the trace can be followed in the code.
+- **Two OCR engines.** Slower (about 16 s a page on 2 vCPUs) but lets a scanned fact reach `high`
+  confidence when both engines agree.
+- **One small server.** Containers keep nothing, so a restart or redeploy loses nothing; a larger
+  deployment would only add workers.
+
 ## Where uploads and analyses are stored, and why they persist
 
 | What | Where | Survives |
@@ -77,7 +132,7 @@ Caddy (automatic HTTPS). Both OCR engines together peak at ≈1.2 GB, so the hos
    Attach an Elastic IP so the address survives restarts.
 3. **On the host:**
    ```bash
-   curl -fsSL https://raw.githubusercontent.com/SoumitraRai/motorinsurancepolicyagent/sdlc/2026-11-20-brokerage-rate-agent/deploy/aws/bootstrap.sh | bash
+   curl -fsSL https://raw.githubusercontent.com/SoumitraRai/motorinsurancepolicyagent/main/deploy/aws/bootstrap.sh | bash
    sudo cp /opt/rater/app/deploy/aws/env.template /opt/rater/rater.env
    sudo chmod 600 /opt/rater/rater.env && sudo nano /opt/rater/rater.env   # fill in the values
    /opt/rater/app/deploy/aws/deploy.sh
@@ -118,6 +173,48 @@ the pages the facts came from (its text is used for nothing else). Product owner
   row (RTO/zone mapping, the matched row's dimensions, a T&C condition) is below `medium`, the result is
   `low`. Then one level lower per date warning, and capped by named assumptions (e.g. HDFC ERGO's slab
   footnote, C1, caps at `medium`).
+
+## Sample results
+
+The four supplied policies, run with the local rules extractor (`EXTRACTION_PROVIDER=rules`). Each has a
+structured result (`.json`) and a readable decision trace (`.md`).
+
+| Policy | Status | OD | TP | Trace |
+|---|---|---|---|---|
+| HDFC ERGO private car, comprehensive | `resolved` | 15% | not published (OD only) | [JSON](samples/output/pvt-car-comprehensive-hdfc-ergo.json) · [trace](samples/output/pvt-car-comprehensive-hdfc-ergo.md) |
+| Go Digit private car, stand-alone TP | `resolved` | not applicable | 29.5% | [JSON](samples/output/pvt-car-satp-go-digit.json) · [trace](samples/output/pvt-car-satp-go-digit.md) |
+| Reliance private car, comprehensive | `unsupported` | — | — | [JSON](samples/output/pvt-car-comprehensive-reliance.json) · [trace](samples/output/pvt-car-comprehensive-reliance.md) |
+| Tata AIG private car, stand-alone TP | `unsupported` | not applicable | — | [JSON](samples/output/pvt-car-satp-tata-aig.json) · [trace](samples/output/pvt-car-satp-tata-aig.md) |
+
+- **Reliance:** the policy starts 23 Dec 2025 and the grid is for January 2026 ("Jan-26"). A date outside
+  the grid's period is an error (Vaatun, 2026-11-22).
+- **Tata AIG:** the private-car grid's rows depend on a segment the policy doesn't print, and the workbook
+  has no table that derives it (C8).
+
+## From a trace step to the code
+
+Each step in a trace has a kind. This is where each kind is decided.
+
+| Trace step | What it decides | Code |
+|---|---|---|
+| facts (table) | the policy facts, page and quote | `extraction/ocr.py` (`ocr_document`), `extraction/providers/` (`openrouter.py`, `rules.py`), `extraction/verify.py` (`verify_quote`), `extraction/normalise.py` (`normalise`) |
+| `select` | insurer → grid for this vehicle class and policy type | `resolve/select.py` (`select_grid`) |
+| `business_type` | a missing business type that doesn't change the rate | `resolve/engine.py` (`resolve`) |
+| `date` | the policy date against the grid's period | `resolve/dates.py` (`check_dates`) |
+| `map` | RTO / model / location → the grid's zone or cluster | `resolve/mapping.py` (`apply_mappings`) |
+| `match` | the row where every dimension matches, per OD and TP | `resolve/match.py` (`match_component`) |
+| `exception`, `note`, `broker_bonus` | footnotes and T&C: reductions, declines, notes, bonuses not applied | `resolve/exceptions.py` (`apply_exceptions`) |
+| `result` | status, rates and the reason for a refusal | `resolve/engine.py` |
+| confidence | the result's confidence and its explanation | `resolve/confidence.py` (`overall`) |
+| grid citations | which cell a rule came from | `grids/adapters/<insurer>_*.py`, re-read by `grids/readback.py` |
+
+Paths are under `backend/src/rater/`.
+
+## Persistence check (AC22)
+
+Checked by the product owner on the hosted app on 2026-11-23: a policy was uploaded and its run and PDF
+were still listed and opened after a browser refresh, closing and reopening the browser, signing out and
+back in, a restart of the containers, and a redeploy.
 
 ## Data and privacy
 
@@ -219,10 +316,12 @@ D = default pending Vaatun) and [`spec.md`](sdlc/changes/2026-11-20-brokerage-ra
   - GVW in kg ("2.5K" = 2.5 t). 3.5-7.5 t has no column (`unsupported`). From 12 t, COMP is only for TATA,
     Ashok Leyland and Eicher. Taxi "< 6 Seater" = up to 5 seats, "7+1STR" = 8; "Nil Dep" = a zero-dep
     add-on. Tractor "Fresh" = new business, "without Trailer" = a body type not naming a trailer.
-  - Kaali Peeli is not a policy fact: where its rate differs from the ordinary taxi rate, `ambiguous`.
+  - Kaali Peeli is not a policy fact: where its rate differs from the ordinary taxi rate, `ambiguous`, and
+    the reason gives both rates and cells.
     Flat Bed rows go by body type, so an unknown body type is `ambiguous` where their rate differs.
-  - M&HCV terms: no towing cover, 1.5% less; OD discount over 85% and the residency clause, 2.5% less each.
-    The policy shows neither of the last two, so heavy goods vehicles are `ambiguous`. The West Zone
+  - M&HCV terms: no towing cover, 1.5% less; the residency clause, 2.5% less on every heavy goods vehicle
+    (PO decision 2026-11-23); OD discount over 85%, 2.5% less. The policy doesn't show the OD discount, so
+    heavy-goods COMP is `ambiguous`; SATP resolves. The West Zone
     booking-location rules make Ahmedabad, Vadodara, Surat, Pune and Nagpur over 12 t `ambiguous`.
     No CPA, 1% less. School-bus enablers and volume slabs are partner terms: listed, not applied (D2).
   - Not read: Employee Pick up and Car Carrier (deal-only, all 0) and "PC STP Non-Diesel" (all 0; private

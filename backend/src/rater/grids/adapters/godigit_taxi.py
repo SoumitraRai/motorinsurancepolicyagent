@@ -11,7 +11,7 @@ Readings (README assumptions):
   add-on) don't name; "Other than X" excludes X. Ages written into the make column ("Hyundai Age 0",
   "Maruti (all age) & Hyundai age 1+") split the row.
 - "Kaali peeli" (black-and-yellow taxi) rows price a kind of taxi the policy can't be shown to be: a
-  policy they could cover is `ambiguous`.
+  policy they could cover is `ambiguous`, and the reason gives the Kaali peeli rate.
 - WagonR: where a cluster's notes say WagonR takes the "> 1000 cc" grid (or a segment says "WagonR
   Included"), a WagonR is priced by the "> 1000 cc" rows whatever its cc.
 - "(including Ertiga, Maruti XI6, ECO, Invicto)": those models take the row whatever their seats ("XI6" is
@@ -287,16 +287,21 @@ def _component(sheet: Sheet, file: str, rows: list[Row], col: str, component: st
             continue
         cite = XlsxCite(file, SHEET, f"{col}{row.r}")
         if row.make.kind == "kaali":
+            # Whether the taxi is a Kaali peeli is not a policy fact (`kaali_peeli`), so this stays open.
+            declined = isinstance(v, str) and v.strip().upper() == "D"
+            paid = "declined" if declined else f"paid {_pct(v):g}%"
+            text = (
+                f"'{SHEET}' row {row.r}: a '{_clean(sheet.value(f'D{row.r}'))}' (black-and-yellow) taxi is "
+                f"{paid} ({col}{row.r}); the policy does not show whether this taxi is one"
+            )
             for alt in row.alternatives:
                 out.exceptions.append(
                     ExceptionRule(
-                        "unclassified",
-                        f"'{SHEET}' row {row.r} prices '{_clean(sheet.value(f'D{row.r}'))}' "
-                        "(black-and-yellow) taxis apart; the policy does not show whether this taxi is one",
-                        cite,
-                        when=_when(row, alt),
+                        "policy_condition", text, cite, "decline" if declined else "flat",
+                        None if declined else _pct(v), when=_when(row, [*alt, ("kaali_peeli", "yes")]),
+                        components=(component,),
                     )
-                )
+                )  # fmt: skip
             continue
         for alt in row.alternatives:
             when = _when(row, alt)

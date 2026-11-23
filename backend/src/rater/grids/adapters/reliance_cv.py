@@ -13,12 +13,13 @@ Readings (README assumptions):
 - Taxi "< 6 Seater" = up to 5 seats; "7+1STR" = 8 seats. "Nil Dep" = a zero-depreciation add-on (COMP
   only). Tractor "Fresh" = new business; "without Trailer" = a body type not naming a trailer.
 - Kaali Peeli (black-and-yellow taxi) is not a policy fact (`kaali_peeli`): where its rate differs from
-  the ordinary taxi rate, the result is `ambiguous`. Flat Bed rows are matched by body type, so an unknown
-  body type is `ambiguous` where the Flat Bed rate differs.
+  the ordinary taxi rate, the result is `ambiguous`, naming both rates. Flat Bed rows are matched by body
+  type, so an unknown body type is `ambiguous` where the Flat Bed rate differs.
 - Left out: Employee Pick up and Car Carrier ("Only Deal Based", all 0) and "PC STP Non-Diesel" (all 0;
   private cars are priced by `PRIVATE CAR COMP, SAOD & STP`, so a second private-car grid would clash).
-- Terms: M&HCV towing cover (1.5% less without it), OD discount over 85% and the residency clause (2.5% less
-  each; neither is on the policy, so heavy-goods COMP is `ambiguous`); the West Zone booking-location rules
+- Terms: M&HCV towing cover (1.5% less without it); the residency clause (2.5% less, applied to every
+  heavy goods vehicle: PO decision 2026-11-23); OD discount over 85% (2.5% less; not on the policy, so
+  heavy-goods COMP is `ambiguous`); the West Zone booking-location rules
   (`ambiguous` for Ahmedabad, Vadodara, Surat, Pune and Nagpur, over 12 t); no CPA, 1% less. School-bus
   enablers and volume slabs are partner terms: listed, not applied (D2), like synergy.
 """
@@ -46,7 +47,7 @@ from rater.grids.model import (
     Unpublished,
 )
 from rater.grids.textrules import classify
-from rater.grids.xlsx import MISSING, Workbook
+from rater.grids.xlsx import MISSING, Sheet, Workbook
 
 INSURER = "Reliance"
 SHEET = "FEB'26 - Grid"
@@ -143,7 +144,6 @@ COLUMNS: tuple[Column, ...] = (
         ),
     ),
     Column("AK", ("tp",), (TRACTOR,)),
-    Column("AL", ("od", "tp"), ((*TAXI, ("kaali_peeli", "yes")),)),
     *_pair("AN", "AO", (GCV, ("body_type", ContainsAny(frozenset({"FLAT BED", "FLATBED"}))))),
     *_pair(
         "AP",
@@ -162,15 +162,55 @@ def _region(label: object) -> frozenset[str]:
     return frozenset({k, REGION_ALIASES[k]}) if k in REGION_ALIASES else frozenset({k})
 
 
-def _rules(wb: Workbook, file: str) -> tuple[list[RateRule], list[RateRule]]:
+# Taxi columns the Kaali Peeli column (AL, "Comp/STP") is set against.
+_TAXI_COLUMNS = ("AA", "AB", "AC", "AD", "AE")
+
+
+def _kaali(sheet: Sheet, file: str, r: int, region: tuple[str, DimValue]) -> list[tuple[str, ExceptionRule]]:
+    """(component, exception) where this row's Kaali Peeli rate differs from an ordinary taxi rate."""
+    al = sheet.value(f"AL{r}")
+    if not isinstance(al, int | float):
+        return []
+    kaali = round(float(al) * 100, 6)
+    place = " ".join(str(sheet.value(f"C{r}")).split())
+    out = []
+    for column in (c for c in COLUMNS if c.col in _TAXI_COLUMNS):
+        v = sheet.value(f"{column.col}{r}")
+        if not isinstance(v, int | float) or round(float(v) * 100, 6) == kaali:
+            continue
+        rate = round(float(v) * 100, 6)
+        text = (
+            f"{place}: a Kaali Peeli (black-and-yellow) taxi is paid {kaali:g}% ('{SHEET}'!AL{r}) instead of "
+            f"{rate:g}% ('{SHEET}'!{column.col}{r}); the policy does not show whether this taxi is "
+            "a Kaali Peeli"
+        )
+        (component,) = column.components
+        for alt in column.alternatives:
+            when = tuple(sorted((region, *alt, ("kaali_peeli", "yes")), key=lambda d: d[0]))
+            rule = ExceptionRule(
+                "policy_condition", text, XlsxCite(file, SHEET, f"AL{r}"), "flat", kaali, when=when,
+                components=(component,),
+            )  # fmt: skip
+            out.append((component, rule))
+    return out
+
+
+def _rules(
+    wb: Workbook, file: str
+) -> tuple[list[RateRule], list[RateRule], list[ExceptionRule], list[ExceptionRule]]:
+    """Rate rules and Kaali Peeli exceptions: (comp rules, SATP rules, comp exceptions, SATP exceptions)."""
     sheet = wb.sheet(SHEET)
     comp: list[RateRule] = []
     satp: list[RateRule] = []
+    comp_exc: list[ExceptionRule] = []
+    satp_exc: list[ExceptionRule] = []
     for r in range(FIRST, LAST + 1):
         label = sheet.value(f"C{r}")
         if not label:
             continue
         region = ("region", _region(label))
+        for component, rule in _kaali(sheet, file, r, region):
+            (comp_exc if component == "od" else satp_exc).append(rule)
         for column in COLUMNS:
             v = sheet.value(f"{column.col}{r}")
             if v is None or v is MISSING:
@@ -189,7 +229,7 @@ def _rules(wb: Workbook, file: str) -> tuple[list[RateRule], list[RateRule]]:
                     out = comp if component == "od" else satp
                     od, tp = (cell, None) if component == "od" else (None, cell)
                     out.append(RateRule(when, od, tp, XlsxCite(file, SHEET, f"A{r}:C{r}"), name))
-    return comp, satp
+    return comp, satp, comp_exc, satp_exc
 
 
 _HEAVY: Dims = (GCV, _gvw(12, INF, True, True, "12 t and above"))
@@ -242,7 +282,7 @@ def _terms(wb: Workbook, file: str) -> tuple[list[ExceptionRule], list[Exception
                     out.append(
                         ExceptionRule(
                             "policy_condition", text, cite, "reduce", 2.5,
-                            when=(*_HEAVY, ("residency_clause", "yes")),
+                            when=_HEAVY,  # applied to every heavy goods vehicle (PO, 2026-11-23)
                         )
                     )  # fmt: skip
         elif section.startswith("guidelines for gcv"):
@@ -296,8 +336,10 @@ def load(root: Path) -> list[Grid]:
     file = path.relative_to(root).as_posix()
     wb = Workbook(path)
     try:
-        comp, satp = _rules(wb, file)
-        comp_exc, satp_exc = _terms(wb, file)
+        comp, satp, comp_exc, satp_exc = _rules(wb, file)
+        comp_terms, satp_terms = _terms(wb, file)
+        comp_exc += comp_terms
+        satp_exc += satp_terms
         mapping = _mapping(wb, file)
         a1 = str(wb.sheet(SHEET).value("A1"))
     finally:

@@ -108,11 +108,12 @@ def test_heavy_goods_bands_by_age_and_comp_only_for_named_makes() -> None:
     assert r.status == "unsupported", why(r)
 
 
-def test_heavy_goods_depend_on_terms_the_policy_does_not_show() -> None:
+def test_heavy_goods_take_the_residency_cut_and_comp_depends_on_the_od_discount() -> None:
+    r = run("satp", gvw=16000, model="SIGNA")  # N5 25%, less 2.5% (residency clause, PO 2026-11-23)
+    assert r.status == "resolved" and r.rates["tp"].rate_percent == 22.5, why(r)
+    assert "Residency" in why(r)
     r = run(gvw=16000, model="SIGNA")
-    assert r.status == "ambiguous" and ("od_discount" in why(r) or "residency" in why(r)), why(r)
-    r = run("satp", gvw=16000, model="SIGNA")
-    assert r.status == "ambiguous" and "residency" in why(r), why(r)
+    assert r.status == "ambiguous" and "ODD>85%" in why(r), why(r)
 
 
 def test_west_zone_booking_location_rules() -> None:
@@ -124,8 +125,10 @@ def test_west_zone_booking_location_rules() -> None:
 
 def test_taxi_kaali_peeli_column_makes_the_rate_unknowable_where_it_differs() -> None:
     taxi = dict(vehicle_class="pcv_taxi", make="MARUTI", model="DZIRE", fuel="petrol", seating_capacity=5)
-    r = run(**taxi)
-    assert r.status == "ambiguous" and "kaali_peeli" in why(r), why(r)
+    r = run(**taxi)  # Mumbai: AA5 52.5% for this taxi, AL5 40% for a Kaali Peeli
+    assert r.status == "ambiguous", why(r)
+    reason = r.trace[-1].decision
+    assert "Kaali Peeli" in reason and "40%" in reason and "52.5%" in reason, reason
 
 
 def test_taxi_nil_dep_and_fuel_columns() -> None:

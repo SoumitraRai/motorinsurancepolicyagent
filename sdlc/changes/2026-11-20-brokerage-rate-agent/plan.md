@@ -839,4 +839,18 @@ T14 and T15 reuse T7's primitives and extend `registry.py`. **Test:** the same
     clause, booking location) are grid dimensions without a fact, so those policies are `ambiguous`.
   - `textrules`: "All % on Net Premium" is a premium basis, not an unreadable term.
   - Tests: `test_reliance_cv.py` (12), `test_tata_cv.py` (8), one `test_textrules.py` case.
+- **PO decisions, 2026-11-23 (after T15).**
+  - Buses stay as built (rate depends on who runs the bus; not extracted). Revisit only if needed.
+  - Reliance residency clause: the 2.5% cut is applied to every heavy goods vehicle (12 t and over), no
+    longer a condition the policy must show. Heavy-goods SATP now resolves; COMP stays `ambiguous` (OD
+    discount over 85%) (`test_heavy_goods_take_the_residency_cut_and_comp_depends_on_the_od_discount`).
+  - Taxis stay `ambiguous` where a Kaali Peeli rate differs, but the reason names both rates and cells
+    (Reliance: a `flat` term per taxi column instead of a rule; Go Digit: the Kaali peeli row's rate).
+- **T16 (README).** Architecture (parts, run flow, failure modes, trade-offs), sample results with links,
+  a trace-step → code map and the AC22 record were added. Sample outputs were regenerated on the latest
+  code (rules extractor): same statuses, rates, citations and traces; only the run time changed.
+- **Repository clean-up (PO, 2026-11-23).** AI coding-assistant configuration (assistant instructions and settings, the
+  sdlc plugin's workflows, evals and monitoring) is no longer part of the repository; the history was
+  rewritten to remove it and the commit trailers that referred to it. The working branch is now `main`
+  and `deploy/aws/bootstrap.sh` defaults to it.
 

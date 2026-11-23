@@ -3,7 +3,7 @@
 # and the repo at /opt/rater/app. Safe to re-run: it updates the checkout instead of re-cloning.
 set -euo pipefail
 REPO=https://github.com/SoumitraRai/motorinsurancepolicyagent.git
-BRANCH=${BRANCH:-sdlc/2026-11-20-brokerage-rate-agent}
+BRANCH=${BRANCH:-main}
 
 sudo apt-get update
 sudo apt-get install -y docker.io docker-compose-v2 docker-buildx git

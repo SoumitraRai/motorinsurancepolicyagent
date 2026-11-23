@@ -323,7 +323,7 @@
     "pagesRead": 15,
     "pdfSha256": "c96ad51804c7195838f7faca446c068e48604e990be6c9a6d412cf7c0518efbb",
     "reviewerSupplied": [],
-    "seconds": 56.1,
+    "seconds": 55.0,
     "switches": {
       "BROKER_ELIGIBILITY": "assume_base",
       "GRID_DATE_POLICY": "strict",

@@ -127,8 +127,9 @@ def test_make_scopes_with_ages() -> None:
 
 
 def test_kaali_peeli_rows_make_the_rate_unknowable() -> None:
-    r = taxi(rto="MH01")
-    assert r.status == "ambiguous" and "Kaali" in why(r)
+    r = taxi(rto="MH01")  # Mumbai Maruti > 1000 cc with add-ons: G257 25%, Kaali peeli G265 47.5%
+    reason = r.trace[-1].decision
+    assert r.status == "ambiguous" and "Kaali peeli" in reason and "47.5%" in reason, reason
     assert taxi(rto="MH01", fuel="diesel").rates["od"].rate_percent == 5
     assert taxi(rto="DL01", fuel="cng").status == "ambiguous"  # "Kaali-Peeli (Maruti & Hyundai)" CNG
 
