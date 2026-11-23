@@ -8,6 +8,7 @@ from pydantic.alias_generators import to_camel
 
 Verification = Literal[
     "text_layer",  # quote found in the PDF's own text layer
+    "confirmed_both",  # quote in both OCR engines' text, and each engine's text gives the same value
     "verified_both",  # quote found in both OCR engines' text
     "verified_one",  # quote found in one OCR engine's text
     "unverified",  # value given but quote not found on the cited page

@@ -237,3 +237,11 @@ def test_rules_extracts_commercial_vehicle_fields() -> None:
     assert raw["bodyType"].value.strip().lower() == "closed body"
     assert raw["gvw"].value == "2450"
     assert "restricted" in raw["tppdRestricted"].value.lower()
+
+
+def test_rules_quote_is_the_label_and_value_not_the_whole_row() -> None:
+    # A row often holds several fields; one misread character elsewhere must not fail the quote check.
+    row = "Customerld 1011632 Cubic Capacity 1197 Seating Capacity 7 Engine No X9"
+    raw = RulesExtractor().extract([PageInput(1, row, None)])
+    assert raw["cc"].quote == "Cubic Capacity 1197"
+    assert raw["seatingCapacity"].quote == "Seating Capacity 7"

@@ -35,6 +35,7 @@ export const LABELS: Record<string, string> = {
 
 export const CHECK: Record<string, string> = {
   text_layer: "Text layer",
+  confirmed_both: "Both OCR engines, same value",
   verified_both: "Both OCR engines",
   verified_one: "One OCR engine",
   unverified: "Not verified",

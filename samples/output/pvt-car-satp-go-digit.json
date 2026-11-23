@@ -3,7 +3,7 @@
   "confidence": {
     "cappedBy": [],
     "level": "low",
-    "reason": "weakest link: cc (verified one, page 1)"
+    "reason": "5 of 6 facts the result used confirmed (83%); a fact that picked the rate row is weak: rto (verified one, page 1)"
   },
   "facts": {
     "addOns": {
@@ -37,14 +37,14 @@
       "verification": "derived"
     },
     "cc": {
-      "confidence": "low",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
-      "quote": "Engine No. G4HGKM999181 Chassis No. MALAF51CLKM049328 Cubic Capacity 1086CC",
+      "quote": "Cubic Capacity 1086",
       "raw": "1086",
       "value": 1086,
-      "verification": "verified_one"
+      "verification": "confirmed_both"
     },
     "cngLpgKitValue": {
       "confidence": "unknown",
@@ -67,14 +67,14 @@
       "verification": "not_found"
     },
     "fuel": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
-      "quote": "Fuel Type Petrol Year of Mfg. 0001-01-01 Year of Regn. 2019",
+      "quote": "Fuel Type Petrol",
       "raw": "Petrol",
       "value": "petrol",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "gvw": {
       "confidence": "unknown",
@@ -87,54 +87,54 @@
       "verification": "not_found"
     },
     "insurer": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
-      "quote": "GoDigit General Insurance Ltd. Schedule/Certificate",
+      "quote": "GoDigit General Insurance Ltd.",
       "raw": "GoDigit General Insurance Ltd.",
       "value": "GoDigit General Insurance Ltd.",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "issueDate": {
-      "confidence": "low",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
-      "quote": "Policy No. D240744942 / 24031550 PolicyIssueDate 24-Mar-2026 Invoice No. IA224410314",
+      "quote": "IssueDate 24-Mar-2026",
       "raw": "24-Mar-2026",
       "value": "2026-03-24",
-      "verification": "verified_one"
+      "verification": "confirmed_both"
     },
     "make": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
-      "quote": "Make HYUNDAI Model/VehicleVariant(Sub-Type) SANTRONEW/1.1MT CORPORATE",
+      "quote": "Make HYUNDAI",
       "raw": "HYUNDAI",
       "value": "HYUNDAI",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "manufactureYear": {
       "confidence": "unknown",
       "note": "placeholder date on the policy (e.g. 0001-01-01): manufacture year unknown",
       "page": 1,
       "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
-      "quote": "Fuel Type Petrol Year of Mfg. 0001-01-01 Year of Regn. 2019",
+      "quote": "Year of Mfg. 0001-01-01",
       "raw": "0001-01-01",
       "value": null,
       "verification": "not_found"
     },
     "model": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
-      "quote": "Make HYUNDAI Model/VehicleVariant(Sub-Type) SANTRONEW/1.1MT CORPORATE",
+      "quote": "Model/VehicleVariant(Sub-Type) SANTRONEW/1.1MT CORPORATE",
       "raw": "SANTRONEW/1.1MT CORPORATE",
       "value": "SANTRONEW/1.1MT CORPORATE",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "ncb": {
       "confidence": "unknown",
@@ -177,24 +177,24 @@
       "verification": "not_found"
     },
     "policyStartDate": {
-      "confidence": "low",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
-      "quote": "Period of Policy From 25-Mar-2026 00:00:01 InvoiceDate 24-Mar-2026",
+      "quote": "From 25-Mar-2026",
       "raw": "25-Mar-2026",
       "value": "2026-03-25",
-      "verification": "verified_one"
+      "verification": "confirmed_both"
     },
     "policyType": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
-      "quote": "Digit Private Car Liability OnlyPolicy UINNo.:IRDAN158RP0002V01201718",
+      "quote": "Private Car Liability OnlyPolicy",
       "raw": "Private Car Liability OnlyPolicy",
       "value": "satp",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "powerKw": {
       "confidence": "unknown",
@@ -227,21 +227,21 @@
       "verification": "not_found"
     },
     "registrationYear": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
-      "quote": "Fuel Type Petrol Year of Mfg. 0001-01-01 Year of Regn. 2019",
+      "quote": "Year of Regn. 2019",
       "raw": "2019",
       "value": 2019,
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "rto": {
       "confidence": "low",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
-      "quote": "Name REENA KUMARI VehicleRegistrationNo. UP78FZ1372",
+      "quote": "RegistrationNo. UP78FZ1372",
       "raw": "UP78FZ1372",
       "value": "UP78",
       "verification": "verified_one"
@@ -251,7 +251,7 @@
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
-      "quote": "RTOLocation Kanpur Nagar,UTTAR PRADESH Seating Capacity 5",
+      "quote": "RTOLocation Kanpur Nagar,UTTAR PRADESH Seating Capacity",
       "raw": "Kanpur Nagar,UTTAR PRADESH",
       "value": "KANPUR NAGAR,UTTAR PRADESH",
       "verification": "verified_one"
@@ -261,7 +261,7 @@
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
-      "quote": "RTOLocation Kanpur Nagar,UTTAR PRADESH Seating Capacity 5",
+      "quote": "Seating Capacity 5",
       "raw": "5",
       "value": 5,
       "verification": "verified_one"
@@ -297,14 +297,14 @@
       "verification": "not_found"
     },
     "vehicleClass": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-satp-go-digit.pdf · page 1",
-      "quote": "Digit Private Car Liability OnlyPolicy UINNo.:IRDAN158RP0002V01201718",
+      "quote": "Private Car",
       "raw": "Private Car",
       "value": "private_car",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     }
   },
   "meta": {
@@ -323,7 +323,7 @@
     "pagesRead": 4,
     "pdfSha256": "4854e968d2280cb4ca6022b0b385328e14847d059a60bf186edf248df4bd4a26",
     "reviewerSupplied": [],
-    "seconds": 16.9,
+    "seconds": 13.7,
     "switches": {
       "BROKER_ELIGIBILITY": "assume_base",
       "GRID_DATE_POLICY": "strict",

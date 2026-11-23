@@ -4,8 +4,8 @@
     "cappedBy": [
       "HDFC ERGO slab footnote mentions GWP / slab achievement; the policy's OD premium was used as the slab (C1)"
     ],
-    "level": "low",
-    "reason": "weakest link: ncb (verified one, page 1); capped by HDFC ERGO slab footnote mentions GWP / slab achievement; the policy's OD premium was used as the slab (C1)"
+    "level": "medium",
+    "reason": "7 of 8 facts the result used confirmed (88%); weakest link: fuel (derived, page 1); capped by HDFC ERGO slab footnote mentions GWP / slab achievement; the policy's OD premium was used as the slab (C1)"
   },
   "facts": {
     "addOns": {
@@ -19,14 +19,14 @@
       "verification": "not_found"
     },
     "bodyType": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
-      "quote": "Yearof Manufacture 2023 BodyTypeSUV",
+      "quote": "BodyTypeSUV",
       "raw": "SUV",
       "value": "SUV",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "businessType": {
       "confidence": "unknown",
@@ -39,14 +39,14 @@
       "verification": "not_found"
     },
     "cc": {
-      "confidence": "low",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
-      "quote": "HARYANA - 122002 Te|88MWELPCW2 CubicCapacityWatts 1493 Seats 7 Customerld 101163279601",
+      "quote": "CubicCapacityWatts 1493",
       "raw": "1493",
       "value": 1493,
-      "verification": "verified_one"
+      "verification": "confirmed_both"
     },
     "cngLpgKitValue": {
       "confidence": "unknown",
@@ -73,7 +73,7 @@
       "note": "fuel not printed; MAHINDRA BOLERO NEO-N10 (R) is sold in diesel only per the model → fuel reference list (rater/grids/data/model_fuels.csv)",
       "page": 1,
       "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
-      "quote": "CommunicationAddress: Model BOLERO NEO-N10 (R) Periodof From 29 Mar,202600:01hrs",
+      "quote": "Model BOLERO NEO-N10 (R) Periodof From 29 Mar",
       "raw": "MAHINDRA BOLERO NEO-N10 (R)",
       "value": "diesel",
       "verification": "derived"
@@ -89,84 +89,84 @@
       "verification": "not_found"
     },
     "insurer": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
-      "quote": "HDFC ERGO General Insurance Company Limited. IRDAI Reg No.146 UIN:IRDAN125RP0001V02201415.Policy Issuing/ Customer Happiness Center: D 301,3rd Floor,",
+      "quote": "HDFC ERGO General Insurance Company Limited.",
       "raw": "HDFC ERGO General Insurance Company Limited.",
       "value": "HDFC ERGO General Insurance Company Limited.",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "issueDate": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
-      "quote": "HARYANA 122002GURUGRAM PINCODE- 122002 GURGAON RTO GURGAON Issuance Date 26/03/2026",
+      "quote": "Issuance Date 26/03/2026",
       "raw": "26/03/2026",
       "value": "2026-03-26",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "make": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
-      "quote": "M/S GLOBAL SOLUTIONS CO. LTD. Make MAHINDRA Policy No. 230221208393018307915",
+      "quote": "Make MAHINDRA",
       "raw": "MAHINDRA",
       "value": "MAHINDRA",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "manufactureYear": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
-      "quote": "Yearof Manufacture 2023 BodyTypeSUV",
+      "quote": "Yearof Manufacture 2023",
       "raw": "2023",
       "value": 2023,
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "model": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
-      "quote": "CommunicationAddress: Model BOLERO NEO-N10 (R) Periodof From 29 Mar,202600:01hrs",
+      "quote": "Model BOLERO NEO-N10 (R) Periodof From 29 Mar",
       "raw": "BOLERO NEO-N10 (R)",
       "value": "BOLERO NEO-N10 (R)",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "ncb": {
-      "confidence": "low",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
-      "quote": "Less: No Claim Bonus (35%) 852 LL for Employees of Insured (for 7 Persons) (IMT-29) 350",
+      "quote": "No Claim Bonus (35%)",
       "raw": "35",
       "value": 35.0,
-      "verification": "verified_one"
+      "verification": "confirmed_both"
     },
     "netPremium": {
-      "confidence": "low",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
-      "quote": "Net Own Damage Premium (a) 8053 Total Premium 14005",
+      "quote": "Total Premium 14005",
       "raw": "14005",
       "value": 14005.0,
-      "verification": "verified_one"
+      "verification": "confirmed_both"
     },
     "odPremium": {
-      "confidence": "low",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
-      "quote": "Net Own Damage Premium (a) 8053 Total Premium 14005",
+      "quote": "Net Own Damage Premium (a) 8053",
       "raw": "8053",
       "value": 8053.0,
-      "verification": "verified_one"
+      "verification": "confirmed_both"
     },
     "odTermYears": {
       "confidence": "unknown",
@@ -179,24 +179,24 @@
       "verification": "not_found"
     },
     "policyStartDate": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
-      "quote": "CommunicationAddress: Model BOLERO NEO-N10 (R) Periodof From 29 Mar,202600:01hrs",
+      "quote": "From 29 Mar,2026",
       "raw": "29 Mar,2026",
       "value": "2026-03-29",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "policyType": {
-      "confidence": "low",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
-      "quote": "CertificateofInsurancecumPolicySchedule [PHONE REMOVED] PRIVATECARCOMPREHENSIVEPOLICY 2302208393018307915 HREC",
+      "quote": "PRIVATECARCOMPREHENSIVEPOLICY",
       "raw": "PRIVATECARCOMPREHENSIVEPOLICY",
       "value": "comprehensive",
-      "verification": "verified_one"
+      "verification": "confirmed_both"
     },
     "powerKw": {
       "confidence": "unknown",
@@ -239,24 +239,24 @@
       "verification": "not_found"
     },
     "rto": {
-      "confidence": "low",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
-      "quote": "TECH PARK A 2 UNIT 12 URGAONGURUGRAM RegistrationNo HR-26-FB-8239 Insurance To 28 Mar, 2027 23:59",
+      "quote": "RegistrationNo HR-26-FB-8239",
       "raw": "HR-26-FB-8239",
       "value": "HR26",
-      "verification": "verified_one"
+      "verification": "confirmed_both"
     },
     "rtoLocation": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
-      "quote": "HARYANA 122002GURUGRAM PINCODE- 122002 GURGAON RTO GURGAON Issuance Date 26/03/2026",
+      "quote": "RTO GURGAON Issuance Date",
       "raw": "GURGAON",
       "value": "GURGAON",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "seatingCapacity": {
       "confidence": "unknown",
@@ -279,14 +279,14 @@
       "verification": "not_found"
     },
     "tpPremium": {
-      "confidence": "low",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
-      "quote": "Total-Less 852 Net Liability Premium (b) 3816",
+      "quote": "Net Liability Premium (b) 3816",
       "raw": "3816",
       "value": 3816.0,
-      "verification": "verified_one"
+      "verification": "confirmed_both"
     },
     "tppdRestricted": {
       "confidence": "unknown",
@@ -299,14 +299,14 @@
       "verification": "not_found"
     },
     "vehicleClass": {
-      "confidence": "low",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-comprehensive-hdfc-ergo.pdf · page 1",
-      "quote": "CertificateofInsurancecumPolicySchedule [PHONE REMOVED] PRIVATECARCOMPREHENSIVEPOLICY 2302208393018307915 HREC",
+      "quote": "PRIVATECAR",
       "raw": "PRIVATECAR",
       "value": "private_car",
-      "verification": "verified_one"
+      "verification": "confirmed_both"
     }
   },
   "meta": {
@@ -321,11 +321,11 @@
       "tesseract": "5.5.4"
     },
     "pageCount": 9,
-    "pages": 6,
-    "pagesRead": 6,
+    "pages": 9,
+    "pagesRead": 9,
     "pdfSha256": "c5d88a11b7341baef97ec531e5239e7afe803877eb31555a82b4bfdd5964ca70",
     "reviewerSupplied": [],
-    "seconds": 30.3,
+    "seconds": 31.5,
     "switches": {
       "BROKER_ELIGIBILITY": "assume_base",
       "GRID_DATE_POLICY": "strict",

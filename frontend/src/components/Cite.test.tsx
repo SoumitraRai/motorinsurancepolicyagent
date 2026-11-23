@@ -65,3 +65,32 @@ test("the confidence reason is written in the reviewer's words, with the fact's 
   );
   expect(c.quote).toBe("Cubic Capacity 1086CC");
 });
+
+test("the confirmed share leads the confidence text; a weak rate-row fact is named", async () => {
+  const { confidenceText } = await import("./RatesCard");
+  const cc = {
+    value: 1086,
+    page: 1,
+    quote: "Cubic Capacity 1086CC",
+    verification: "verified_one" as const,
+    confidence: "low" as const,
+  };
+  expect(
+    confidenceText("10 of 10 facts the result used confirmed (100%)", {}).text,
+  ).toBe("10 of 10 facts confirmed by both OCR engines (100%)");
+  const row = confidenceText(
+    "9 of 10 facts the result used confirmed (90%); a fact that picked the rate row is weak: cc (verified one, page 1)",
+    { cc },
+  );
+  expect(row.text).toBe(
+    "9 of 10 facts confirmed by both OCR engines (90%). A fact that picked the rate row is weak: Engine CC, read by one OCR engine (page 1)",
+  );
+  expect(row.quote).toBe("Cubic Capacity 1086CC");
+  const capped = confidenceText(
+    "9 of 10 facts the result used confirmed (90%); weakest link: cc (verified one, page 1); capped by slab (C1)",
+    { cc },
+  );
+  expect(capped.text).toBe(
+    "9 of 10 facts confirmed by both OCR engines (90%). Weakest link: Engine CC, read by one OCR engine (page 1); capped by slab (C1)",
+  );
+});

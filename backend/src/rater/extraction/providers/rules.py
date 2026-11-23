@@ -1,7 +1,9 @@
 """Local rule-based extractor: generic insurance-schedule labels matched against OCR rows.
 
 It is the fallback when no LLM is configured or the LLM call fails, so the app always returns a result.
-Each match returns the whole row as its quote (so verification can find it) and the row's page. The label
+Each match returns the matched label and value as its quote, and the row's page. Only that span is quoted:
+a row often holds several fields, and one misread character in another field must not fail the quote
+check (PO 2026-11-23). The label
 table holds generic schedule wording only; it is never tuned to a particular sample's values (NN5).
 """
 
@@ -113,5 +115,7 @@ class RulesExtractor:
                 for row in p.text.splitlines():
                     m = rx.search(row.strip())
                     if m and m.group(1).strip():
-                        return RawField(value=" ".join(m.group(1).split()), page=p.page, quote=row.strip())
+                        return RawField(
+                            value=" ".join(m.group(1).split()), page=p.page, quote=m.group(0).strip()
+                        )
         return None

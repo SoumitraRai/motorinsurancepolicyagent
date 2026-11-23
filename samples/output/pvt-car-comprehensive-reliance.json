@@ -2,8 +2,8 @@
   "clarification": null,
   "confidence": {
     "cappedBy": [],
-    "level": "low",
-    "reason": "weakest link: insurer (verified one, page 2)"
+    "level": "medium",
+    "reason": "3 of 4 facts the result used confirmed (75%); weakest link: business_type (derived, page 13)"
   },
   "facts": {
     "addOns": {
@@ -31,27 +31,27 @@
       "note": "same current and previous insurer → renewal",
       "page": 13,
       "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 13",
-      "quote": "44. FullName ofprevious insurer RelianceGeneral InsuranceCompanyLtd.",
+      "quote": "previous insurer RelianceGeneral InsuranceCompanyLtd.",
       "raw": "RELIANCe GENERAL INSURANCE / RelianceGeneral InsuranceCompanyLtd.",
       "value": "renewal",
       "verification": "derived"
     },
     "cc": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 2,
       "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
-      "quote": "Make/Model&Variant RENAULTKWID1.0RXT O CC/HP 999",
+      "quote": "CC/HP 999",
       "raw": "999",
       "value": 999,
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "cngLpgKitValue": {
       "confidence": "low",
       "note": null,
       "page": 2,
       "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
-      "quote": "VehicleIDV 263,250.00CNG/LPGKit 0.00",
+      "quote": "CNG/LPGKit 0.00",
       "raw": "0.00",
       "value": 0.0,
       "verification": "verified_one"
@@ -87,14 +87,14 @@
       "verification": "not_found"
     },
     "insurer": {
-      "confidence": "low",
+      "confidence": "high",
       "note": null,
       "page": 2,
       "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
-      "quote": "RELIANCe GENERAL INSURANCE Live Smart CompanyLimited Digitallysigned byReliance General Insurance reliancegeneral.co.in 02248903009",
+      "quote": "RELIANCe GENERAL INSURANCE",
       "raw": "RELIANCe GENERAL INSURANCE",
       "value": "RELIANCe GENERAL INSURANCE",
-      "verification": "verified_one"
+      "verification": "confirmed_both"
     },
     "issueDate": {
       "confidence": "unknown",
@@ -107,44 +107,44 @@
       "verification": "not_found"
     },
     "make": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 2,
       "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
-      "quote": "Make/Model&Variant RENAULTKWID1.0RXT O CC/HP 999",
+      "quote": "Make/Model&Variant RENAULTKWID",
       "raw": "RENAULT",
       "value": "RENAULT",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "manufactureYear": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 2,
       "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
-      "quote": "RegistrationNo. UP16CS5830 Mfg.Month&Year OCT-2020",
+      "quote": "Mfg.Month&Year OCT-2020",
       "raw": "OCT-2020",
       "value": 2020,
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "model": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 2,
       "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
-      "quote": "Make/Model&Variant RENAULTKWID1.0RXT O CC/HP 999",
+      "quote": "Model&Variant RENAULTKWID1.0RXT O CC/HP 999",
       "raw": "RENAULTKWID1.0RXT O",
       "value": "RENAULTKWID1.0RXT O",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "ncb": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 2,
       "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
-      "quote": "Deduct25%forNCB -350.01 TotalPAPremium 375.00",
+      "quote": "Deduct25%forNCB",
       "raw": "25",
       "value": 25.0,
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "netPremium": {
       "confidence": "unknown",
@@ -177,24 +177,24 @@
       "verification": "not_found"
     },
     "policyStartDate": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 2,
       "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
-      "quote": "From00:00Hrson23-Dec-2025toMidnightof22-Dec-2026",
+      "quote": "From00:00Hrson23-Dec-2025",
       "raw": "23-Dec-2025",
       "value": "2025-12-23",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "policyType": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 1",
-      "quote": "YourReliancePrivateCarPackagePolicy- network garages. livevideo streaming.",
+      "quote": "PrivateCarPackagePolicy",
       "raw": "PrivateCarPackagePolicy",
       "value": "comprehensive",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "powerKw": {
       "confidence": "unknown",
@@ -211,7 +211,7 @@
       "note": null,
       "page": 13,
       "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 13",
-      "quote": "44. FullName ofprevious insurer RelianceGeneral InsuranceCompanyLtd.",
+      "quote": "previous insurer RelianceGeneral InsuranceCompanyLtd.",
       "raw": "RelianceGeneral InsuranceCompanyLtd.",
       "value": "RelianceGeneral InsuranceCompanyLtd.",
       "verification": "verified_both"
@@ -227,44 +227,44 @@
       "verification": "not_found"
     },
     "registrationYear": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 5,
       "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 5",
-      "quote": "Make/Model&Variant RENAULTKWID1.0RXT O DateofRegistration 24-Dec-2020",
+      "quote": "DateofRegistration 24-Dec-2020",
       "raw": "24-Dec-2020",
       "value": 2020,
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "rto": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 2,
       "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
-      "quote": "RegistrationNo. UP16CS5830 Mfg.Month&Year OCT-2020",
+      "quote": "RegistrationNo. UP16CS5830",
       "raw": "UP16CS5830",
       "value": "UP16",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "rtoLocation": {
-      "confidence": "low",
+      "confidence": "high",
       "note": null,
       "page": 2,
       "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
-      "quote": "RTO Location UTTARPRADESH-Noida TotalPremium 8,535.00",
+      "quote": "RTO Location UTTARPRADESH-Noida TotalPremium",
       "raw": "UTTARPRADESH-Noida",
       "value": "UTTARPRADESH-NOIDA",
-      "verification": "verified_one"
+      "verification": "confirmed_both"
     },
     "seatingCapacity": {
-      "confidence": "low",
+      "confidence": "high",
       "note": null,
       "page": 2,
       "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 2",
-      "quote": "EngineNo./ChassisNo. B4DA416E029716 MEEBBA0MEEBBA005LB744759 Seating CapacityIncludingDriver 5",
+      "quote": "Seating CapacityIncludingDriver 5",
       "raw": "5",
       "value": 5,
-      "verification": "verified_one"
+      "verification": "confirmed_both"
     },
     "segment": {
       "confidence": "unknown",
@@ -297,14 +297,14 @@
       "verification": "not_found"
     },
     "vehicleClass": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-comprehensive-reliance.pdf · page 1",
-      "quote": "YourReliancePrivateCarPackagePolicy- network garages. livevideo streaming.",
+      "quote": "PrivateCar",
       "raw": "PrivateCar",
       "value": "private_car",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     }
   },
   "meta": {
@@ -323,7 +323,7 @@
     "pagesRead": 15,
     "pdfSha256": "c96ad51804c7195838f7faca446c068e48604e990be6c9a6d412cf7c0518efbb",
     "reviewerSupplied": [],
-    "seconds": 87.9,
+    "seconds": 56.1,
     "switches": {
       "BROKER_ELIGIBILITY": "assume_base",
       "GRID_DATE_POLICY": "strict",

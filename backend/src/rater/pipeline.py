@@ -9,9 +9,10 @@ import json
 import time
 from dataclasses import dataclass
 
-from rater.extraction.normalise import apply_overrides, normalise
-from rater.extraction.ocr import OcrEngine, ocr_document, versions
+from rater.extraction.normalise import RawExtraction, apply_overrides, normalise
+from rater.extraction.ocr import OcrEngine, PageEvidence, ocr_document, versions
 from rater.extraction.providers.base import Extractor, PageInput, extract_with_fallback
+from rater.extraction.providers.rules import RulesExtractor
 from rater.extraction.render import iter_pages, page_count
 from rater.facts import Facts
 from rater.grids.model import GridSet
@@ -34,6 +35,8 @@ class Deps:
     # Vaatun 2026-11-22 says the key details are in the first 5-6 pages, but two samples print the insurer
     # (Tata AIG, page 12) or the previous insurer (Reliance, page 13) later, so the default is 20.
     read_pages: int | None = 20
+    # Reads the cross-check engine's text on its own, to confirm each value (PO 2026-11-23).
+    cross_reader: Extractor | None = None
 
 
 def _png(image: object) -> bytes:
@@ -53,9 +56,31 @@ def _no_facts(facts: Facts, file_name: str) -> Result:
     )
 
 
+def _cross_check(
+    pdf: bytes, pages: list[PageEvidence], cited: set[int], deps: Deps
+) -> tuple[list[PageEvidence], RawExtraction | None]:
+    """Run the cross-check engines only on the pages the facts came from: their text is used only to
+    check quotes and confirm values, so reading other pages would only cost time."""
+    image_pages = {p.page for p in pages if not p.text_layer} & cited
+    engines = deps.engines[1:]
+    if not engines or not image_pages:
+        return pages, None
+    extra = {e.page: e for e in ocr_document(pdf, engines, max_pages=deps.read_pages, only_pages=image_pages)}
+    merged = [
+        PageEvidence(p.page, p.text_layer, {**p.by_engine, **extra[p.page].by_engine})
+        if p.page in extra
+        else p
+        for p in pages
+    ]
+    reader = deps.cross_reader or RulesExtractor()
+    first = engines[0].name
+    cross = reader.extract([PageInput(e.page, e.by_engine.get(first, ""), None) for e in extra.values()])
+    return merged, cross
+
+
 def run_pipeline(pdf: bytes, file_name: str, deps: Deps, overrides: dict[str, str] | None = None) -> Result:
     started = time.monotonic()
-    pages = ocr_document(pdf, deps.engines, max_pages=deps.read_pages)
+    pages = ocr_document(pdf, deps.engines[:1], max_pages=deps.read_pages)
     llm = deps.primary.name != deps.fallback.name
     images = (
         [_png(img) for img in itertools.islice(iter_pages(pdf, LLM_IMAGE_DPI), len(pages))]
@@ -66,7 +91,8 @@ def run_pipeline(pdf: bytes, file_name: str, deps: Deps, overrides: dict[str, st
         PageInput(page=p.page, text=p.best_text, image_png=img) for p, img in zip(pages, images, strict=True)
     ]
     raw, used, note = extract_with_fallback(inputs, deps.primary, deps.fallback)
-    facts = normalise(raw, pages, file_name)
+    pages, cross = _cross_check(pdf, pages, {f.page for f in raw.values() if f.page}, deps)
+    facts = normalise(raw, pages, file_name, cross)
     if overrides:
         facts = apply_overrides(facts, overrides)
 

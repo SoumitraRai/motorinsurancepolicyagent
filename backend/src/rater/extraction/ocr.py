@@ -108,9 +108,13 @@ def _ocr_page(args: tuple[int, Image.Image, tuple[OcrEngine, ...]]) -> PageEvide
 
 
 def ocr_document(
-    pdf: bytes, engines: tuple[OcrEngine, ...], dpi: int = 300, max_pages: int | None = None
+    pdf: bytes,
+    engines: tuple[OcrEngine, ...],
+    dpi: int = 300,
+    max_pages: int | None = None,
+    only_pages: set[int] | None = None,
 ) -> list[PageEvidence]:
-    """OCR evidence for the first `max_pages` pages (all when None)."""
+    """OCR evidence for the first `max_pages` pages (all when None), or only the page numbers given."""
     layers = text_layer(pdf)
     if max_pages is not None:
         layers = layers[:max_pages]
@@ -119,6 +123,8 @@ def ocr_document(
     out: dict[int, PageEvidence] = {}
     pages = itertools.islice(iter_pages(pdf, dpi), len(layers))
     for number, (layer, image) in enumerate(zip(layers, pages, strict=True), start=1):
+        if only_pages is not None and number not in only_pages:
+            continue
         if len(layer) >= MIN_TEXT_LAYER_CHARS:
             out[number] = PageEvidence(page=number, text_layer=layer)
             continue

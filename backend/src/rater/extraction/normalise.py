@@ -299,7 +299,33 @@ def _fuel_from_model(facts: Facts) -> None:
     )
 
 
-def normalise(raw: RawExtraction, pages: list[PageEvidence], file_name: str) -> Facts:
+# Names are compared loosely across engines: case, punctuation and these filler words are ignored.
+_NAME_ATTRS = {"insurer", "previous_insurer", "make", "model", "rto_location"}
+_FILLER = {"ltd", "limited", "co", "company", "the", "with", "of", "and"}
+
+
+def _loose(text: str) -> str:
+    return "".join(w for w in re.findall(r"[a-z0-9]+", text.lower()) if w not in _FILLER)
+
+
+def _same_value(attr: str, value: Any, other: RawField | None) -> bool:
+    """Does the cross-check engine's own reading give the same value? (PO 2026-11-23, C4 amended)"""
+    if other is None or other.value is None or not str(other.value).strip():
+        return False
+    if attr in _NAME_ATTRS:
+        return _loose(str(value)) == _loose(str(other.value))
+    try:
+        return bool(_PARSERS[attr](str(other.value)) == value)
+    except Exception:  # an unparseable cross reading simply doesn't confirm
+        return False
+
+
+def normalise(
+    raw: RawExtraction, pages: list[PageEvidence], file_name: str, cross: RawExtraction | None = None
+) -> Facts:
+    """Typed facts from the extractor's fields. `cross` is the same fields read from the cross-check
+    engine's text alone; a fact whose quote both engines contain and whose value both readings agree on
+    is `confirmed_both`."""
     by_page = {p.page: p for p in pages}
     facts = Facts()
     for name, field in raw.items():
@@ -312,6 +338,8 @@ def normalise(raw: RawExtraction, pages: list[PageEvidence], file_name: str) -> 
         verification = verify_quote(field.quote, by_page.get(field.page or -1))
         try:
             value = _PARSERS[attr](str(field.value))
+            if verification == "verified_both" and cross and _same_value(attr, value, cross.get(name)):
+                verification = "confirmed_both"
             setattr(
                 facts,
                 attr,

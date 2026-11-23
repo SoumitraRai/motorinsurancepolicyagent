@@ -103,6 +103,22 @@ enough memory are paid).
 
 Every run records the switch values in `meta.switches`.
 
+## Confidence
+
+Scanned pages are read by two OCR engines: RapidOCR reads every page, and Tesseract cross-checks only
+the pages the facts came from (its text is used for nothing else). Product owner decision 2026-11-23
+(spec C4 and SR23 amended): scanned facts can reach `high`.
+
+- **Per fact.** `high`: the fact's label and value appear in the PDF's text layer, or both engines
+  contain them and the value read from Tesseract's text alone is the same (names compared ignoring case,
+  punctuation and "Ltd/Limited/Co/With"). `medium`: both engines contain the quote but the values aren't
+  confirmed. `low`: only one engine, or neither, has it.
+- **Per result.** The share of the facts the result used that are `high`: ≥ 90% → `high`, ≥ 70% →
+  `medium`, otherwise `low`, and never below the weakest fact's level. If a fact that picked the rate
+  row (RTO/zone mapping, the matched row's dimensions, a T&C condition) is below `medium`, the result is
+  `low`. Then one level lower per date warning, and capped by named assumptions (e.g. HDFC ERGO's slab
+  footnote, C1, caps at `medium`).
+
 ## Data and privacy
 
 Uploaded PDFs and extracted facts are treated as restricted. They are stored only in Supabase (private

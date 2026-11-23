@@ -786,3 +786,25 @@ T14 and T15 reuse T7's primitives and extend `registry.py`. **Test:** the same
   next to Supabase; the 2 GB free-plan types are too small for both OCR engines (≈1.2 GB peak). Same
   Dockerfile, no code change. `render.yaml` is kept but unused. Release authorised by the PO as release
   manager (`RELEASE_APPROVAL`); there is no staging environment, so no rollback rehearsal precedes it.
+- **Progress bar while a run is analysed (PO request, 2026-11-23; not in the plan).** `AnalysisProgress`
+  replaces the "Analysing this policy" line on queued/processing runs: a `role="progressbar"` bar of elapsed
+  time against an estimate (15 s + 12 s per page read, pages capped at `READ_PAGES` 20), the time left, and
+  "Taking longer than estimated" past it. The server reports no progress, so the bar is labelled an estimate
+  and stops at 95% until the run finishes. Tests: `AnalysisProgress.test.tsx`; `RunPage.test.tsx` processing
+  test now finds the bar.
+- **Confidence and speed (PO, 2026-11-23; spec C4 and SR23 amended).** The PO lifted the OCR cap: every
+  real policy is scanned, so scanned facts must be able to reach `high`.
+  - Rules extractor quotes the matched label and value, not the whole OCR row: one misread character in
+    another field on the row no longer fails the quote check (`test_rules_quote_is_the_label_and_value_*`).
+  - New verification `confirmed_both`: the quote is in both engines and the value read from the
+    cross-check engine's text alone (rules extractor) is the same; names compared loosely
+    (`test_same_value_from_each_engine_is_confirmed`, `test_names_are_compared_loosely_across_engines`).
+  - `confidence.overall`: share of used facts that are `high`, 90% / 70% thresholds (PO), never below the
+    weakest link, `low` when a rate-row fact (mapping, match, T&C) is below `medium`; the engine tracks
+    those facts (`row_used`). `test_confidence_weakest_link` replaced by the share and row-fact tests;
+    `test_pipeline_resolves_and_records_meta` now expects `confirmed_both` (both fake engines agree).
+  - Tesseract reads only the pages the facts came from (`ocr_document(only_pages=…)`,
+    `pipeline._cross_check`); measured on 2 vCPUs it was ≈ 40% of OCR time on every page
+    (`test_cross_check_engine_reads_only_the_cited_pages`).
+  - Frontend: the confidence text leads with the confirmed share; the progress estimate is 30 s + 16 s
+    per page, from the 2-vCPU measurement. README has a new Confidence section. Sample outputs regenerated.

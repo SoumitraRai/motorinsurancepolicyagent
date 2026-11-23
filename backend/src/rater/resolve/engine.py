@@ -54,6 +54,7 @@ class _Run:
         self.policy_file = policy_file
         self.steps: list[Step] = []
         self.used: set[str] = set()
+        self.row_used: set[str] = set()  # facts that picked the rate row (mapping, match, T&C conditions)
         self.warnings = 0
         self.grid: Grid | None = None
         self.caps: list[Cap] = []
@@ -119,7 +120,9 @@ class _Run:
             else:
                 rates[comp] = RateOut(applicable=True, rate_percent=None, reason=r.reason)
         used = {n: self.facts.get(n) for n in sorted(self.used | set(r.missing))}
-        conf = overall(used, self.warnings, (list(self.grid.caps) if self.grid else []) + self.caps)
+        conf = overall(
+            used, self.warnings, (list(self.grid.caps) if self.grid else []) + self.caps, row=self.row_used
+        )
         return Result(
             status=r.status,
             facts=self.facts,
@@ -193,6 +196,7 @@ class _Run:
         mapped, map_steps, map_used, map_caps = mapped_out
         self.steps.extend(map_steps)
         self.used.update(map_used)
+        self.row_used.update(map_used)
         self.caps.extend(map_caps)
 
         matches: dict[str, Match] = {}
@@ -227,6 +231,7 @@ class _Run:
                 return self.refuse(self._explain(m, grid, mapped))
             matches[comp] = m
             self.used.update(m.used)
+            self.row_used.update(m.used)
             rule = m.rules[0]
             what = rule.label or ", ".join(f"{d} {describe(w)}" for d, w in rule.dims)
             note = f" ({_rate_reason(m.cell)})" if m.cell.label else ""
@@ -258,6 +263,7 @@ class _Run:
             return self.refuse(applied)
         self.steps.extend(applied.steps)
         self.used.update(applied.used)
+        self.row_used.update(applied.used)
         if self.pending is not None:
             return self.refuse(self.pending)
 
@@ -287,7 +293,10 @@ class _Run:
         )
 
         conf = overall(
-            {n: self.facts.get(n) for n in sorted(self.used)}, self.warnings, list(grid.caps) + self.caps
+            {n: self.facts.get(n) for n in sorted(self.used)},
+            self.warnings,
+            list(grid.caps) + self.caps,
+            row=self.row_used,
         )
         return Result(
             status="resolved",

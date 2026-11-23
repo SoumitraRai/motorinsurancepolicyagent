@@ -81,7 +81,9 @@ test("processing state polls until the run finishes", async () => {
       result: satpResult,
     } satisfies RunDetail);
   renderWithApi(<RunPage runId="r1" pollMs={10} />, { getRun });
-  expect(await screen.findByText(/Analysing this policy/)).toBeInTheDocument();
+  expect(
+    await screen.findByRole("progressbar", { name: "Analysis progress" }),
+  ).toBeInTheDocument();
   await waitFor(() =>
     expect(getRun.mock.calls.length).toBeGreaterThanOrEqual(2),
   );
@@ -189,4 +191,18 @@ test("a refusal says why inside the schedule", async () => {
   expect(
     within(why).getByText("No row matches this policy."),
   ).toBeInTheDocument();
+});
+
+test("a processing run shows a progress bar with the time left", async () => {
+  const getRun = vi.fn().mockResolvedValue({
+    ...base,
+    createdAt: new Date().toISOString(),
+    status: "processing",
+    result: null,
+  } satisfies RunDetail);
+  renderWithApi(<RunPage runId="r1" pollMs={60_000} />, { getRun });
+  expect(
+    await screen.findByRole("progressbar", { name: "Analysis progress" }),
+  ).toBeInTheDocument();
+  expect(screen.getByText(/left/)).toBeInTheDocument();
 });

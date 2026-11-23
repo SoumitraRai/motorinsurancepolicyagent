@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useApi, type RunDetail } from "../api";
+import { AnalysisProgress } from "../components/AnalysisProgress";
 import { Cite } from "../components/Cite";
 import { ClarifyPanel } from "../components/ClarifyPanel";
 import { FactsTable } from "../components/FactsTable";
@@ -176,11 +177,11 @@ export function RunPage({
       <RatesCard run={r} res={res} printed={printed} />
 
       {PENDING.has(r.status) && (
-        <p className="max-w-[75ch] text-ink-soft">
-          Analysing this policy: reading pages, extracting facts, checking
-          quotes, resolving the grid. This page updates by itself; you can leave
-          and come back.
-        </p>
+        <AnalysisProgress
+          createdAt={r.createdAt}
+          pageCount={r.pageCount}
+          status={r.status}
+        />
       )}
 
       {r.status === "failed" && (

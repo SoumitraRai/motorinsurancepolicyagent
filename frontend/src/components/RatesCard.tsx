@@ -75,22 +75,42 @@ const camel = (s: string) =>
  * The engine's confidence reason in the reviewer's words: "weakest link: cc (verified one, page 1)"
  * becomes "Weakest link: Engine CC, read by one OCR engine (page 1)", with that fact's quote.
  */
+function weakFact(
+  m: RegExpExecArray,
+  facts: Record<string, Fact>,
+): { text: string; quote: string | null } {
+  const [, lead, name, verification, page, rest] = m;
+  const key = camel(name);
+  const raw = CHECK[verification.replace(/ /g, "_")] ?? verification;
+  const check = raw.charAt(0).toLowerCase() + raw.slice(1);
+  const how = /OCR/.test(check) ? `read by ${check}` : check;
+  return {
+    text: `${lead.charAt(0).toUpperCase()}${lead.slice(1)}: ${LABELS[key] ?? name}, ${how}${page ? ` (page ${page})` : ""}${rest}`,
+    quote: facts[key]?.quote ?? null,
+  };
+}
+
+const SHARE = /^(\d+ of \d+) facts the result used confirmed (\(\d+%\))(?:; )?(.*)$/s;
+const WEAK =
+  /^(weakest link|a fact that picked the rate row is weak): (\w+) \(([^,)]+)(?:, page (\d+))?\)(.*)$/s;
+
 export function confidenceText(
   reason: string,
   facts: Record<string, Fact>,
 ): { text: string; quote: string | null } {
-  const m = /^weakest link: (\w+) \(([^,)]+)(?:, page (\d+))?\)(.*)$/s.exec(
-    reason,
-  );
-  if (!m) return { text: reason, quote: null };
-  const key = camel(m[1]);
-  const raw = CHECK[m[2].replace(/ /g, "_")] ?? m[2];
-  const check = raw.charAt(0).toLowerCase() + raw.slice(1);
-  const how = /OCR/.test(check) ? `read by ${check}` : check;
-  const page = m[3] ? ` (page ${m[3]})` : "";
+  const share = SHARE.exec(reason);
+  const rest = share ? share[3] : reason;
+  const lead = share
+    ? `${share[1]} facts confirmed by both OCR engines ${share[2]}`
+    : "";
+  const weak = WEAK.exec(rest);
+  const tail = weak
+    ? weakFact(weak, facts)
+    : { text: rest ? rest.charAt(0).toUpperCase() + rest.slice(1) : "", quote: null };
+  if (!share) return weak ? tail : { text: reason, quote: null };
   return {
-    text: `Weakest link: ${LABELS[key] ?? m[1]}, ${how}${page}${m[4]}`,
-    quote: facts[key]?.quote ?? null,
+    text: tail.text ? `${lead}. ${tail.text}` : lead,
+    quote: tail.quote,
   };
 }
 

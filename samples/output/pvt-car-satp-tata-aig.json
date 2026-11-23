@@ -2,8 +2,8 @@
   "clarification": null,
   "confidence": {
     "cappedBy": [],
-    "level": "low",
-    "reason": "weakest link: policy_type (verified one, page 1)"
+    "level": "medium",
+    "reason": "2 of 3 facts the result used confirmed (67%); weakest link: insurer (verified both, page 12)"
   },
   "facts": {
     "addOns": {
@@ -41,7 +41,7 @@
       "note": null,
       "page": 4,
       "policyCitation": "pvt-car-satp-tata-aig.pdf · page 4",
-      "quote": "Registration No. DL9CAB2893 CC/KW 998",
+      "quote": "CC/KW 998",
       "raw": "998",
       "value": 998,
       "verification": "verified_one"
@@ -51,7 +51,7 @@
       "note": null,
       "page": 5,
       "policyCitation": "pvt-car-satp-tata-aig.pdf · page 5",
-      "quote": "Add: CNG / LPG kit TP (IMT 25) 60",
+      "quote": "CNG / LPG kit TP (IMT 25",
       "raw": "25",
       "value": 25.0,
       "verification": "verified_one"
@@ -91,7 +91,7 @@
       "note": null,
       "page": 12,
       "policyCitation": "pvt-car-satp-tata-aig.pdf · page 12",
-      "quote": "belongs to Tata Sons Private Limited and AIG and is used by TATA AIG General Insurance Company Limited under License.",
+      "quote": "belongs to Tata Sons Private Limited and AIG and is used by TATA AIG General Insurance Company Limited",
       "raw": "belongs to Tata Sons Private Limited and AIG and is used by TATA AIG General Insurance Company Limited",
       "value": "belongs to Tata Sons Private Limited and AIG and is used by TATA AIG General Insurance Company Limited",
       "verification": "verified_both"
@@ -111,30 +111,30 @@
       "note": null,
       "page": 4,
       "policyCitation": "pvt-car-satp-tata-aig.pdf · page 4",
-      "quote": "Make/Model/ MARUTI/ZENESTILO/ Mfg. Year 2011",
+      "quote": "Make/Model/ MARUTI",
       "raw": "MARUTI",
       "value": "MARUTI",
       "verification": "verified_both"
     },
     "manufactureYear": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 4,
       "policyCitation": "pvt-car-satp-tata-aig.pdf · page 4",
-      "quote": "Make/Model/ MARUTI/ZENESTILO/ Mfg. Year 2011",
+      "quote": "Mfg. Year 2011",
       "raw": "2011",
       "value": 2011,
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "model": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 4,
       "policyCitation": "pvt-car-satp-tata-aig.pdf · page 4",
-      "quote": "Make/Model/ MARUTI/ZENESTILO/ Mfg. Year 2011",
+      "quote": "Model/ MARUTI/ZENESTILO/ Mfg. Year 2011",
       "raw": "MARUTI/ZENESTILO/",
       "value": "MARUTI/ZENESTILO/",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "ncb": {
       "confidence": "unknown",
@@ -187,14 +187,14 @@
       "verification": "not_found"
     },
     "policyType": {
-      "confidence": "low",
+      "confidence": "high",
       "note": null,
       "page": 1,
       "policyCitation": "pvt-car-satp-tata-aig.pdf · page 1",
-      "quote": "TATA INSURANCE AIG Auto Secure - Liability Only Policy Million 50",
+      "quote": "Liability Only Policy",
       "raw": "Liability Only Policy",
       "value": "satp",
-      "verification": "verified_one"
+      "verification": "confirmed_both"
     },
     "powerKw": {
       "confidence": "unknown",
@@ -227,41 +227,41 @@
       "verification": "not_found"
     },
     "registrationYear": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 4,
       "policyCitation": "pvt-car-satp-tata-aig.pdf · page 4",
       "quote": "Date of Registration 02/11/2011",
       "raw": "02/11/2011",
       "value": 2011,
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     },
     "rto": {
       "confidence": "low",
       "note": null,
       "page": 4,
       "policyCitation": "pvt-car-satp-tata-aig.pdf · page 4",
-      "quote": "Registration No. DL9CAB2893 CC/KW 998",
+      "quote": "Registration No. DL9CAB2893",
       "raw": "DL9CAB2893",
       "value": "DL09",
       "verification": "verified_one"
     },
     "rtoLocation": {
-      "confidence": "low",
+      "confidence": "high",
       "note": null,
       "page": 4,
       "policyCitation": "pvt-car-satp-tata-aig.pdf · page 4",
-      "quote": "RTO Location DELHI No.ofBatteries NA",
+      "quote": "RTO Location DELHI No",
       "raw": "DELHI",
       "value": "DELHI",
-      "verification": "verified_one"
+      "verification": "confirmed_both"
     },
     "seatingCapacity": {
       "confidence": "low",
       "note": null,
       "page": 4,
       "policyCitation": "pvt-car-satp-tata-aig.pdf · page 4",
-      "quote": "Chassis No. MA3EMDE1S00365877 Seating Capacity 5",
+      "quote": "Seating Capacity 5",
       "raw": "5",
       "value": 5,
       "verification": "verified_one"
@@ -297,14 +297,14 @@
       "verification": "not_found"
     },
     "vehicleClass": {
-      "confidence": "medium",
+      "confidence": "high",
       "note": null,
       "page": 4,
       "policyCitation": "pvt-car-satp-tata-aig.pdf · page 4",
       "quote": "Body Type HATCHBACK",
       "raw": "HATCHBACK",
       "value": "private_car",
-      "verification": "verified_both"
+      "verification": "confirmed_both"
     }
   },
   "meta": {
@@ -323,7 +323,7 @@
     "pagesRead": 12,
     "pdfSha256": "ec180dc9dfa947ccd388a08b2350988b490551072b52878c998a14a7c5e24249",
     "reviewerSupplied": [],
-    "seconds": 40.4,
+    "seconds": 26.6,
     "switches": {
       "BROKER_ELIGIBILITY": "assume_base",
       "GRID_DATE_POLICY": "strict",

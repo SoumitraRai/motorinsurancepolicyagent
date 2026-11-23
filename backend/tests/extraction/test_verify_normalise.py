@@ -197,3 +197,30 @@ def test_body_type_and_tppd() -> None:
     f = run(bodyType=raw(" Oil  tanker "), tppdRestricted=raw("TPPD restricted to Rs. 6,000"))
     assert f.body_type.value == "OIL TANKER" and f.tppd_restricted.value == "yes"
     assert run(tppdRestricted=raw("TPPD: No")).tppd_restricted.value == "no"
+
+
+def test_same_value_from_each_engine_is_confirmed() -> None:
+    # PO 2026-11-23 (C4 amended): the cross-check engine's text, read on its own, gives the same value.
+    pages = [page(rapid="Cubic Capacity 1197", tess="Cubic Capacity 1197")]
+    main = {"cc": raw("1197", "Cubic Capacity 1197")}
+    f = normalise(main, pages, "upload.pdf", cross={"cc": raw("1197", "Cubic Capacity 1197")})
+    assert f.cc.verification == "confirmed_both" and f.cc.confidence == "high"
+    f = normalise(main, pages, "upload.pdf", cross={"cc": raw("1191", "Cubic Capacity 1191")})
+    assert f.cc.verification == "verified_both"
+    assert normalise(main, pages, "upload.pdf").cc.verification == "verified_both"  # no cross read
+
+
+def test_names_are_compared_loosely_across_engines() -> None:
+    q = "RELIANCe GENERAL INSURANCE"
+    pages = [page(rapid=q, tess="With Reliance general Insurance Co. Ltd. " + q)]
+    f = normalise(
+        {"insurer": raw(q)},
+        pages,
+        "upload.pdf",
+        cross={"insurer": raw("With Reliance general Insurance Co. Ltd.")},
+    )
+    assert f.insurer.verification == "confirmed_both"
+    f = normalise(
+        {"insurer": raw(q)}, pages, "upload.pdf", cross={"insurer": raw("Tata Sons Private Limited")}
+    )
+    assert f.insurer.verification == "verified_both"

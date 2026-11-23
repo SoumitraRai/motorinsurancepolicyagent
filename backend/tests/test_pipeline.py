@@ -91,7 +91,7 @@ def test_pipeline_resolves_and_records_meta() -> None:
     meta = r.meta
     assert meta["extractor"] == "rules" and meta["gridManifest"] == "manifest-sha"
     assert meta["ocr"] == {"rapidocr": "test", "tesseract": "test"} and len(meta["pdfSha256"]) == 64
-    assert r.facts.cc.verification == "verified_both" and r.facts.cc.policy_citation == "upload.pdf · page 1"
+    assert r.facts.cc.verification == "confirmed_both" and r.facts.cc.policy_citation == "upload.pdf · page 1"
 
 
 def test_clarify_override_marked_and_linked() -> None:
@@ -129,3 +129,23 @@ def test_only_the_first_pages_are_read() -> None:
     result = run_pipeline(multi_page_pdf(9), "long.pdf", d)
     assert len(d.primary.seen) == 6  # type: ignore[attr-defined]
     assert result.meta["pagesRead"] == 6 and result.meta["pageCount"] == 9
+
+
+class CountingTess(FakeTess):
+    def __init__(self, text: str) -> None:
+        super().__init__(text)
+        self.calls = 0
+
+    def ocr(self, image: Image.Image) -> PageText:
+        self.calls += 1
+        return super().ocr(image)
+
+
+def test_cross_check_engine_reads_only_the_cited_pages() -> None:
+    # Tesseract only cross-checks quotes, so it reads just the pages the facts came from (all on page 1).
+    d = deps(CAR)
+    tess = CountingTess(d.engines[1].text)  # type: ignore[attr-defined]
+    d = dataclasses.replace(d, engines=(d.engines[0], tess))
+    result = run_pipeline(multi_page_pdf(3), "three.pdf", d)
+    assert tess.calls == 1
+    assert result.facts.cc.verification == "confirmed_both"  # the cross reading agrees

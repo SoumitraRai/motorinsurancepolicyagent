@@ -423,3 +423,18 @@ def test_no_rate_code_explains_the_refusal() -> None:
     r = run(car(fuel="diesel"), acme(exceptions=(code,)))
     assert r.status == "unsupported" and "MISP" in r.trace[-1].decision
     assert cite("F70").render() in r.trace[-1].grid_citation
+
+
+def _weaken(f, name: str):  # type: ignore[no-untyped-def]
+    return f.model_copy(update={name: getattr(f, name).model_copy(update={"verification": "verified_one"})})
+
+
+def test_one_weak_grid_picking_fact_does_not_sink_a_confirmed_run() -> None:
+    # PO 2026-11-23: >= 90% of used facts confirmed -> high, unless a fact that picked the rate row is weak.
+    confirmed = car("confirmed_both")
+    r = run(confirmed)
+    assert r.status == "resolved" and r.confidence.level == "high"
+    r = run(_weaken(confirmed, "insurer"))  # insurer only picks the grid
+    assert r.confidence.level != "low" and "picked the rate row" not in r.confidence.reason
+    r = run(_weaken(confirmed, "rto"))  # the RTO picks the zone, so the row
+    assert r.confidence.level == "low" and "rto" in r.confidence.reason.split("picked the rate row")[1]
