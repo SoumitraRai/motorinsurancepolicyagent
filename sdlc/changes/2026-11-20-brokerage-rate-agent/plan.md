@@ -849,8 +849,8 @@ T14 and T15 reuse T7's primitives and extend `registry.py`. **Test:** the same
 - **T16 (README).** Architecture (parts, run flow, failure modes, trade-offs), sample results with links,
   a trace-step → code map and the AC22 record were added. Sample outputs were regenerated on the latest
   code (rules extractor): same statuses, rates, citations and traces; only the run time changed.
-- **Repository clean-up (PO, 2026-11-23).** AI coding-assistant configuration (assistant instructions and settings, the
-  sdlc plugin's workflows, evals and monitoring) is no longer part of the repository; the history was
+- **Repository clean-up (PO, 2026-11-23).** AI coding-assistant configuration (assistant instructions and
+  settings, plugin workflows, evals and monitoring) is no longer part of the repository; the history was
   rewritten to remove it and the commit trailers that referred to it. The working branch is now `main`
   and `deploy/aws/bootstrap.sh` defaults to it.
 

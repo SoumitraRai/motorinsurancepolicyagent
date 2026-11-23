@@ -38,7 +38,7 @@ held by Soumitra Rai. All 13 were decided on 2026-11-20 ("accept all recommendat
 | C8 | **Tata AIG has no make/model → segment table** in any of its 7 sheets, including the hidden `cv checks` and `pci checks`. `Pvtcar` rows need a segment (Mini, Compact, Mid Size, …). Our own knowledge of which models are "Mini" would be inference. **Recommend:** if the policy doesn't print the segment, the result is `unsupported`, citing the absence of a mapping. This is consistent with the test bench's Tata case expecting a refusal; we don't target that answer, it follows from the rule. | NN2, NN5 | PO || Accepted: no printed segment → `unsupported`, citing the missing mapping. (Soumitra Rai, PO/TL, 2026-11-20) |
 | C9 | **Full A1 scope is large.** About 20 sheets beyond private car (CV, HCV, taxi, school/staff bus, two-wheeler, SAOD flexi), each with its own layout. That doesn't fit 24 hours with certainty. Per intent's Deadline: attempt everything, and if time runs short the PO asks Vaatun for more time. **Recommend:** build in the order of the Build order section below, so the baseline gate and the four samples are safe first. | intent A1, Deadline | PO || Accepted: build order baseline → four samples → rest of A1; ask Vaatun for time if short. (Soumitra Rai, PO/TL, 2026-11-20) |
 | C10 | **Reviewer uploads may contain real personal data** (names, addresses, registration numbers). They are stored in Supabase and sent to the extraction LLM API (A7; amended: OpenRouter, when configured). The security policy template says new storage or transfer of restricted data needs a flagged concern. **Recommend:** treat uploads as restricted, use a private bucket, disable signups, keep personal fields out of logs, disclose this in the README, and keep data for the review period only. | security-policy, A7 | PO (as data protection owner) || Accepted: restricted data controls as recommended; disclosed in README. (Soumitra Rai, PO/TL, 2026-11-20) |
-| C11 | **The policy skills are unfilled templates.** All five organisation policy files have placeholders and no review date, so they were applied in spirit only (generic controls). **Recommend:** accept them as applied for this submission and note it in the README's assumptions. | all policy skills | PO (as policy owner) || Accepted: templates applied in spirit; noted in README assumptions. (Soumitra Rai, PO/TL, 2026-11-20) |
+| C11 | **The policy skills are unfilled templates.** All five organisation policy files (security, compliance, brand, UX, API review) have placeholders and no review date, so they were applied in spirit only (generic controls). **Recommend:** accept them as applied for this submission and note it in the README's assumptions. | all policy skills | PO (as policy owner) || Accepted: templates applied in spirit; noted in README assumptions. (Soumitra Rai, PO/TL, 2026-11-20) |
 | C12 | **Paid hosting tiers.** Intent requires no sleep or pause, which needs paid Render and Supabase plans. The cost depends on plan prices at sign-up and isn't stated here. **Recommend:** Render paid web service and worker, plus Supabase Pro, for the review window. | intent decisions (uptime) | PO (budget) || Accepted: Render paid web + worker, Supabase Pro for the review window. (Soumitra Rai, PO/TL, 2026-11-20) |
 | C13 | **secure-api-review asks for `scripts/check-endpoints.sh` output, but that script doesn't exist in this repo.** **Recommend:** replace it with an automated test that every route except `/health` returns 401 without a valid JWT (AC19). | secure-api-review | TL || Accepted: AC19 replaces `check-endpoints.sh`. (Soumitra Rai, PO/TL, 2026-11-20) |
 
@@ -348,13 +348,11 @@ be detected.
 - Egress goes only to OpenRouter (when configured) and Supabase (amended).
 
 ### Integration with the existing codebase
-Greenfield. The repo today holds only the sdlc scaffold: `sdlc.config.json` (commands via `make`),
-process configuration and the read-only
-bundle. The application adds:
+Greenfield. The repo today holds only the process scaffold (build, test and lint commands via `make`)
+and the read-only bundle. The application adds:
 - a Python backend: API, worker, extraction, grids, resolution;
 - a React frontend;
-- a root `Makefile` that keeps `make build/test/lint/format/run` working as `sdlc.config.json` and
-  the process configuration expects;
+- a root `Makefile` that keeps `make build/test/lint/format/run` working;
 - a `Dockerfile` with Tesseract and the RapidOCR models.
 
 Module boundaries (names only; files and order are Stage 3):
