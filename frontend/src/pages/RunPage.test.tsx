@@ -138,6 +138,18 @@ test("failed state offers a retry", async () => {
   await waitFor(() => expect(retryRun).toHaveBeenCalledWith("r1"));
 });
 
+test("a missing run provides a link back to history", async () => {
+  renderWithApi(<RunPage runId="missing" />, {
+    getRun: vi.fn(async () => {
+      throw new Error("Run not found");
+    }),
+  });
+  const link = await screen.findByRole("link", {
+    name: "Go back to the run list and try again.",
+  });
+  expect(link).toHaveAttribute("href", "#/");
+});
+
 test("tabs follow the ARIA tabs pattern: arrow keys move, panel is labelled", async () => {
   renderWithApi(<RunPage runId="r1" pollMs={10} />, {
     getRun: vi.fn(async (): Promise<RunDetail> => ({

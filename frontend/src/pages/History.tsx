@@ -113,8 +113,8 @@ export function History({
         )}
         {runs.isSuccess && items.length === 0 && (
           <p className="text-ink-muted">
-            No policies yet. Upload a motor policy PDF to get its brokerage
-            rate.
+            No policies yet for this account. Runs are private to each login.
+            Upload a motor policy PDF to get its brokerage rate.
           </p>
         )}
         {items.length > 0 && (

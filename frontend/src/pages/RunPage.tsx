@@ -121,7 +121,10 @@ export function RunPage({
   if (run.isError)
     return (
       <p role="alert" className="text-refuse">
-        Couldn't load this run. Go back to the run list and try again.
+        Couldn't load this run.{" "}
+        <a href="#/" className="font-medium underline">
+          Go back to the run list and try again.
+        </a>
       </p>
     );
   if (!run.data)

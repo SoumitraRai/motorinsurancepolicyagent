@@ -69,6 +69,7 @@ export default function App({ auth, api: given }: { auth: Auth; api?: Api }) {
                 onClick={async () => {
                   await auth.signOut();
                   queryClient.clear();
+                  window.location.hash = "#/";
                 }}
                 className="btn-quiet"
               >
@@ -83,7 +84,13 @@ export default function App({ auth, api: given }: { auth: Auth; api?: Api }) {
           id="main"
           className="flex flex-1 items-start justify-center px-4 py-16"
         >
-          <SignIn signIn={(e, p) => auth.signIn(e, p)} />
+          <SignIn
+            signIn={async (email, password) => {
+              await auth.signIn(email, password);
+              queryClient.clear();
+              window.location.hash = "#/";
+            }}
+          />
         </main>
       )}
       {signedIn && (

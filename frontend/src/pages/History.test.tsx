@@ -7,7 +7,7 @@ test("shows the empty state copy when there are no runs", async () => {
   renderWithApi(<History />, {});
   expect(
     await screen.findByText(
-      "No policies yet. Upload a motor policy PDF to get its brokerage rate.",
+      "No policies yet for this account. Runs are private to each login. Upload a motor policy PDF to get its brokerage rate.",
     ),
   ).toBeInTheDocument();
   expect(
